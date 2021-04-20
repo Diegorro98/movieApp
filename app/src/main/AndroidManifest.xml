@@ -9,8 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieApp">
-        <activity android:name=".MovieList"
-            android:label="Movies"/>
+        <activity
+            android:name=".Contact"
+            android:label="Contact"/>
+        <activity
+            android:name=".MovieList"
+            android:label="Movies" />
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -6,4 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".MovieList">
 
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/btn_addMovie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:minHeight="56dp"
+        android:contentDescription="@string/add_a_movie"
+        android:text="@string/add_a_movie"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:icon="@drawable/outline_add_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>
