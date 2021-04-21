@@ -13,9 +13,9 @@ class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
-        supportActionBar?.hide()
-
-        /*startActivity(Intent(this, MovieList::class.java))
+        /*
+        Load what you need and then...
+        startActivity(Intent(this, MovieList::class.java))
         finish()*/
         Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this, MovieList::class.java))
