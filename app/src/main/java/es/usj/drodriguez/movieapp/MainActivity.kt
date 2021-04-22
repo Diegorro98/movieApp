@@ -10,7 +10,7 @@ import androidx.appcompat.widget.SearchView
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MovieList : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
         val searchMovieList =  menu?.findItem(R.id.btn_search)?.actionView as SearchView
@@ -25,7 +25,7 @@ class MovieList : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         pager.adapter = adapter
-        val tabLayoutMediator = TabLayoutMediator(tabLayout, pager, TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+        TabLayoutMediator(tabLayout, pager) { tab, position ->
             when (position) {
                 0 -> {
                     tab.text = "Name"
@@ -37,7 +37,7 @@ class MovieList : AppCompatActivity() {
                     tab.text = "Actors"
                 }
             }
-        }).attach()
+        }.attach()
 
         setSupportActionBar(toolbar_movieList)
         toolbar_movieList.showOverflowMenu()
