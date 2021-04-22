@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
+        menuInflater.inflate(R.menu.toolbar_main, menu)
         val searchMovieList =  menu?.findItem(R.id.btn_search)?.actionView as SearchView
         searchMovieList.queryHint = "Search for a movie"
         return super.onCreateOptionsMenu(menu)
