@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">movieApp</string>
+    <string name="add_a_movie">Añadir pelicula</string>
+    <string name="developed_by">Desarrollado por J. Diego Rodriguez</string>
+</resources>

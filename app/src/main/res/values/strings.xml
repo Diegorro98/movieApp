@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">movieApp</string>
+    <string name="developer" translatable="false">J. Diego Rodríguez</string>
     <string name="add_a_movie">Add a movie</string>
+    <string name="phone" translatable="false">+34625454546</string>
+    <string name="mail" translatable="false">alu.103413@usj.es</string>
+    <string name="telegramUser" translatable="false">JDiegoRodriguez</string>
+    <string name="developed_by">Developed by J. Diego Rodriguez</string>
 </resources>
