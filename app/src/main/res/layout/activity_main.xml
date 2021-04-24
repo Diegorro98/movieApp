@@ -25,13 +25,12 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/MyToolbar"
-        app:title="Movies"
+        android:theme="@style/ToolbarIcons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/toolbar_main"
-        />
+        app:title="@string/tb_main_title" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"

@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_main, menu)
         val searchMovieList =  menu?.findItem(R.id.btn_search)?.actionView as SearchView
-        searchMovieList.queryHint = "Search for a movie"
+        searchMovieList.queryHint = getString(R.string.searchMovie)
         return super.onCreateOptionsMenu(menu)
        }
 
@@ -28,13 +28,13 @@ class MainActivity : AppCompatActivity() {
         TabLayoutMediator(tabLayout, pager) { tab, position ->
             when (position) {
                 0 -> {
-                    tab.text = "Name"
+                    tab.text = getString(R.string.movieList_title)
                 }
                 1 -> {
-                    tab.text = "Genre"
+                    tab.text = getString(R.string.movieList_genre)
                 }
                 2 -> {
-                    tab.text = "Actors"
+                    tab.text = getString(R.string.movieList_actors)
                 }
             }
         }.attach()

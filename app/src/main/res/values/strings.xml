@@ -6,4 +6,10 @@
     <string name="mail" translatable="false">alu.103413@usj.es</string>
     <string name="telegramUser" translatable="false">JDiegoRodriguez</string>
     <string name="developed_by">Developed by J. Diego Rodriguez</string>
+    <string name="tb_main_title">Movies</string>
+    <string name="tb_contact_title">Contact</string>
+    <string name="movieList_title">Title</string>
+    <string name="movieList_genre">Genres</string>
+    <string name="movieList_actors">Actors</string>
+    <string name="searchMovie">Search for a movie</string>
 </resources>

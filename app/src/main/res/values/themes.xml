@@ -16,6 +16,9 @@
     </style>
     <style name="MyToolbar" parent="Widget.MaterialComponents.Toolbar">
         <item name="titleTextColor">@color/white</item>
+        <item name="android:theme">@style/ToolbarIcons</item>
+    </style>
+    <style name="ToolbarIcons">
         <item name="colorControlNormal">@color/white</item>
     </style>
 </resources>
