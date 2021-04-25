@@ -2,20 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:title="Search"
+        android:title="@string/btn_search_title"
         android:id="@+id/btn_search"
         android:icon="@drawable/baseline_search_24"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"/>
 
     <item
-        android:title="Favorites"
         android:id="@+id/btn_fav"
-        android:icon="@drawable/outline_favorite_border_24"
-        app:showAsAction="ifRoom">
+        android:title="@string/btn_fav_title"
+        android:checkable="true"
+        android:checked="false"
+        android:checkableBehavior="single"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="android.widget.Bu"
+        >
     </item>
     <item
-        android:title="Profile"
+        android:title="@string/contact_title"
         android:id="@+id/btn_contact"
         android:icon="@drawable/outline_person_24"
         app:showAsAction="ifRoom">

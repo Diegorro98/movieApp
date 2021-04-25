@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">movieApp</string>
+    <string name="app_name" translatable="false">movieApp</string>
     <string name="developer" translatable="false">J. Diego Rodríguez</string>
     <string name="add_a_movie">Add a movie</string>
     <string name="phone" translatable="false">+34625454546</string>
@@ -7,9 +7,11 @@
     <string name="telegramUser" translatable="false">JDiegoRodriguez</string>
     <string name="developed_by">Developed by J. Diego Rodriguez</string>
     <string name="tb_main_title">Movies</string>
-    <string name="tb_contact_title">Contact</string>
+    <string name="contact_title">Contact</string>
     <string name="movieList_title">Title</string>
     <string name="movieList_genre">Genres</string>
     <string name="movieList_actors">Actors</string>
     <string name="searchMovie">Search for a movie</string>
+    <string name="btn_fav_title">Favorites</string>
+    <string name="btn_search_title">Search</string>
 </resources>

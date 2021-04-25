@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/baseline_arrow_back_24"
-        app:title="@string/tb_contact_title" />
+        app:title="@string/contact_title" />
 
     <ImageView
         android:id="@+id/iv_logo"
