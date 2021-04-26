@@ -5,7 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_prueba.*
+import es.usj.drodriguez.movieapp.databinding.FragmentPruebaBinding
+
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
@@ -18,9 +19,10 @@ private const val ARG_PARAM2 = "param2"
  */
 class Prueba : Fragment() {
     // TODO: Rename and change types of parameters
+    private var _binding : FragmentPruebaBinding? = null
+    private val binding get() = _binding!!
     private var param1: String? = null
     private var param2: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -32,15 +34,16 @@ class Prueba : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_prueba, container, false)
+        _binding = FragmentPruebaBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        arguments?.takeIf { it.containsKey(Companion.ARG_OBJECT) }?.apply {
-            textView.text = getInt(Companion.ARG_OBJECT).toString()
+        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
+            binding.textView.text = getInt(ARG_OBJECT).toString()
         }
     }
     companion object {

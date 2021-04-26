@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.activity_main.*
+import es.usj.drodriguez.movieapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -45,14 +45,17 @@ class MainActivity : AppCompatActivity() {
             super.onOptionsItemSelected(item)
         }
     }
+
     private val adapter by lazy { ViewPagerAdapter(this) }
 
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
 
-        pager.adapter = adapter
-        TabLayoutMediator(tabLayout, pager) { tab, position ->
+        binding.pager.adapter = adapter
+        TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
             when (position) {
                 0 -> {
                     tab.text = getString(R.string.movieList_title)
@@ -66,17 +69,18 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
 
-        setSupportActionBar(toolbar_movieList)
-        toolbar_movieList.showOverflowMenu()
+        setSupportActionBar(binding.toolbarMovieList)
+        binding.toolbarMovieList.showOverflowMenu()
 
-        btn_addMovie.shrink()
-        btn_addMovie.setOnClickListener {
-            //startActivity(Intent(this, AddMovie::class.java))
+        binding.btnAddMovie.shrink()
+        binding.btnAddMovie.setOnClickListener {
+            val addMovieIntent = Intent(this, MovieEditor::class.java).putExtra(MovieEditor.EDITOR_MODE, MovieEditor.MODE_NEW)
+            startActivity(addMovieIntent)
         }
-        btn_addMovie.setOnLongClickListener {
-            btn_addMovie.extend()
+        binding.btnAddMovie.setOnLongClickListener {
+            binding.btnAddMovie.extend()
             Handler(Looper.getMainLooper()).postDelayed({
-                btn_addMovie.shrink()
+                binding.btnAddMovie.shrink()
             }, 2000)
             return@setOnLongClickListener true
         }

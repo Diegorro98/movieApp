@@ -5,26 +5,28 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import kotlinx.android.synthetic.main.activity_contact.*
+import es.usj.drodriguez.movieapp.databinding.ActivityContactBinding
 
 class Contact : AppCompatActivity() {
+    lateinit var binding: ActivityContactBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contact)
-        toolbar_contact.setNavigationOnClickListener {
+        binding = ActivityContactBinding.inflate(layoutInflater)
+        binding.toolbarContact.setNavigationOnClickListener {
             finish()
         }
-        btn_call.setOnClickListener {
+        binding.btnCall.setOnClickListener {
             startActivity(Intent(Intent.ACTION_DIAL).apply {
                 data = Uri.parse("tel:${getString(R.string.phone)}")
             })
         }
-        btn_mail.setOnClickListener {
+        binding.btnMail.setOnClickListener {
            startActivity(Intent(Intent.ACTION_SENDTO).apply {
                data = Uri.parse("mailto:${getString(R.string.mail)}")
            })
         }
-        btn_telegram.setOnClickListener {
+        binding.btnTelegram.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/${getString(R.string.telegramUser)}")))
         }
     }

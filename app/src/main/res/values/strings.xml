@@ -17,4 +17,6 @@
     <string name="btn_mail_title">Mail</string>
     <string name="btn_call_title">Telephone</string>
     <string name="btn_telegram_title" translatable="false">Telegram</string>
+    <string name="editor_edit_mode_title">Edit</string>
+    <string name="editor_new_mode_title">Add a movie</string>
 </resources>
