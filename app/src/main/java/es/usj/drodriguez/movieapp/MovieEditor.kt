@@ -12,8 +12,8 @@ class MovieEditor : AppCompatActivity() {
     private lateinit var binding: ActivityMovieEditorBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_movie_editor)
         binding = ActivityMovieEditorBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         editorMode = intent?.extras?.get(EDITOR_MODE).toString()
 
         binding.toolbarEditor.setNavigationOnClickListener {

@@ -11,8 +11,8 @@ class Contact : AppCompatActivity() {
     lateinit var binding: ActivityContactBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_contact)
         binding = ActivityContactBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         binding.toolbarContact.setNavigationOnClickListener {
             finish()
         }
