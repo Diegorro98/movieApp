@@ -7,22 +7,19 @@
         android:icon="@drawable/baseline_search_24"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"/>
-
-    <item
-        android:id="@+id/btn_fav"
-        android:title="@string/btn_fav_title"
-        android:checkable="true"
-        android:checked="false"
-        android:checkableBehavior="single"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="android.widget.Bu"
-        >
-    </item>
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/btn_fav"
+            android:title="@string/btn_fav_title"
+            android:checkable="true"
+            app:actionViewClass="android.widget.CheckBox"
+            app:showAsAction="ifRoom"
+            />
+    </group>
     <item
         android:title="@string/contact_title"
         android:id="@+id/btn_contact"
         android:icon="@drawable/outline_person_24"
         app:showAsAction="ifRoom">
     </item>
-    <group />
 </menu>

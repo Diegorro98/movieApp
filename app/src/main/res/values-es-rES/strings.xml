@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="add_a_movie">Añadir pelicula</string>
+    <string name="add_a_movie">Añadir película</string>
     <string name="developed_by">Desarrollado por J. Diego Rodriguez</string>
     <string name="tb_main_title">Peliculas</string>
     <string name="contact_title">Contacto</string>
     <string name="movieList_title">Titulo</string>
     <string name="movieList_genre">Generos</string>
     <string name="movieList_actors">Actores</string>
-    <string name="searchMovie">Buscar una pelicula</string>
+    <string name="searchMovie">Buscar una película</string>
     <string name="btn_fav_title">Favortos</string>
     <string name="btn_search_title">Buscar</string>
+    <string name="btn_call_title">Teléfono</string>
+    <string name="btn_mail_title">Correo</string>
 </resources>

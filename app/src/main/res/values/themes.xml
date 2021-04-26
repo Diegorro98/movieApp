@@ -15,10 +15,10 @@
         <item name="toolbarStyle">@style/MyToolbar</item>
     </style>
     <style name="MyToolbar" parent="Widget.MaterialComponents.Toolbar">
-        <item name="titleTextColor">@color/white</item>
+        <item name="titleTextColor">@color/Toolbar_Primary</item>
         <item name="android:theme">@style/ToolbarIcons</item>
     </style>
-    <style name="ToolbarIcons">
-        <item name="colorControlNormal">@color/white</item>
+    <style name="ToolbarIcons" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
+        <item name="colorControlNormal">@color/Toolbar_Primary</item>
     </style>
 </resources>

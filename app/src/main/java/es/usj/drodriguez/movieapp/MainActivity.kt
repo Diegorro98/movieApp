@@ -8,6 +8,7 @@ import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import com.google.android.material.tabs.TabLayoutMediator
@@ -17,34 +18,31 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_main, menu)
 
+        //Fav-checkbox configuration (Because it is not possible to configure it on the XML)
         val searchMovieList =  menu?.findItem(R.id.btn_search)?.actionView as SearchView
         searchMovieList.queryHint = getString(R.string.searchMovie)
+        val favButton = menu.findItem(R.id.btn_fav)?.actionView as CheckBox
+        val favIcon = ContextCompat.getDrawable(this,R.drawable.favorite_check)
+        favIcon?.setTint(getColor(R.color.Toolbar_Primary))
+        favButton.buttonDrawable  =  favIcon
+        //onOptionsItemsSelected no triggered when neither checkbox or fav-checkbox is clicked, so is configured this way
+        favButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked){
+                Toast.makeText(this,"Favorites on!", Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this,"Favorites off!", Toast.LENGTH_SHORT).show()
+            }
+        }
 
-        val fav = menu.findItem(R.id.btn_fav)?.actionView as CheckBox
-        fav.buttonDrawable  =  ContextCompat.getDrawable(this,R.drawable.outline_favorite_border_24)
-        fav.isChecked = false
         return super.onCreateOptionsMenu(menu)
        }
-
-    override fun onOptionsItemSelected(item: MenuItem) :Boolean{
-        when (item.itemId) {
-            R.id.btn_fav -> {
-                val fav = item as CheckBox
-                if (fav.isChecked) {
-                    fav.buttonDrawable = ContextCompat.getDrawable(this, R.drawable.outline_favorite_border_24)
-                } else {
-                    fav.buttonDrawable = ContextCompat.getDrawable(this, R.drawable.outline_favorite_24)
-                }
-                fav.isChecked = !fav.isChecked
-                return true
-            }
-            R.id.btn_contact -> {
-                startActivity(Intent(this, Contact::class.java))
-                return true
-            }
-            else -> {
-                return super.onOptionsItemSelected(item)
-            }
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.btn_contact -> {
+            startActivity(Intent(this, Contact::class.java))
+            true
+        }
+        else -> {
+            super.onOptionsItemSelected(item)
         }
     }
     private val adapter by lazy { ViewPagerAdapter(this) }

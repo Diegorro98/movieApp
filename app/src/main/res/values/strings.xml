@@ -14,4 +14,7 @@
     <string name="searchMovie">Search for a movie</string>
     <string name="btn_fav_title">Favorites</string>
     <string name="btn_search_title">Search</string>
+    <string name="btn_mail_title">Mail</string>
+    <string name="btn_call_title">Telephone</string>
+    <string name="btn_telegram_title" translatable="false">Telegram</string>
 </resources>
