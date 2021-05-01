@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.ContactsContract
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
@@ -52,12 +53,7 @@ class SplashScreen : AppCompatActivity() {
         var fetchMovies = false; var fetchActors = false; var fetchGenre = false
         while (!endedFetcher) {
             if (host == "" || host == null) {
-                val dialog = HostDialogFragment()
-                dialog.show(supportFragmentManager, "host_input")
-                while (!dialog.end) {
-                    delay(100) //to avoid thread blocking
-                }
-                host = dialog.hostName
+                host = DatabaseFetcher.popUpDialog(manager = supportFragmentManager)
                 endedFetcher = false
             } else {
                 if (DatabasePreferences(this).isOnline(Context.MODE_PRIVATE)){
@@ -79,11 +75,7 @@ class SplashScreen : AppCompatActivity() {
                         }
                         endedFetcher = true
                     } else {
-                        val dialog = HostDialogFragment(host)
-                        dialog.show(supportFragmentManager, "host_input")
-                        while (!dialog.end) {
-                            delay(100) //to avoid thread blocking
-                        }
+                        host = DatabaseFetcher.popUpDialog(host, supportFragmentManager)
                         endedFetcher = false
                     }
                 }else{
@@ -93,6 +85,7 @@ class SplashScreen : AppCompatActivity() {
         }
         startActivity(Intent(this, MainActivity::class.java))
         finish()
+        println("Host${DatabasePreferences(this).getHost(Context.MODE_PRIVATE)}")
     }
 
     override fun onPause() {

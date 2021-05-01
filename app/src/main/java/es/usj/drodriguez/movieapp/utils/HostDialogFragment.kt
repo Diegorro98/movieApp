@@ -25,7 +25,7 @@ class HostDialogFragment(var hostName: String? = null) : DialogFragment() {
             val inflater = requireActivity().layoutInflater;
             val layout = inflater.inflate(R.layout.fragment_dialog_host, null)
             val editText = layout.findViewById<EditText>(R.id.ed_newHost)
-            editText.addTextChangedListener (object : TextWatcher {
+            editText.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {}
 
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -40,22 +40,22 @@ class HostDialogFragment(var hostName: String? = null) : DialogFragment() {
             // Inflate and set the layout for the dialog
             // Pass null as the parent view because its going in the dialog layout
             builder.setView(layout)
-                .setTitle(if(hostName == null || hostName == "") getString(R.string.tv_host_dialog_first_connect)else getString(R.string.tv_host_dialog_reconnect_title))
-                .setMessage(if(hostName != null && hostName != "") getString(R.string.tv_host_dialog_reconnect_message) else null)
-                // Add action buttons
-                .setPositiveButton(R.string.dialog_host_connect
-                ) { _, _ ->
-                    DatabasePreferences(it).setOnline(true, Context.MODE_PRIVATE)
-                    DatabasePreferences(it).setHost(hostName, Context.MODE_PRIVATE)
-                    end = true
-                }
-                .setNegativeButton(
-                R.string.dialog_host_cancel
-                ) { _, _ ->
-                    DatabasePreferences(it).setOnline(false, Context.MODE_PRIVATE)
-                    end = true
-                    dialog?.cancel()
-                }
+                    .setTitle(if (hostName == null || hostName == "") getString(R.string.tv_host_dialog_first_connect) else getString(R.string.tv_host_dialog_reconnect_title))
+                    .setMessage(if (hostName != null && hostName != "") getString(R.string.tv_host_dialog_reconnect_message) else null)
+                    // Add action buttons
+                    .setPositiveButton(R.string.dialog_host_connect
+                    ) { _, _ ->
+                        DatabasePreferences(it).setOnline(true, Context.MODE_PRIVATE)
+                        DatabasePreferences(it).setHost(hostName, Context.MODE_PRIVATE)
+                        end = true
+                    }
+                    .setNegativeButton(
+                            R.string.dialog_host_cancel
+                    ) { _, _ ->
+                        DatabasePreferences(it).setOnline(false, Context.MODE_PRIVATE)
+                        end = true
+                        dialog?.cancel()
+                    }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }

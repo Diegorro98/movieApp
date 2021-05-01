@@ -148,12 +148,7 @@ class DatabaseFetcher(
 
             while (!endedFetcher) {
                 if (host == "" || host == null) {
-                    val dialog = HostDialogFragment()
-                    dialog.show(manager, "host_input")
-                    while (!dialog.end) {
-                        delay(100) //to avoid thread blocking
-                    }
-                    host = dialog.hostName
+                    host = popUpDialog(manager = manager)
                     endedFetcher = false
                 } else {
                     if (DatabasePreferences(context).isOnline(Context.MODE_PRIVATE)){
@@ -165,11 +160,7 @@ class DatabaseFetcher(
                             }
                             endedFetcher = true
                         } else {
-                            val dialog = HostDialogFragment(host)
-                            dialog.show(manager, "host_input")
-                            while (!dialog.end) {
-                                delay(100) //to avoid thread blocking
-                            }
+                            host = popUpDialog(host, manager)
                             endedFetcher = false
                         }
                     }else{
@@ -177,6 +168,14 @@ class DatabaseFetcher(
                     }
                 }
             }
+        }
+        suspend fun popUpDialog(hostName: String?=null, @NonNull manager:androidx.fragment.app.FragmentManager): String?{
+            val dialog = HostDialogFragment(hostName)
+            dialog.show(manager, "host_input")
+            while (!dialog.end) {
+                delay(100) //to avoid thread blocking
+            }
+            return dialog.hostName
         }
     }
 }
