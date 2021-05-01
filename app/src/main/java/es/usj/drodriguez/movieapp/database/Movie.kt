@@ -4,7 +4,9 @@ import androidx.room.*
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
+import java.io.File
 import java.lang.reflect.Type
+import java.nio.file.Path
 
 
 @Entity(tableName = Movie.TABLE_NAME)
@@ -19,8 +21,8 @@ data class Movie(
     @ColumnInfo(name = VOTES) @SerializedName(VOTES) var votes: Int,
     @ColumnInfo(name = REVENUE) @SerializedName(REVENUE) var revenue: Float,
     @ColumnInfo(name = GENRES) @SerializedName(GENRES) var genres: List<Int>,
-    @ColumnInfo(name = ACTORS) @SerializedName(ACTORS)  var actors: List<Int>
-){
+    @ColumnInfo(name = ACTORS) @SerializedName(ACTORS)  var actors: List<Int>,
+    @ColumnInfo(name = POSTER) @Transient var posterPath: File){
     companion object{
         const val ID = "id"
         const val TITLE = "title"
@@ -34,6 +36,7 @@ data class Movie(
         const val GENRES = "genres"
         const val ACTORS = "actors"
         const val TABLE_NAME = "movies"
+        const val POSTER = "poster"
     }
 }
 class IntListConverter{
@@ -45,7 +48,19 @@ class IntListConverter{
     }
 
     @TypeConverter
-    fun someObjectListToString(someObjects: List<Int?>?): String? {
+    fun IntListToString(someObjects: List<Int?>?): String? {
         return gson.toJson(someObjects)
+    }
+}
+class FileConverter{
+    private val gson = Gson()
+    @TypeConverter
+    fun stringToPath(filePath: String):File{
+        return File(filePath)
+    }
+
+    @TypeConverter
+    fun PathToString(Object: File?): String? {
+        return Object.toString()
     }
 }

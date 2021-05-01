@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val adapter by lazy { ViewPagerAdapter(this) }
+    private val adapter by lazy { MainViewPagerAdapter(this) }
 
     private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {

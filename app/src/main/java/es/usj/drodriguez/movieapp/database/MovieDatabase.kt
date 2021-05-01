@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.room.*
 
 
-@Database(entities = [Movie::class, Actor::class, Genre::class], version = 1)
-@TypeConverters(IntListConverter::class)
+@Database(entities = [Movie::class, Actor::class, Genre::class], version = 1, exportSchema = false)
+@TypeConverters(IntListConverter::class, FileConverter::class)
 abstract class MovieDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
     abstract fun actorDao(): ActorDao

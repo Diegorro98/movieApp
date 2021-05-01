@@ -22,4 +22,13 @@
     <string name="btn_telegram_title" translatable="false">Telegram</string>
     <string name="editor_edit_mode_title">Edit</string>
     <string name="editor_new_mode_title">Add a movie</string>
+    <string name="dialog_host_cancel">Continue offline</string>
+    <string name="dialog_host_connect">Connect</string>
+    <string name="ed_newHost_hint">IP or host</string>
+    <string name="tv_host_dialog_reconnect_title">Could\'t not connect to the host</string>
+    <string name="tv_host_dialog_reconnect_message">Specify other host or retry it later</string>
+    <string name="tv_host_dialog_first_connect">Set a host</string>
+    <string name="tv_splashscreen_info_connecting">Establishing connection</string>
+    <string name="tv_splashscreen_info_fetching">Downloading last updated data</string>
+    <string name="tv_splashscreen_info_first_fetch">Downloading the database</string>
 </resources>

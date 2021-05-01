@@ -13,8 +13,12 @@ import androidx.appcompat.app.AppCompatActivity
 import es.usj.drodriguez.movieapp.database.MovieDatabase
 import es.usj.drodriguez.movieapp.databinding.ActivitySplashScreenBinding
 import es.usj.drodriguez.movieapp.utils.DatabaseFetcher
+import es.usj.drodriguez.movieapp.utils.DatabasePreferences
+import es.usj.drodriguez.movieapp.utils.HostDialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -26,67 +30,69 @@ class SplashScreen : AppCompatActivity() {
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.statusBarColor = Color.WHITE
-        /*
-        Load what it's need and then...
-        startActivity(Intent(this, MovieList::class.java))
-        finish()*/
-        binding.tvSplashscreenInfo.text = "Loading whatever" //TODO
+        Handler(Looper.getMainLooper()).postDelayed({
         binding.tvSplashscreenInfo.visibility = View.VISIBLE
         binding.ivLoading.visibility = View.VISIBLE
-        fetchDatabase()
+        CoroutineScope(Main).launch {
+            fetchDatabase()
+        }
         loadingAnimation = ObjectAnimator.ofFloat(binding.ivLoading,"rotation", 0f, 360f)
         loadingAnimation.repeatCount = ObjectAnimator.INFINITE
         loadingAnimation.repeatMode = ObjectAnimator.RESTART
         loadingAnimation.interpolator = AccelerateInterpolator()
         loadingAnimation.start()
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-        }, 6000)
+        }, 1000)
     }
 
-    private fun fetchDatabase(){
-        val fetch = DatabaseFetcher()
+    private suspend fun fetchDatabase(){
+        var host = DatabasePreferences(this).getHost(Context.MODE_PRIVATE)
+        var endedFetcher = false
+        var fetch : DatabaseFetcher
         val database = MovieDatabase.getDatabase(this)
-        val databasePreferences = getSharedPreferences("databaseInfo", Context.MODE_PRIVATE)
-        val databasePreferencesEditor = databasePreferences.edit()
-        var fetchMovies = false
-        var fetchActors = false
-        var fetchGenre = false
-        when(val lastUpdate = databasePreferences.getLong("last_update", 0)){
-            0L ->{
-                CoroutineScope(IO).launch {
-                    val ret = fetch.movies()
-                    database?.movieDao()?.insertAll(ret)
-                    fetchMovies = true
+        var fetchMovies = false; var fetchActors = false; var fetchGenre = false
+        while (!endedFetcher) {
+            if (host == "" || host == null) {
+                val dialog = HostDialogFragment()
+                dialog.show(supportFragmentManager, "host_input")
+                while (!dialog.end) {
+                    delay(100) //to avoid thread blocking
                 }
-                CoroutineScope(IO).launch {
-                    val ret = fetch.actors()
-                    database?.actorDao()?.insertAll(ret)
-                    fetchActors = true
+                host = dialog.hostName
+                endedFetcher = false
+            } else {
+                if (DatabasePreferences(this).isOnline(Context.MODE_PRIVATE)){
+                    fetch = DatabaseFetcher(host, "admin", "admin")
+                    binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)
+                    if (fetch.ping()){
+                        when(val lastUpdate = DatabasePreferences(this).getLastUpdate(Context.MODE_PRIVATE)) {
+                            0L -> {
+                                binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_first_fetch)
+                                fetch.downloadAll(this)
+                            }
+                            else -> {
+                                binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_fetching)
+                                //GetUpdates
+                                //Get updateTable
+                                //Download elements that changed
+                                println("it has been updated before, TIMESTAMP:$lastUpdate")
+                            }
+                        }
+                        endedFetcher = true
+                    } else {
+                        val dialog = HostDialogFragment(host)
+                        dialog.show(supportFragmentManager, "host_input")
+                        while (!dialog.end) {
+                            delay(100) //to avoid thread blocking
+                        }
+                        endedFetcher = false
+                    }
+                }else{
+                    endedFetcher = true
                 }
-                CoroutineScope(IO).launch {
-                    val ret = fetch.genres()
-                    database?.genreDao()?.insertAll(ret)
-                    fetchGenre = true
-                }
-                //Get last update number and record it in database Preferences
-                /*CoroutineScope(IO).launch {
-                    while(!fetchMovies && !fetchActors && !fetchGenre ){}
-                    databasePreferencesEditor.putLong("last_update", System.currentTimeMillis()/1000)
-                }*/
-                //delete up there when it is correctly get the timestamp
-            }
-            else -> {
-                //GetUpdates
-                //Get updateTable
-                //Download elements that changed
-                println("it has been updated before, TIMESTAMP:$lastUpdate")
             }
         }
-        databasePreferencesEditor.apply()
-
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     override fun onPause() {

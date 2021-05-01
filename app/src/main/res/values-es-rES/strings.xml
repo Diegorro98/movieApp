@@ -14,4 +14,13 @@
     <string name="btn_mail_title">Correo</string>
     <string name="editor_edit_mode_title">Editar</string>
     <string name="editor_new_mode_title">Añade una película</string>
+    <string name="dialog_host_cancel">Seguir sin conexion</string>
+    <string name="dialog_host_connect">Conectar</string>
+    <string name="ed_newHost_hint">IP o host</string>
+    <string name="tv_host_dialog_first_connect">Escriba un host</string>
+    <string name="tv_splashscreen_info_connecting">Conectando</string>
+    <string name="tv_splashscreen_info_fetching">Descargando los datos mas actualizados</string>
+    <string name="tv_splashscreen_info_first_fetch">Descargando la base de datos</string>
+    <string name="tv_host_dialog_reconnect_title">No se ha podido conectar al host</string>
+    <string name="tv_host_dialog_reconnect_message">" Especifique otro o reintentelo mas tarde"</string>
 </resources>
