@@ -32,66 +32,60 @@ class SplashScreen : AppCompatActivity() {
         setContentView(binding.root)
         window.statusBarColor = Color.WHITE
         Handler(Looper.getMainLooper()).postDelayed({
-        binding.tvSplashscreenInfo.visibility = View.VISIBLE
-        binding.ivLoading.visibility = View.VISIBLE
-        CoroutineScope(Main).launch {
-            fetchDatabase()
-        }
-        loadingAnimation = ObjectAnimator.ofFloat(binding.ivLoading,"rotation", 0f, 360f)
-        loadingAnimation.repeatCount = ObjectAnimator.INFINITE
-        loadingAnimation.repeatMode = ObjectAnimator.RESTART
-        loadingAnimation.interpolator = AccelerateInterpolator()
-        loadingAnimation.start()
-        }, 1000)
+            binding.tvSplashscreenInfo.visibility = View.VISIBLE
+            binding.ivLoading.visibility = View.VISIBLE
+            loadingAnimation = ObjectAnimator.ofFloat(binding.ivLoading,"rotation", 0f, 360f)
+            loadingAnimation.repeatCount = ObjectAnimator.INFINITE
+            loadingAnimation.repeatMode = ObjectAnimator.RESTART
+            loadingAnimation.interpolator = AccelerateInterpolator()
+            loadingAnimation.start()
+            CoroutineScope(Main).launch {
+                fetchDatabase()
+            }
+        }, 1000)//A little bit of time to show the splash screen
     }
 
     private suspend fun fetchDatabase(){
+        DatabasePreferences(this).setOnline(true, Context.MODE_PRIVATE)
         var host = DatabasePreferences(this).getHost(Context.MODE_PRIVATE)
         var endedFetcher = false
         var fetch : DatabaseFetcher
-        val database = MovieDatabase.getDatabase(this)
-        var fetchMovies = false; var fetchActors = false; var fetchGenre = false
         while (!endedFetcher) {
-            if (host == "" || host == null) {
-                host = DatabaseFetcher.popUpDialog(manager = supportFragmentManager)
-                endedFetcher = false
-            } else {
-                if (DatabasePreferences(this).isOnline(Context.MODE_PRIVATE)){
-                    fetch = DatabaseFetcher(host, "admin", "admin")
-                    binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)
-                    if (fetch.ping()){
-                        when(val lastUpdate = DatabasePreferences(this).getLastUpdate(Context.MODE_PRIVATE)) {
-                            0L -> {
-                                binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_first_fetch)
-                                fetch.downloadAll(this)
-                            }
-                            else -> {
-                                binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_fetching)
-                                //GetUpdates
-                                //Get updateTable
-                                //Download elements that changed
-                                println("it has been updated before, TIMESTAMP:$lastUpdate")
-                            }
-                        }
-                        endedFetcher = true
-                    } else {
-                        host = DatabaseFetcher.popUpDialog(host, supportFragmentManager)
-                        endedFetcher = false
+            if (DatabasePreferences(this).isOnline(Context.MODE_PRIVATE)){
+                fetch = DatabaseFetcher(host, "admin", "admin")
+                binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)
+                if (fetch.ping()){
+                    val lastUpdate = DatabasePreferences(this).getLastUpdate(Context.MODE_PRIVATE)
+                    when(lastUpdate) {
+                        0L -> binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_first_fetch)
+                        else -> binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_fetching)
                     }
-                }else{
+                    fetch.updateDatabase(lastUpdate,this)
                     endedFetcher = true
+                } else {
+                    host = DatabaseFetcher.popUpDialog(host, supportFragmentManager)
+                    endedFetcher = false
                 }
+            }else{
+                endedFetcher = true
             }
         }
         startActivity(Intent(this, MainActivity::class.java))
         finish()
-        println("Host${DatabasePreferences(this).getHost(Context.MODE_PRIVATE)}")
     }
-
     override fun onPause() {
         super.onPause()
-        loadingAnimation.pause()
+        if (binding.ivLoading.visibility == View.VISIBLE) {
+            loadingAnimation.pause()
+        }
     }
+    override fun onResume() {
+        super.onResume()
+        if (binding.ivLoading.visibility == View.VISIBLE) {
+            loadingAnimation.start()
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()

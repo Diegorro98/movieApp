@@ -31,4 +31,5 @@
     <string name="tv_splashscreen_info_connecting">Establishing connection</string>
     <string name="tv_splashscreen_info_fetching">Downloading last updated data</string>
     <string name="tv_splashscreen_info_first_fetch">Downloading the database</string>
+    <string name="toast_host_dialog">Press back again to continue offline</string>
 </resources>

@@ -9,6 +9,7 @@ import es.usj.drodriguez.movieapp.R
 import es.usj.drodriguez.movieapp.database.*
 import kotlinx.coroutines.*
 import java.io.*
+import java.lang.IllegalArgumentException
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -38,8 +39,8 @@ class DatabaseFetcher(
                 sock.connect(socket, timeoutMs)
             }
             return true
-        } catch (e: IOException) {
-            // Handle exception
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
             return false
         }
     }
@@ -105,76 +106,68 @@ class DatabaseFetcher(
         }
         return total.toString()
     }
-    suspend fun downloadAll(context: Context){
+    suspend fun updateDatabase(lastUpdate : Long, context: Context){
         val database = MovieDatabase.getDatabase(context)
         var fetchMovies = false; var fetchActors = false; var fetchGenre = false
-        CoroutineScope(Dispatchers.IO).launch {
-            val ret = movies()
-            database?.movieDao()?.insertAll(ret)
-            fetchMovies = true
+        when(lastUpdate){
+            0L->{
+                CoroutineScope(Dispatchers.IO).launch {
+                    val ret = movies()
+                    database?.movieDao()?.insertAll(ret)
+                    fetchMovies = true
+                }
+                CoroutineScope(Dispatchers.IO).launch {
+                    val ret = actors()
+                    database?.actorDao()?.insertAll(ret)
+                    fetchActors = true
+                }
+                CoroutineScope(Dispatchers.IO).launch {
+                    val ret = genres()
+                    database?.genreDao()?.insertAll(ret)
+                    fetchGenre = true
+                }
+                while (!fetchMovies && !fetchActors && !fetchGenre) {
+                    delay(100)
+                }
+            }
+            else -> {
+                //
+                //TODO
+                //GetUpdates
+                //Get updateTable
+                //Download elements that changed
+            }
         }
-        CoroutineScope(Dispatchers.IO).launch {
-            val ret = actors()
-            database?.actorDao()?.insertAll(ret)
-            fetchActors = true
-        }
-        CoroutineScope(Dispatchers.IO).launch {
-            val ret = genres()
-            database?.genreDao()?.insertAll(ret)
-            fetchGenre = true
-        }
-        while (!fetchMovies && !fetchActors && !fetchGenre) {
-            delay(100)
-        }
-        //Get last update number and record it in database Preferences
-        /*CoroutineScope(IO).launch {
 
-            databasePreferencesEditor.putLong("last_update", System.currentTimeMillis()/1000)
-        }*/
-        //delete up there when it is correctly get the timestamp
-    }
-    fun updateDatabase(context: Context){
-        val database = MovieDatabase.getDatabase(context)
-        //TODO
-        //GetUpdates
-        //Get updateTable
-        //Download elements that changed
     }
     companion object{
         suspend fun fetchDatabase(context: Context, @NonNull manager:androidx.fragment.app.FragmentManager){
+            DatabasePreferences(context).setOnline(true, Context.MODE_PRIVATE)
             var host = DatabasePreferences(context).getHost(Context.MODE_PRIVATE)
             var endedFetcher = false
             var fetch : DatabaseFetcher
-
             while (!endedFetcher) {
-                if (host == "" || host == null) {
-                    host = popUpDialog(manager = manager)
-                    endedFetcher = false
-                } else {
-                    if (DatabasePreferences(context).isOnline(Context.MODE_PRIVATE)){
-                        fetch = DatabaseFetcher(host, "admin", "admin")
-                        if (fetch.ping()){
-                            when(val lastUpdate = DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE)) {
-                                0L -> fetch.downloadAll(context)
-                                else -> fetch.updateDatabase(context)
-                            }
-                            endedFetcher = true
-                        } else {
-                            host = popUpDialog(host, manager)
-                            endedFetcher = false
-                        }
-                    }else{
+                if (DatabasePreferences(context).isOnline(Context.MODE_PRIVATE)){
+                    fetch = DatabaseFetcher(host, "admin", "admin")
+                    if (fetch.ping()){
+                        fetch.updateDatabase(DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE),context)
                         endedFetcher = true
+                    } else {
+                        host = popUpDialog(host, manager)
+                        endedFetcher = false
                     }
+                }else{
+                    endedFetcher = true
                 }
             }
         }
         suspend fun popUpDialog(hostName: String?=null, @NonNull manager:androidx.fragment.app.FragmentManager): String?{
             val dialog = HostDialogFragment(hostName)
             dialog.show(manager, "host_input")
-            while (!dialog.end) {
+            while (!dialog.end) { //wait for the dialog to end
                 delay(100) //to avoid thread blocking
             }
+            println(dialog.hostName)
             return dialog.hostName
         }
     }
