@@ -1,7 +1,8 @@
-package es.usj.drodriguez.movieapp.database
+package es.usj.drodriguez.movieapp.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import es.usj.drodriguez.movieapp.database.classes.Genre
 
 @Dao
 interface GenreDao {

@@ -2,6 +2,8 @@ package es.usj.drodriguez.movieapp.database
 
 import android.content.Context
 import androidx.room.*
+import es.usj.drodriguez.movieapp.database.dao.*
+import es.usj.drodriguez.movieapp.database.classes.*
 
 
 @Database(entities = [Movie::class, Actor::class, Genre::class], version = 1, exportSchema = false)

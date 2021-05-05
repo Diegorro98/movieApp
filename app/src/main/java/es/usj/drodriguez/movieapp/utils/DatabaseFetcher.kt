@@ -1,20 +1,17 @@
 package es.usj.drodriguez.movieapp.utils
 
 import android.content.Context
-import android.content.Intent
 import androidx.annotation.NonNull
 import com.google.gson.Gson
-import es.usj.drodriguez.movieapp.MainActivity
-import es.usj.drodriguez.movieapp.R
 import es.usj.drodriguez.movieapp.database.*
+import es.usj.drodriguez.movieapp.database.classes.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import java.io.*
-import java.lang.IllegalArgumentException
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URL
-import java.nio.file.Files.exists
 import java.util.*
 
 
@@ -25,8 +22,8 @@ class DatabaseFetcher(
 ){
     private val gson = Gson()
     private val port = 8888
-    suspend fun ping(): Boolean{
-        try {
+    fun ping(): Boolean{
+        return try {
             val socket =InetSocketAddress(hostname, port)
 
             // Create an unbound socket
@@ -35,16 +32,14 @@ class DatabaseFetcher(
             // This method will block no more than timeoutMs.
             // If the timeout occurs, SocketTimeoutException is thrown.
             val timeoutMs = 2000 // 2 seconds
-            withContext(Dispatchers.IO) {
-                sock.connect(socket, timeoutMs)
-            }
-            return true
+            sock.connect(socket, timeoutMs)
+            true
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
-            return false
+            false
         }
     }
-    suspend fun movies(id: Int? = null) : List<Movie>{
+    fun movies(id: Int? = null) : List<Movie>{
         var url = "http://$hostname:$port/user/getMovies.php?user=$user&pass=$password"
         if (id != null) {
             url += "&id=$id"
@@ -56,7 +51,7 @@ class DatabaseFetcher(
             Collections.emptyList()
         }
     }
-    suspend fun actors(id: Int? = null) : List<Actor>{
+    fun actors(id: Int? = null) : List<Actor>{
         var url ="http://$hostname:$port/user/getActors.php?user=$user&pass=$password"
         if (id != null) {
             url += "&id=$id"
@@ -68,7 +63,7 @@ class DatabaseFetcher(
             Collections.emptyList()
         }
     }
-    suspend fun genres(id: Int? = null) : List<Genre>{
+    fun genres(id: Int? = null) : List<Genre>{
         var url = "http://$hostname:$port/user/getGenres.php?user=$user&pass=$password"
         if (id != null) {
             url += "&id=$id"
@@ -82,13 +77,11 @@ class DatabaseFetcher(
 
     }
 
-    private suspend fun getResponse(url: URL): String? {
+    private fun getResponse(url: URL): String? {
         val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
         return try {
             val input: InputStream
-            withContext(Dispatchers.IO) {
-                 input = BufferedInputStream(urlConnection.inputStream)
-            }
+            input = BufferedInputStream(urlConnection.inputStream)
             readStream(input)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -106,22 +99,22 @@ class DatabaseFetcher(
         }
         return total.toString()
     }
-    suspend fun updateDatabase(lastUpdate : Long, context: Context){
+    suspend fun updateDatabase(lastUpdate : Long, job: CompletableJob, context: Context){
         val database = MovieDatabase.getDatabase(context)
         var fetchMovies = false; var fetchActors = false; var fetchGenre = false
         when(lastUpdate){
             0L->{
-                CoroutineScope(Dispatchers.IO).launch {
+                CoroutineScope(IO + job ).launch {
                     val ret = movies()
                     database?.movieDao()?.insertAll(ret)
                     fetchMovies = true
                 }
-                CoroutineScope(Dispatchers.IO).launch {
+                CoroutineScope(IO + job ).launch {
                     val ret = actors()
                     database?.actorDao()?.insertAll(ret)
                     fetchActors = true
                 }
-                CoroutineScope(Dispatchers.IO).launch {
+                CoroutineScope(IO + job ).launch {
                     val ret = genres()
                     database?.genreDao()?.insertAll(ret)
                     fetchGenre = true
@@ -141,7 +134,7 @@ class DatabaseFetcher(
 
     }
     companion object{
-        suspend fun fetchDatabase(context: Context, @NonNull manager:androidx.fragment.app.FragmentManager){
+        suspend fun fetchDatabase(context: Context, job: CompletableJob,@NonNull manager:androidx.fragment.app.FragmentManager){
             DatabasePreferences(context).setOnline(true, Context.MODE_PRIVATE)
             var host = DatabasePreferences(context).getHost(Context.MODE_PRIVATE)
             var endedFetcher = false
@@ -150,7 +143,7 @@ class DatabaseFetcher(
                 if (DatabasePreferences(context).isOnline(Context.MODE_PRIVATE)){
                     fetch = DatabaseFetcher(host, "admin", "admin")
                     if (fetch.ping()){
-                        fetch.updateDatabase(DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE),context)
+                        fetch.updateDatabase(DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE), job, context)
                         endedFetcher = true
                     } else {
                         host = popUpDialog(host, manager)
