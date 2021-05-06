@@ -50,7 +50,7 @@ class SplashScreen : AppCompatActivity() {
                 }
 
             }
-            DatabaseFetcher.fetch(this@SplashScreen, fetcherJob, supportFragmentManager,
+            DatabaseFetcher.fetch(this@SplashScreen, fetcherJob,
                 onPing = {
                     GlobalScope.launch(Main){
                         binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)

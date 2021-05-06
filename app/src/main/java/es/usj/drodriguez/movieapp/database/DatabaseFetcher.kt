@@ -1,7 +1,9 @@
 package es.usj.drodriguez.movieapp.database
 
+import android.app.Activity
 import android.content.Context
 import androidx.annotation.NonNull
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.google.gson.Gson
 import es.usj.drodriguez.movieapp.database.*
@@ -140,34 +142,32 @@ class DatabaseFetcher(
         /**
          * Allows to do fetch the database by taking the necessary info from shared preferences and stores the data in the database. The anonymous functions are run in a coroutine,
          * so if you want to do things in Main thread, you should call <pre>GlobalScope.launch(Main){}</pre>
-         * @param context
+         * @param context Context for the sharedPreferences and the supportFragmentManager
          * @param job Job to get its own environment in coroutines resulting in a CoroutineScope(IO + job)
-         * @param manager
          * @param onPing Set of actions to do when the fetcher is going to do when pings the server
          * @param onDownloadAll Set of actions to do when the fetcher is going to do when downloads all the database from the server because it never had an first download
          * @param onUpdate Set of actions to do when the fetcher is going to do when updates the database
          * @param onFinish Set of actions to do when the fetcher is going to do when finishes its job
          */
-        fun fetch(@NonNull context: Context, @NonNull job: CompletableJob = Job(), @NonNull manager: FragmentManager, onPing: ( () -> Unit)? = null, onDownloadAll: ( () -> Unit)? = null, onUpdate: (() -> Unit)? = null, onFinish: ( (Boolean) -> Unit)? = null){
+        fun fetch(@NonNull context: Context, @NonNull job: CompletableJob = Job(), /*@NonNull manager: FragmentManager,*/ onPing: ( () -> Unit)? = null, onDownloadAll: ( () -> Unit)? = null, onUpdate: (() -> Unit)? = null, onFinish: ( (Boolean) -> Unit)? = null){
+            DatabasePreferences(context).setOnline(true, Context.MODE_PRIVATE)
+
+            var host = DatabasePreferences(context).getHost(Context.MODE_PRIVATE)
+            var endedFetcher = false
+            var fetcher: DatabaseFetcher
+            val lastUpdate = DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE)
+            val manager : FragmentManager = (context as FragmentActivity).supportFragmentManager //TODO is save to do this cast? It works, but...
             CoroutineScope(IO + job).launch {
-                DatabasePreferences(context).setOnline(true, Context.MODE_PRIVATE)
-
-                var host = DatabasePreferences(context).getHost(Context.MODE_PRIVATE)
-                var endedFetcher = false
-                var fetch: DatabaseFetcher
-                var lastUpdate: Long
-
                 while (!endedFetcher) {
                     if (DatabasePreferences(context).isOnline(Context.MODE_PRIVATE)) {
-                        fetch = DatabaseFetcher(host, "admin", "admin")
+                        fetcher = DatabaseFetcher(host, "admin", "admin")
                         onPing?.invoke()
-                        if (fetch.ping()) {
-                            lastUpdate = DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE)
+                        if (fetcher.ping()) {
                             when (lastUpdate) {
                                 0L -> onDownloadAll?.invoke()
                                 else -> onUpdate?.invoke()
                             }
-                            fetch.updateDatabase(lastUpdate, job, context)
+                            fetcher.updateDatabase(lastUpdate, job, context)
                             endedFetcher = true
                         } else {
                             host = popUpDialog(host, manager)
