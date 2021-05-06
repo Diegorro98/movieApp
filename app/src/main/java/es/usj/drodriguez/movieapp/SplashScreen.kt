@@ -12,9 +12,8 @@ import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import es.usj.drodriguez.movieapp.databinding.ActivitySplashScreenBinding
-import es.usj.drodriguez.movieapp.utils.DatabaseFetcher
+import es.usj.drodriguez.movieapp.database.DatabaseFetcher
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 
 
@@ -51,31 +50,29 @@ class SplashScreen : AppCompatActivity() {
                 }
 
             }
-            CoroutineScope(IO + fetcherJob).launch {
-                DatabaseFetcher.fetch(this@SplashScreen, fetcherJob, supportFragmentManager,
-                    onPing = {
-                        GlobalScope.launch(Main){
-                            binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)
-                        }
-                    },
-                    onDownloadAll = {
-                        GlobalScope.launch(Main) {
-                            binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_first_fetch)
-                        }
-                    },
-                    onUpdate = {
-                        GlobalScope.launch(Main) {
-                            binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_fetching)
-                        }
-                    },
-                    onFinish = {
-                        GlobalScope.launch(Main){
-                            binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_update_complete)
-                            startActivity(Intent(this@SplashScreen, MainActivity::class.java))
-                            finish()
-                        }
-                    })
-            }
+            DatabaseFetcher.fetch(this@SplashScreen, fetcherJob, supportFragmentManager,
+                onPing = {
+                    GlobalScope.launch(Main){
+                        binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)
+                    }
+                },
+                onDownloadAll = {
+                    GlobalScope.launch(Main) {
+                        binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_first_fetch)
+                    }
+                },
+                onUpdate = {
+                    GlobalScope.launch(Main) {
+                        binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_fetching)
+                    }
+                },
+                onFinish = { online ->
+                    GlobalScope.launch(Main){
+                        binding.tvSplashscreenInfo.text = if (online)getString(R.string.tv_splashscreen_info_update_complete) else getString(R.string.tv_splashscreen_info_offline_mode)
+                        startActivity(Intent(this@SplashScreen, MainActivity::class.java))
+                        finish()
+                    }
+                })
         }, 1000)//A little bit of time to show the splash screen
     }
     override fun onPause() {

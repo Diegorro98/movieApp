@@ -1,4 +1,4 @@
-package es.usj.drodriguez.movieapp.utils
+package es.usj.drodriguez.movieapp.database
 
 import android.content.Context
 import androidx.annotation.NonNull
@@ -6,6 +6,8 @@ import androidx.fragment.app.FragmentManager
 import com.google.gson.Gson
 import es.usj.drodriguez.movieapp.database.*
 import es.usj.drodriguez.movieapp.database.classes.*
+import es.usj.drodriguez.movieapp.utils.DatabasePreferences
+import es.usj.drodriguez.movieapp.utils.HostDialogFragment
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import java.io.*
@@ -135,35 +137,48 @@ class DatabaseFetcher(
 
     }
     companion object{
-        suspend fun fetch(@NonNull context: Context, @NonNull job: CompletableJob, @NonNull manager: FragmentManager, onPing: ( () -> Unit)? = null, onDownloadAll: ( () -> Unit)? = null, onUpdate: (() -> Unit)? = null, onFinish: ( () -> Unit)? = null){
-            DatabasePreferences(context).setOnline(true, Context.MODE_PRIVATE)
+        /**
+         * Allows to do fetch the database by taking the necessary info from shared preferences and stores the data in the database. The anonymous functions are run in a coroutine,
+         * so if you want to do things in Main thread, you should call <pre>GlobalScope.launch(Main){}</pre>
+         * @param context
+         * @param job Job to get its own environment in coroutines resulting in a CoroutineScope(IO + job)
+         * @param manager
+         * @param onPing Set of actions to do when the fetcher is going to do when pings the server
+         * @param onDownloadAll Set of actions to do when the fetcher is going to do when downloads all the database from the server because it never had an first download
+         * @param onUpdate Set of actions to do when the fetcher is going to do when updates the database
+         * @param onFinish Set of actions to do when the fetcher is going to do when finishes its job
+         */
+        fun fetch(@NonNull context: Context, @NonNull job: CompletableJob = Job(), @NonNull manager: FragmentManager, onPing: ( () -> Unit)? = null, onDownloadAll: ( () -> Unit)? = null, onUpdate: (() -> Unit)? = null, onFinish: ( (Boolean) -> Unit)? = null){
+            CoroutineScope(IO + job).launch {
+                DatabasePreferences(context).setOnline(true, Context.MODE_PRIVATE)
 
-            var host = DatabasePreferences(context).getHost(Context.MODE_PRIVATE)
-            var endedFetcher = false
-            var fetch : DatabaseFetcher
-            var lastUpdate : Long
+                var host = DatabasePreferences(context).getHost(Context.MODE_PRIVATE)
+                var endedFetcher = false
+                var fetch: DatabaseFetcher
+                var lastUpdate: Long
 
-            while (!endedFetcher) {
-                if (DatabasePreferences(context).isOnline(Context.MODE_PRIVATE)){
-                    fetch = DatabaseFetcher(host, "admin", "admin")
-                    onPing?.invoke()
-                    if (fetch.ping()){
-                        lastUpdate =DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE)
-                        when (lastUpdate) {
-                            0L -> onDownloadAll?.invoke()
-                            else -> onUpdate?.invoke()
+                while (!endedFetcher) {
+                    if (DatabasePreferences(context).isOnline(Context.MODE_PRIVATE)) {
+                        fetch = DatabaseFetcher(host, "admin", "admin")
+                        onPing?.invoke()
+                        if (fetch.ping()) {
+                            lastUpdate = DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE)
+                            when (lastUpdate) {
+                                0L -> onDownloadAll?.invoke()
+                                else -> onUpdate?.invoke()
+                            }
+                            fetch.updateDatabase(lastUpdate, job, context)
+                            endedFetcher = true
+                        } else {
+                            host = popUpDialog(host, manager)
+                            endedFetcher = false
                         }
-                        fetch.updateDatabase(lastUpdate, job, context)
-                        endedFetcher = true
                     } else {
-                        host = popUpDialog(host, manager)
-                        endedFetcher = false
+                        endedFetcher = true
                     }
-                }else{
-                    endedFetcher = true
                 }
+                onFinish?.invoke(DatabasePreferences(context).isOnline(Context.MODE_PRIVATE))
             }
-            onFinish?.invoke()
         }
         private suspend fun popUpDialog(hostName: String?=null, @NonNull manager:FragmentManager): String?{
             val dialog = HostDialogFragment(hostName)
