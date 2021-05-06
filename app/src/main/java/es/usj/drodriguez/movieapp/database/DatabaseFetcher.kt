@@ -106,30 +106,24 @@ class DatabaseFetcher(
     }
     suspend fun updateDatabase(lastUpdate : Long, job: CompletableJob, context: Context){
         val database = MovieDatabase.getDatabase(context)
-        var fetchMovies = false; var fetchActors = false; var fetchGenre = false
         when(lastUpdate){
-            0L->{
-                CoroutineScope(IO + job ).launch {
-                    val ret = movies()
-                    database?.movieDao()?.insertAll(ret)
-                    fetchMovies = true
-                }
-                CoroutineScope(IO + job ).launch {
-                    val ret = actors()
-                    database?.actorDao()?.insertAll(ret)
-                    fetchActors = true
-                }
-                CoroutineScope(IO + job ).launch {
-                    val ret = genres()
-                    database?.genreDao()?.insertAll(ret)
-                    fetchGenre = true
-                }
-                while (!fetchMovies && !fetchActors && !fetchGenre) {
-                    delay(100)
+            0L ->  {
+                withContext(IO + job){
+                    listOf(
+                            launch{
+                                database?.movieDao()?.insertAll(movies())
+                            },
+                            launch {
+                                database?.actorDao()?.insertAll(actors())
+                            },
+                            launch {
+                                database?.genreDao()?.insertAll(genres())
+                            }
+                    ).joinAll()
+                    println("All ended")
                 }
             }
             else -> {
-                //
                 //TODO
                 //GetUpdates
                 //Get updateTable
@@ -141,7 +135,7 @@ class DatabaseFetcher(
     companion object{
         /**
          * Allows to do fetch the database by taking the necessary info from shared preferences and stores the data in the database. The anonymous functions are run in a coroutine,
-         * so if you want to do things in Main thread, you should call <pre>GlobalScope.launch(Main){}</pre>
+         * so if you want to do things in Main thread, you should call `GlobalScope.launch(Main){}`
          * @param context Context for the sharedPreferences and the supportFragmentManager
          * @param job Job to get its own environment in coroutines resulting in a CoroutineScope(IO + job)
          * @param onPing Set of actions to do when the fetcher is going to do when pings the server
@@ -178,6 +172,7 @@ class DatabaseFetcher(
                     }
                 }
                 onFinish?.invoke(DatabasePreferences(context).isOnline(Context.MODE_PRIVATE))
+                job.complete()
             }
         }
         private suspend fun popUpDialog(hostName: String?=null, @NonNull manager:FragmentManager): String?{

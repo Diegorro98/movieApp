@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers.Main
 class SplashScreen : AppCompatActivity() {
     private lateinit var binding : ActivitySplashScreenBinding
     private lateinit var loadingAnimation : ObjectAnimator
-    private  lateinit var fetcherJob: CompletableJob
+    private lateinit var fetcherJob: CompletableJob
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
@@ -37,19 +37,6 @@ class SplashScreen : AppCompatActivity() {
 
             //initJob()
             fetcherJob = Job()
-            fetcherJob.invokeOnCompletion {
-                it?.message.let{it_msg ->
-                    var msg = it_msg
-                    if(msg.isNullOrBlank()){
-                        msg = "Unknown cancellation error."
-                    }
-                    Log.e("JOB", "${fetcherJob} was cancelled. Reason: ${msg}")
-                    GlobalScope.launch(Main){
-                        Toast.makeText(this@SplashScreen, msg, Toast.LENGTH_SHORT).show()
-                    }
-                }
-
-            }
             DatabaseFetcher.fetch(this@SplashScreen, fetcherJob,
                 onPing = {
                     GlobalScope.launch(Main){
@@ -89,7 +76,6 @@ class SplashScreen : AppCompatActivity() {
     }
     override fun onDestroy() {
         super.onDestroy()
-        //fetcherJob.cancel()
         loadingAnimation.end() //TODO ESTA CORRECTAMENTE APLICADO?
     }
 }
