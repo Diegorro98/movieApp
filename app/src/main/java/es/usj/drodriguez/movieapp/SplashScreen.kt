@@ -1,23 +1,18 @@
 package es.usj.drodriguez.movieapp
 
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.ContactsContract
 import android.util.Log
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import es.usj.drodriguez.movieapp.database.MovieDatabase
 import es.usj.drodriguez.movieapp.databinding.ActivitySplashScreenBinding
 import es.usj.drodriguez.movieapp.utils.DatabaseFetcher
-import es.usj.drodriguez.movieapp.utils.DatabasePreferences
-import es.usj.drodriguez.movieapp.utils.HostDialogFragment
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -57,46 +52,31 @@ class SplashScreen : AppCompatActivity() {
 
             }
             CoroutineScope(IO + fetcherJob).launch {
-                fetchDatabase(fetcherJob)
+                DatabaseFetcher.fetch(this@SplashScreen, fetcherJob, supportFragmentManager,
+                    onPing = {
+                        GlobalScope.launch(Main){
+                            binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)
+                        }
+                    },
+                    onDownloadAll = {
+                        GlobalScope.launch(Main) {
+                            binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_first_fetch)
+                        }
+                    },
+                    onUpdate = {
+                        GlobalScope.launch(Main) {
+                            binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_fetching)
+                        }
+                    },
+                    onFinish = {
+                        GlobalScope.launch(Main){
+                            binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_update_complete)
+                            startActivity(Intent(this@SplashScreen, MainActivity::class.java))
+                            finish()
+                        }
+                    })
             }
         }, 1000)//A little bit of time to show the splash screen
-    }
-
-    private suspend fun fetchDatabase(job: CompletableJob){
-        DatabasePreferences(this).setOnline(true, Context.MODE_PRIVATE)
-        var host = DatabasePreferences(this).getHost(Context.MODE_PRIVATE)
-        var endedFetcher = false
-        var fetch : DatabaseFetcher
-        while (!endedFetcher) {
-            if (DatabasePreferences(this).isOnline(Context.MODE_PRIVATE)){
-                fetch = DatabaseFetcher(host, "admin", "admin")
-                GlobalScope.launch(Main){
-                    binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)
-                }
-
-                if (fetch.ping()){
-                    val lastUpdate = DatabasePreferences(this).getLastUpdate(Context.MODE_PRIVATE)
-                    GlobalScope.launch(Main) {
-                        when (lastUpdate) {
-                            0L -> binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_first_fetch)
-                            else -> binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_fetching)
-                        }
-                    }
-                    fetch.updateDatabase(lastUpdate,job,this)
-                    endedFetcher = true
-                } else {
-                    host = DatabaseFetcher.popUpDialog(host, supportFragmentManager)
-                    endedFetcher = false
-                }
-            }else{
-                endedFetcher = true
-            }
-        }
-        GlobalScope.launch(Main){
-            binding.tvSplashscreenInfo.text = "Update complete"
-            startActivity(Intent(this@SplashScreen, MainActivity::class.java))
-            finish()
-        }
     }
     override fun onPause() {
         super.onPause()
@@ -110,11 +90,9 @@ class SplashScreen : AppCompatActivity() {
             loadingAnimation.start()
         }
     }
-
-
     override fun onDestroy() {
         super.onDestroy()
-        fetcherJob.cancel()
+        //fetcherJob.cancel()
         loadingAnimation.end() //TODO ESTA CORRECTAMENTE APLICADO?
     }
 }

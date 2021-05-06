@@ -24,4 +24,5 @@
     <string name="tv_host_dialog_reconnect_title">No se ha podido conectar al host</string>
     <string name="tv_host_dialog_reconnect_message">" Especifique otro o reintentelo mas tarde"</string>
     <string name="toast_host_dialog">Pulse atrás para continuar sin conexion</string>
+    <string name="tv_splashscreen_info_update_complete">Actualizacion completada</string>
 </resources>

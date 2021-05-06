@@ -2,6 +2,7 @@ package es.usj.drodriguez.movieapp.utils
 
 import android.content.Context
 import androidx.annotation.NonNull
+import androidx.fragment.app.FragmentManager
 import com.google.gson.Gson
 import es.usj.drodriguez.movieapp.database.*
 import es.usj.drodriguez.movieapp.database.classes.*
@@ -134,16 +135,25 @@ class DatabaseFetcher(
 
     }
     companion object{
-        suspend fun fetchDatabase(context: Context, job: CompletableJob,@NonNull manager:androidx.fragment.app.FragmentManager){
+        suspend fun fetch(@NonNull context: Context, @NonNull job: CompletableJob, @NonNull manager: FragmentManager, onPing: ( () -> Unit)? = null, onDownloadAll: ( () -> Unit)? = null, onUpdate: (() -> Unit)? = null, onFinish: ( () -> Unit)? = null){
             DatabasePreferences(context).setOnline(true, Context.MODE_PRIVATE)
+
             var host = DatabasePreferences(context).getHost(Context.MODE_PRIVATE)
             var endedFetcher = false
             var fetch : DatabaseFetcher
+            var lastUpdate : Long
+
             while (!endedFetcher) {
                 if (DatabasePreferences(context).isOnline(Context.MODE_PRIVATE)){
                     fetch = DatabaseFetcher(host, "admin", "admin")
+                    onPing?.invoke()
                     if (fetch.ping()){
-                        fetch.updateDatabase(DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE), job, context)
+                        lastUpdate =DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE)
+                        when (lastUpdate) {
+                            0L -> onDownloadAll?.invoke()
+                            else -> onUpdate?.invoke()
+                        }
+                        fetch.updateDatabase(lastUpdate, job, context)
                         endedFetcher = true
                     } else {
                         host = popUpDialog(host, manager)
@@ -153,8 +163,9 @@ class DatabaseFetcher(
                     endedFetcher = true
                 }
             }
+            onFinish?.invoke()
         }
-        suspend fun popUpDialog(hostName: String?=null, @NonNull manager:androidx.fragment.app.FragmentManager): String?{
+        private suspend fun popUpDialog(hostName: String?=null, @NonNull manager:FragmentManager): String?{
             val dialog = HostDialogFragment(hostName)
             dialog.show(manager, "host_input")
             while (!dialog.end) { //wait for the dialog to end
