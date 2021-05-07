@@ -47,19 +47,18 @@ class IntListConverter{
     }
 
     @TypeConverter
-    fun IntListToString(someObjects: List<Int?>?): String? {
+    fun intListToString(someObjects: List<Int?>?): String? {
         return gson.toJson(someObjects)
     }
 }
 class FileConverter{
-    private val gson = Gson()
     @TypeConverter
     fun stringToPath(filePath: String):File{
         return File(filePath)
     }
 
     @TypeConverter
-    fun PathToString(Object: File?): String? {
+    fun pathToString(Object: File?): String {
         return Object.toString()
     }
 }

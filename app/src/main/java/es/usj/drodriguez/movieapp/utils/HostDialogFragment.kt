@@ -3,11 +3,9 @@ package es.usj.drodriguez.movieapp.utils
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Patterns
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +13,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
 import es.usj.drodriguez.movieapp.R
-import es.usj.drodriguez.movieapp.databinding.FragmentDialogHostBinding
 
 class HostDialogFragment(var hostName: String? = null) : DialogFragment() {
     @Volatile var end = false

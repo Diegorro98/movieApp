@@ -3,7 +3,6 @@ package es.usj.drodriguez.movieapp
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import es.usj.drodriguez.movieapp.databinding.ActivityMainBinding
 import es.usj.drodriguez.movieapp.databinding.ActivityMovieEditorBinding
 
 class MovieEditor : AppCompatActivity() {

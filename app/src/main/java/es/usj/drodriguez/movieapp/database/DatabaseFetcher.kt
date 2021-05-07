@@ -1,6 +1,5 @@
 package es.usj.drodriguez.movieapp.database
 
-import android.app.Activity
 import android.content.Context
 import androidx.annotation.NonNull
 import androidx.fragment.app.FragmentActivity

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import es.usj.drodriguez.movieapp.databinding.ActivityContactBinding
 
 class Contact : AppCompatActivity() {

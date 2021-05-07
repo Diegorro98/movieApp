@@ -1,7 +1,6 @@
 package es.usj.drodriguez.movieapp.utils
 
 import android.content.Context
-import android.content.SharedPreferences
 
 class DatabasePreferences(private val context: Context) {
     private val PREFERENCES_FILE = "database"
