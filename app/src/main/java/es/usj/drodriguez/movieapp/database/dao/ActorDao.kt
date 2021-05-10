@@ -1,29 +1,27 @@
 package es.usj.drodriguez.movieapp.database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import es.usj.drodriguez.movieapp.database.classes.Actor
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ActorDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(actor: Actor)
+    suspend fun insert(actor: Actor)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(actors: List<Actor>)
+    suspend fun insertMultiple(actors: List<Actor>)
     @Update
-    fun update(actor: Actor)
+    suspend fun update(actor: Actor)
     @Update
-    fun updateAll(actors: List<Actor>)
+    suspend fun updateAll(actors: List<Actor>)
 
     @Delete
-    fun delete(actor: Actor)
+    suspend fun delete(actor: Actor)
 
     @Query ("SELECT * FROM ${Actor.TABLE_NAME} ORDER BY ${Actor.ID} ASC")
-    fun getAll(): List<Actor>
-    @Query ("SELECT * FROM ${Actor.TABLE_NAME} ORDER BY ${Actor.ID} ASC")
-    fun getAllWithLiveData(): LiveData<List<Actor>>
+    fun getAll(): Flow<List<Actor>>
 
     @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.ID} = :id")
-    fun getByID(id: Int): Actor
+    fun getByID(id: Int): Flow<Actor>
 
 }

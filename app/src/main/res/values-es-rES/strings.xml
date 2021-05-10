@@ -26,4 +26,5 @@
     <string name="toast_host_dialog">Pulse atrás para continuar sin conexion</string>
     <string name="tv_splashscreen_info_update_complete">Actualizacion completada</string>
     <string name="tv_splashscreen_info_offline_mode">Modo sin conexion</string>
+    <string name="tv_movie_item_runtime">%d minutos</string>
 </resources>

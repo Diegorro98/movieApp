@@ -1,5 +1,6 @@
 package es.usj.drodriguez.movieapp.database
 
+import android.app.Application
 import android.content.Context
 import androidx.annotation.NonNull
 import androidx.fragment.app.FragmentActivity
@@ -7,6 +8,7 @@ import androidx.fragment.app.FragmentManager
 import com.google.gson.Gson
 import es.usj.drodriguez.movieapp.database.*
 import es.usj.drodriguez.movieapp.database.classes.*
+import es.usj.drodriguez.movieapp.utils.App
 import es.usj.drodriguez.movieapp.utils.DatabasePreferences
 import es.usj.drodriguez.movieapp.utils.HostDialogFragment
 import kotlinx.coroutines.*
@@ -103,20 +105,21 @@ class DatabaseFetcher(
         }
         return total.toString()
     }
-    suspend fun updateDatabase(lastUpdate : Long, job: CompletableJob, context: Context){
-        val database = MovieDatabase.getDatabase(context)
+    suspend fun updateDatabase(lastUpdate : Long, job: CompletableJob, application: Application){
+        //val database = DatabaseRepository(context)
         when(lastUpdate){
             0L ->  {
                 withContext(IO + job){
                     listOf(
                             launch{
-                                database?.movieDao()?.insertAll(movies())
+                                (application as App).repository.insertMovies(movies())
                             },
                             launch {
-                                database?.actorDao()?.insertAll(actors())
+                                //database.insertActors(actors())
+                                (application as App).repository.insertActors(actors())
                             },
                             launch {
-                                database?.genreDao()?.insertAll(genres())
+                                (application as App).repository.insertGenres(genres())
                             }
                     ).joinAll()
                     println("All ended")
@@ -142,7 +145,7 @@ class DatabaseFetcher(
          * @param onUpdate Set of actions to do when the fetcher is going to do when updates the database
          * @param onFinish Set of actions to do when the fetcher is going to do when finishes its job
          */
-        fun fetch(@NonNull context: Context, @NonNull job: CompletableJob = Job(), /*@NonNull manager: FragmentManager,*/ onPing: ( () -> Unit)? = null, onDownloadAll: ( () -> Unit)? = null, onUpdate: (() -> Unit)? = null, onFinish: ( (Boolean) -> Unit)? = null){
+        fun fetch(@NonNull context: Context, @NonNull job: CompletableJob = Job(), application: Application,onPing: ( () -> Unit)? = null, onDownloadAll: ( () -> Unit)? = null, onUpdate: (() -> Unit)? = null, onFinish: ( (Boolean) -> Unit)? = null){
             DatabasePreferences(context).setOnline(true, Context.MODE_PRIVATE)
 
             var host = DatabasePreferences(context).getHost(Context.MODE_PRIVATE)
@@ -160,7 +163,7 @@ class DatabaseFetcher(
                                 0L -> onDownloadAll?.invoke()
                                 else -> onUpdate?.invoke()
                             }
-                            fetcher.updateDatabase(lastUpdate, job, context)
+                            fetcher.updateDatabase(lastUpdate, job, application)
                             endedFetcher = true
                         } else {
                             host = popUpDialog(host, manager)
@@ -180,7 +183,6 @@ class DatabaseFetcher(
             while (!dialog.end) { //wait for the dialog to end
                 delay(100) //to avoid thread blocking
             }
-            println(dialog.hostName)
             return dialog.hostName
         }
     }

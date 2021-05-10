@@ -12,11 +12,16 @@ class MainViewPagerAdapter (fa: FragmentActivity) : FragmentStateAdapter(fa){
     override fun getItemCount(): Int = 3
 
     override fun createFragment(position: Int): Fragment {
-        val fragment = Prueba()
+        /*val fragment = Prueba()
         fragment.arguments = Bundle().apply {
             putInt(ARG_OBJECT, position+1)
         }
-        return  fragment
+        return  fragment*/
+        return when(position){
+            0 -> MovieList()
+            1 -> MovieList()//genre list
+            2 -> MovieList()//actor_list
+            else -> MovieList()
+        }
     }
-
 }

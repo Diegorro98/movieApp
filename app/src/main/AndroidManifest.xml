@@ -3,6 +3,7 @@
     package="es.usj.drodriguez.movieapp">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
+        android:name=".utils.App"
         android:usesCleartextTraffic="true"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"

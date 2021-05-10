@@ -19,6 +19,7 @@ class SplashScreen : AppCompatActivity() {
     private lateinit var binding : ActivitySplashScreenBinding
     private lateinit var loadingAnimation : ObjectAnimator
     private lateinit var fetcherJob: CompletableJob
+    @DelicateCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
@@ -35,7 +36,8 @@ class SplashScreen : AppCompatActivity() {
 
             //initJob()
             fetcherJob = Job()
-            DatabaseFetcher.fetch(this@SplashScreen, fetcherJob,
+
+            DatabaseFetcher.fetch(this@SplashScreen, fetcherJob, this.application,
                 onPing = {
                     GlobalScope.launch(Main){
                         binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)

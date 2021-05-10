@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">movieApp</string>
     <string name="developer" translatable="false">J. Diego Rodríguez</string>
-    <string name="host" translatable="false">192.168.0.12</string>
     <string name="user" translatable="false">admin</string>
     <string name="password" translatable="false">admin</string>
     <string name="add_a_movie">Add a movie</string>
@@ -34,4 +33,5 @@
     <string name="toast_host_dialog">Press back again to continue offline</string>
     <string name="tv_splashscreen_info_update_complete">Update complete</string>
     <string name="tv_splashscreen_info_offline_mode">offline mode</string>
+    <string name="tv_movie_item_runtime">%d minutes</string>
 </resources>
