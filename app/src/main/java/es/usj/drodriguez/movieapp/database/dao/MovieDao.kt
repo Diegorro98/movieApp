@@ -21,5 +21,8 @@ interface MovieDao {
     fun getAll(): Flow<List<Movie>>
 
     @Query("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.ID} = :id")
-    fun getByID(id: Int): Flow<Movie>
+    fun getByID(id: Int): Movie
+
+    @Query("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.GENRES} LIKE :id")
+    fun getActorsMovies(id: String): List<Movie>
 }

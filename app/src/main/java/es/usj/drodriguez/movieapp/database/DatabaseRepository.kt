@@ -33,7 +33,9 @@ class DatabaseRepository(
         suspend fun updateAllMovies(movies: List<Movie>) = movieDao.updateAll(movies)
         suspend fun deleteMovie(movie: Movie) = movieDao.delete(movie)
         //fun getAllMovies(): Flow<List<Movie>> = movieDao.getAll()
-        fun getMovieByID(id: Int): Flow<Movie> = movieDao.getByID(id)
+        fun getMovieByID(id: Int): Movie = movieDao.getByID(id)
+
+        fun getActorsMovies(id: String): List<Movie> = movieDao.getActorsMovies(id)
 
         suspend fun insertGenre(genre: Genre) = genreDao.insert(genre)
         suspend fun insertGenres(genres: List<Genre>) = genreDao.insertMultiple(genres)
@@ -41,7 +43,7 @@ class DatabaseRepository(
         suspend fun updateAllGenres(genres: List<Genre>) = genreDao.updateAll(genres)
         suspend fun deleteGenre(genre: Genre) = genreDao.delete(genre)
         //fun getAllGenres(): Flow<List<Genre>> = genreDao.getAll()
-        fun getGenreByID(id: Int): Flow<Genre> = genreDao.getByID(id)
+        fun getGenreByID(id: Int): Genre = genreDao.getByID(id)
 
         suspend fun insertActor(actor: Actor) = actorDao.insert(actor)
         suspend fun insertActors(actors: List<Actor>) = actorDao.insertMultiple(actors)
@@ -49,5 +51,5 @@ class DatabaseRepository(
         suspend fun updateAllActors(actors: List<Actor>) = actorDao.updateAll(actors)
         suspend fun deleteActor(actor: Actor) = actorDao.delete(actor)
         //fun getAllActors(): Flow<List<Actor>> = actorDao.getAll()
-        fun getActorByID(id: Int): Flow<Actor> = actorDao.getByID(id)
+        fun getActorByID(id: Int): Actor = actorDao.getByID(id)
 }

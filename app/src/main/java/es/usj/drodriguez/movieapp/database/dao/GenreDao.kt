@@ -21,5 +21,5 @@ interface GenreDao {
     fun getAll(): Flow<List<Genre>>
 
     @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.ID} = :id")
-    fun getByID(id: Int): Flow<Genre>
+    fun getByID(id: Int): Genre
 }

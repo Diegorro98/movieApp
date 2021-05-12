@@ -13,6 +13,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import es.usj.drodriguez.movieapp.R
 import es.usj.drodriguez.movieapp.database.classes.Movie
+import es.usj.drodriguez.movieapp.utils.App
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MovieListAdapter: ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(MovieComparator) {
     private lateinit var context : Context
@@ -26,7 +32,15 @@ class MovieListAdapter: ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(Movi
         val currentMovie = getItem(position)
         holder.title.text = currentMovie.title
         holder.year.text = currentMovie.year.toString()
-        holder.genre.text = currentMovie.genres.joinToString()
+        CoroutineScope(IO).launch{
+            val genres = mutableListOf<String>()
+            currentMovie.genres.forEach {
+                genres.add(App().repository.getGenreByID(it).name)
+                GlobalScope.launch(Dispatchers.Main) {
+                    holder.genre.text = genres.joinToString()
+                }
+            }
+        }
         holder.runtime.text = String.format(context.getString(R.string.tv_movie_item_runtime),currentMovie.runtime)
         holder.rating.text = currentMovie.rating.toString()
         DrawableCompat.setTint(DrawableCompat.wrap(holder.ratingBackground.drawable), context.getColor(when{
@@ -35,11 +49,6 @@ class MovieListAdapter: ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(Movi
             5 <= currentMovie.rating && currentMovie.rating < 6 -> R.color.mid_bad_rating
             else -> R.color.bad_rating
         }))
-        /*holder.ratingBackground.colorFilter = when(currentMovie.rating){
-            >8 -> context.getColor(R.color.good_rating)
-            else ->
-        }*/
-
     }
 
     class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

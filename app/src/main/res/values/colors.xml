@@ -12,7 +12,7 @@
     <color name="blue">#FF0000FF</color>
     <color name="Toolbar_Primary">@color/white</color>
     <color name="good_rating">#FF00FF00</color>
-    <color name="mid_rating">#FFFFFF00</color>
+    <color name="mid_rating">#F5F501</color>
     <color name="mid_bad_rating">#FF7F00</color>
     <color name="bad_rating">#FFFF0000</color>
 </resources>

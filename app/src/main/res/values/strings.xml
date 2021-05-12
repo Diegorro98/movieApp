@@ -34,4 +34,6 @@
     <string name="tv_splashscreen_info_update_complete">Update complete</string>
     <string name="tv_splashscreen_info_offline_mode">offline mode</string>
     <string name="tv_movie_item_runtime">%d minutes</string>
+    <string name="tv_actor_item_movies">%d movies</string>
+    <string name="tv_actor_movies_finding">Finding movies…</string>
 </resources>

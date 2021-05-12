@@ -22,6 +22,6 @@ interface ActorDao {
     fun getAll(): Flow<List<Actor>>
 
     @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.ID} = :id")
-    fun getByID(id: Int): Flow<Actor>
+    fun getByID(id: Int): Actor
 
 }
