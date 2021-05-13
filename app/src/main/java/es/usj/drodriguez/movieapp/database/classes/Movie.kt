@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import java.io.File
+import java.io.Serializable
 import java.lang.reflect.Type
 
 
@@ -21,7 +22,7 @@ data class Movie(
         @ColumnInfo(name = REVENUE) @SerializedName(REVENUE) var revenue: Float,
         @ColumnInfo(name = GENRES) @SerializedName(GENRES) var genres: List<Int>,
         @ColumnInfo(name = ACTORS) @SerializedName(ACTORS)  var actors: List<Int>,
-        @ColumnInfo(name = POSTER) @Transient var posterPath: File){
+        @ColumnInfo(name = POSTER) @Transient var posterPath: File): Serializable{
     companion object{
         const val ID = "id"
         const val TITLE = "title"

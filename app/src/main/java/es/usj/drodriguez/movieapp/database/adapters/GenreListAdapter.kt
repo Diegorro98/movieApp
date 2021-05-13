@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import es.usj.drodriguez.movieapp.R
-import es.usj.drodriguez.movieapp.database.classes.Actor
+import es.usj.drodriguez.movieapp.database.classes.Genre
 import es.usj.drodriguez.movieapp.utils.App
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,21 +18,21 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ActorListAdapter: ListAdapter<Actor,ActorListAdapter.ActorViewHolder>(ActorComparator) {
+class GenreListAdapter: ListAdapter<Genre,GenreListAdapter.GenreViewHolder>(GenreComparator) {
     private lateinit var context : Context
     @NonNull
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActorViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
         context = parent.context
-        return ActorViewHolder.create(parent)
+        return GenreViewHolder.create(parent)
     }
 
-    override fun onBindViewHolder(holder: ActorViewHolder, position: Int) {
-        val currentActor = getItem(position)
-        holder.name.text = currentActor.name
+    override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
+        val currentGenre = getItem(position)
+        holder.name.text = currentGenre.name
         CoroutineScope(IO).launch{
-            val actorMovies = App().repository.getActorsMovies(currentActor.id)
+            val genreMovies = App().repository.getGenreMovies(currentGenre.id)
             val movies = mutableListOf<String>()
-            actorMovies.forEach {
+            genreMovies.forEach {
                 movies.add(it.title)
             }
             GlobalScope.launch(Dispatchers.Main) {
@@ -44,21 +44,21 @@ class ActorListAdapter: ListAdapter<Actor,ActorListAdapter.ActorViewHolder>(Acto
         }
     }
 
-    class ActorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class GenreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         internal var name: TextView = itemView.findViewById(R.id.tv_actor_genre_name)
         internal var movies: TextView = itemView.findViewById(R.id.tv_actor_genre_movies)
         companion object {
-            fun create(parent: ViewGroup): ActorViewHolder {
+            fun create(parent: ViewGroup): GenreViewHolder {
                 val view: View = LayoutInflater.from(parent.context)
                     .inflate(R.layout.actor_genre_item, parent, false)
-                return ActorViewHolder(view)
+                return GenreViewHolder(view)
             }
         }
     }
-    object ActorComparator: DiffUtil.ItemCallback<Actor>(){
-        override fun areItemsTheSame(oldItem: Actor, newItem: Actor): Boolean = oldItem.id == newItem.id
+    object GenreComparator: DiffUtil.ItemCallback<Genre>(){
+        override fun areItemsTheSame(oldItem: Genre, newItem: Genre): Boolean = oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Actor, newItem: Actor): Boolean = oldItem == newItem
+        override fun areContentsTheSame(oldItem: Genre, newItem: Genre): Boolean = oldItem == newItem
 
     }
 }

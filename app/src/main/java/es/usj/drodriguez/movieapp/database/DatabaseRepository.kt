@@ -35,7 +35,8 @@ class DatabaseRepository(
         //fun getAllMovies(): Flow<List<Movie>> = movieDao.getAll()
         fun getMovieByID(id: Int): Movie = movieDao.getByID(id)
 
-        fun getActorsMovies(id: String): List<Movie> = movieDao.getActorsMovies(id)
+        fun getActorsMovies(actorID: Int): List<Movie> = movieDao.getActorMovies("%$actorID%")
+        fun getGenreMovies(genreID: Int): List<Movie> =movieDao.getGenreMovies("%$genreID%")
 
         suspend fun insertGenre(genre: Genre) = genreDao.insert(genre)
         suspend fun insertGenres(genres: List<Genre>) = genreDao.insertMultiple(genres)

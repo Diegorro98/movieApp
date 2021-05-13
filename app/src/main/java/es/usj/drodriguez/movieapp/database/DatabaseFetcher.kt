@@ -105,21 +105,21 @@ class DatabaseFetcher(
         }
         return total.toString()
     }
-    suspend fun updateDatabase(lastUpdate : Long, job: CompletableJob, application: Application){
+    suspend fun updateDatabase(lastUpdate : Long, job: CompletableJob/*, application: Application*/){
         //val database = DatabaseRepository(context)
         when(lastUpdate){
             0L ->  {
                 withContext(IO + job){
                     listOf(
                             launch{
-                                (application as App).repository.insertMovies(movies())
+                                App().repository.insertMovies(movies())
                             },
                             launch {
                                 //database.insertActors(actors())
-                                (application as App).repository.insertActors(actors())
+                                App().repository.insertActors(actors())
                             },
                             launch {
-                                (application as App).repository.insertGenres(genres())
+                                App().repository.insertGenres(genres())
                             }
                     ).joinAll()
                     println("All ended")
@@ -145,7 +145,7 @@ class DatabaseFetcher(
          * @param onUpdate Set of actions to do when the fetcher is going to do when updates the database
          * @param onFinish Set of actions to do when the fetcher is going to do when finishes its job
          */
-        fun fetch(@NonNull context: Context, @NonNull job: CompletableJob = Job(), application: Application,onPing: ( () -> Unit)? = null, onDownloadAll: ( () -> Unit)? = null, onUpdate: (() -> Unit)? = null, onFinish: ( (Boolean) -> Unit)? = null){
+        fun fetch(@NonNull context: Context, @NonNull job: CompletableJob = Job()/*, application: Application*/, onPing: ( () -> Unit)? = null, onDownloadAll: ( () -> Unit)? = null, onUpdate: (() -> Unit)? = null, onFinish: ( (Boolean) -> Unit)? = null){
             DatabasePreferences(context).setOnline(true, Context.MODE_PRIVATE)
 
             var host = DatabasePreferences(context).getHost(Context.MODE_PRIVATE)
@@ -163,7 +163,7 @@ class DatabaseFetcher(
                                 0L -> onDownloadAll?.invoke()
                                 else -> onUpdate?.invoke()
                             }
-                            fetcher.updateDatabase(lastUpdate, job, application)
+                            fetcher.updateDatabase(lastUpdate, job/*, application*/)
                             endedFetcher = true
                         } else {
                             host = popUpDialog(host, manager)

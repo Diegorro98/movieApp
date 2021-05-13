@@ -13,6 +13,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import com.google.android.material.tabs.TabLayoutMediator
 import es.usj.drodriguez.movieapp.databinding.ActivityMainBinding
+import es.usj.drodriguez.movieapp.editors.MovieEditor
 
 class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -74,8 +75,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnAddMovie.shrink()
         binding.btnAddMovie.setOnClickListener {
-            val addMovieIntent = Intent(this, MovieEditor::class.java).putExtra(MovieEditor.EDITOR_MODE, MovieEditor.MODE_NEW)
-            startActivity(addMovieIntent)
+            val addItemIntent = when(MainViewPagerAdapter.page){
+                Lists.MOVIES ->Intent(this, MovieEditor::class.java)
+                else -> null
+            }
+            startActivity(addItemIntent)
         }
         binding.btnAddMovie.setOnLongClickListener {
             binding.btnAddMovie.extend()

@@ -17,7 +17,7 @@ interface GenreDao {
     @Delete
     suspend fun delete(genre: Genre)
 
-    @Query ("SELECT * FROM ${Genre.TABLE_NAME} ORDER BY ${Genre.ID} ASC")
+    @Query ("SELECT * FROM ${Genre.TABLE_NAME} ORDER BY ${Genre.NAME} ASC")
     fun getAll(): Flow<List<Genre>>
 
     @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.ID} = :id")

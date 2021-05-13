@@ -24,7 +24,7 @@ class SplashScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        window.statusBarColor = Color.WHITE
+        window.statusBarColor = binding.root.solidColor
         Handler(Looper.getMainLooper()).postDelayed({
             binding.tvSplashscreenInfo.visibility = View.VISIBLE
             binding.ivLoading.visibility = View.VISIBLE
@@ -37,7 +37,7 @@ class SplashScreen : AppCompatActivity() {
             //initJob()
             fetcherJob = Job()
 
-            DatabaseFetcher.fetch(this@SplashScreen, fetcherJob, this.application,
+            DatabaseFetcher.fetch(this@SplashScreen, fetcherJob, /*this.application,*/
                 onPing = {
                     GlobalScope.launch(Main){
                         binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)
@@ -60,7 +60,7 @@ class SplashScreen : AppCompatActivity() {
                         finish()
                     }
                 })
-        }, 1000)//A little bit of time to show the splash screen
+        }, 1000 )//A little bit of time to show the splash screen
     }
     override fun onPause() {
         super.onPause()

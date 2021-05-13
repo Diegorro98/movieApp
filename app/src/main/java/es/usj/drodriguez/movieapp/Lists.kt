@@ -7,12 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import es.usj.drodriguez.movieapp.database.adapters.ActorListAdapter
-import es.usj.drodriguez.movieapp.database.adapters.MovieListAdapter
-import es.usj.drodriguez.movieapp.database.viewmodels.ActorViewModel
-import es.usj.drodriguez.movieapp.database.viewmodels.ActorViewModelFactory
-import es.usj.drodriguez.movieapp.database.viewmodels.MovieViewModel
-import es.usj.drodriguez.movieapp.database.viewmodels.MovieViewModelFactory
+import es.usj.drodriguez.movieapp.database.DatabaseFetcher
+import es.usj.drodriguez.movieapp.database.adapters.*
+import es.usj.drodriguez.movieapp.database.viewmodels.*
 import es.usj.drodriguez.movieapp.databinding.FragmentListsBinding
 import es.usj.drodriguez.movieapp.utils.App
 
@@ -25,7 +22,8 @@ class Lists : Fragment() {
     private var type: String? = null
     private val movieViewModel: MovieViewModel by viewModels { MovieViewModelFactory((activity?.application as App).repository) }
     private val actorViewModel: ActorViewModel by viewModels { ActorViewModelFactory((activity?.application as App).repository) }
-    //private val genreViewModel: GenreViewModel by viewModels { GenreViewModelFactory((activity?.application as App).repository) }
+    private val genreViewModel: GenreViewModel by viewModels { GenreViewModelFactory((activity?.application as App).repository) }
+
     private var _binding : FragmentListsBinding? = null
     private val binding get() = _binding!!
 
@@ -47,7 +45,13 @@ class Lists : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.listRefresh.setOnRefreshListener {
+            this.context?.let {
+                DatabaseFetcher.fetch(it, onFinish = {
+                    binding.listRefresh.isRefreshing = false
+                })
+            }
+        }
         when(type){
             MOVIES -> {
                 val adapter = MovieListAdapter()
@@ -64,11 +68,11 @@ class Lists : Fragment() {
                 }
             }
             GENRES ->{
-                /*val adapter = GenreListAdapter()
+                val adapter = GenreListAdapter()
                 binding.recyclerView.adapter = adapter
                 genreViewModel.allGenres.observe(viewLifecycleOwner) { genres ->
                     genres.let { adapter.submitList(it) }
-                }*/
+                }
             }
         }
 

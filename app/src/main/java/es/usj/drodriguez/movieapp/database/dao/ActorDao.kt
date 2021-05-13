@@ -18,7 +18,7 @@ interface ActorDao {
     @Delete
     suspend fun delete(actor: Actor)
 
-    @Query ("SELECT * FROM ${Actor.TABLE_NAME} ORDER BY ${Actor.ID} ASC")
+    @Query ("SELECT * FROM ${Actor.TABLE_NAME} ORDER BY ${Actor.NAME} ASC")
     fun getAll(): Flow<List<Actor>>
 
     @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.ID} = :id")

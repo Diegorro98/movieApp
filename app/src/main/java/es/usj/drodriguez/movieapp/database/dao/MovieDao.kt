@@ -17,12 +17,14 @@ interface MovieDao {
     @Delete
     suspend fun delete(movie: Movie)
 
-    @Query ("SELECT * FROM ${Movie.TABLE_NAME} ORDER BY ${Movie.ID} ASC")
+    @Query ("SELECT * FROM ${Movie.TABLE_NAME} ORDER BY ${Movie.TITLE} ASC")
     fun getAll(): Flow<List<Movie>>
 
     @Query("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.ID} = :id")
     fun getByID(id: Int): Movie
 
-    @Query("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.GENRES} LIKE :id")
-    fun getActorsMovies(id: String): List<Movie>
+    @Query("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.ACTORS} LIKE :actorID ORDER BY ${Movie.TITLE}")
+    fun getActorMovies(actorID: String): List<Movie>
+    @Query("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.GENRES} LIKE :genreID ORDER BY ${Movie.TITLE}")
+    fun getGenreMovies(genreID: String): List<Movie>
 }

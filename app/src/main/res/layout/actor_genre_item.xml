@@ -14,7 +14,7 @@
             android:padding="8dp">
 
             <TextView
-                android:id="@+id/tv_actor_name"
+                android:id="@+id/tv_actor_genre_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -27,14 +27,14 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tv_actor_movies"
+                android:id="@+id/tv_actor_genre_movies"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/tv_actor_movies_finding"
-                app:layout_constraintEnd_toEndOf="@+id/tv_actor_name"
+                app:layout_constraintEnd_toEndOf="@+id/tv_actor_genre_name"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_actor_name" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_actor_genre_name" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
