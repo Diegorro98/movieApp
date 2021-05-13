@@ -12,8 +12,8 @@
     <string name="btn_search_title">Buscar</string>
     <string name="btn_call_title">Teléfono</string>
     <string name="btn_mail_title">Correo</string>
-    <string name="editor_edit_mode_title">Editar</string>
-    <string name="editor_new_mode_title">Añade una película</string>
+    <string name="movie_editor_edit_title">Editar la película</string>
+    <string name="movie_editor_new_title">Añade una película</string>
     <string name="dialog_host_cancel">Seguir sin conexion</string>
     <string name="dialog_host_connect">Conectar</string>
     <string name="ed_newHost_hint">IP o host</string>
@@ -29,4 +29,8 @@
     <string name="tv_movie_item_runtime">%d minutos</string>
     <string name="tv_actor_genre_item_movies">%d movies</string>
     <string name="tv_actor_movies_finding">Buscando peliculas…</string>
+    <string name="actor_editor_edit_title">Editar el actor</string>
+    <string name="actor_editor_new_title">Añadir un actor</string>
+    <string name="genre_editor_edit_title">Editar el genero</string>
+    <string name="genre_editor_new_title">Añadir un genero</string>
 </resources>

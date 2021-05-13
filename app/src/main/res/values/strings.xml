@@ -19,8 +19,8 @@
     <string name="btn_mail_title">Mail</string>
     <string name="btn_call_title">Telephone</string>
     <string name="btn_telegram_title" translatable="false">Telegram</string>
-    <string name="editor_edit_mode_title">Edit</string>
-    <string name="editor_new_mode_title">Add a movie</string>
+    <string name="movie_editor_edit_title">Edit the movie</string>
+    <string name="movie_editor_new_title">Add a movie</string>
     <string name="dialog_host_cancel">Continue offline</string>
     <string name="dialog_host_connect">Connect</string>
     <string name="ed_newHost_hint">IP or host</string>
@@ -36,4 +36,8 @@
     <string name="tv_movie_item_runtime">%d minutes</string>
     <string name="tv_actor_genre_item_movies">%d movies</string>
     <string name="tv_actor_movies_finding">Finding movies…</string>
+    <string name="actor_editor_edit_title">Edit the actor</string>
+    <string name="actor_editor_new_title">Add an actor</string>
+    <string name="genre_editor_edit_title">Edit the genre</string>
+    <string name="genre_editor_new_title">Add an genre</string>
 </resources>

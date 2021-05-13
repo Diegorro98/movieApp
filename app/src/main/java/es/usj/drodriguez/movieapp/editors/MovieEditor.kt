@@ -15,9 +15,9 @@ class MovieEditor : AppCompatActivity() {
         setContentView(binding.root)
         val movie = intent?.extras?.getSerializable(MOVIE_OBJECT) as Movie?
         if (movie == null){
-            binding.toolbarEditor.title = getString(R.string.editor_new_mode_title)
+            binding.toolbarEditor.title = getString(R.string.movie_editor_new_title)
         } else {
-            binding.toolbarEditor.title = getString(R.string.editor_edit_mode_title)
+            binding.toolbarEditor.title = getString(R.string.movie_editor_edit_title)
         }
         binding.toolbarEditor.setNavigationOnClickListener {
             finish()

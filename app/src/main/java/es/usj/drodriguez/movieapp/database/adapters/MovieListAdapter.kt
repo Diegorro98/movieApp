@@ -1,18 +1,22 @@
 package es.usj.drodriguez.movieapp.database.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.NonNull
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import es.usj.drodriguez.movieapp.R
 import es.usj.drodriguez.movieapp.database.classes.Movie
+import es.usj.drodriguez.movieapp.editors.MovieEditor
 import es.usj.drodriguez.movieapp.utils.App
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +53,9 @@ class MovieListAdapter: ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(Movi
             5 <= currentMovie.rating && currentMovie.rating < 6 -> R.color.mid_bad_rating
             else -> R.color.bad_rating
         }))
+        holder.cardView.setOnClickListener {
+            startActivity(context ,Intent(context, MovieEditor::class.java).putExtra(MovieEditor.MOVIE_OBJECT, currentMovie), null)
+        }
     }
 
     class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -58,6 +65,7 @@ class MovieListAdapter: ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(Movi
         internal var runtime: TextView = itemView.findViewById(R.id.tv_movie_runtime)
         internal var rating: TextView = itemView.findViewById(R.id.tv_movie_rating)
         internal var ratingBackground: ImageView = itemView.findViewById(R.id.im_movie_ratingBackground)
+        internal var cardView: CardView = itemView.findViewById(R.id.card_view_movie)
         companion object {
             fun create(parent: ViewGroup): MovieViewHolder {
                 val view: View = LayoutInflater.from(parent.context)

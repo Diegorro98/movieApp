@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieApp">
         <activity android:name=".editors.MovieEditor"/>
+        <activity android:name=".editors.ActorGenreEditor"/>
         <activity
             android:name=".Contact"
             android:parentActivityName=".MainActivity" />
