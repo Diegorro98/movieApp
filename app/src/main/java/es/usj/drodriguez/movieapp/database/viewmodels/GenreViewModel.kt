@@ -13,6 +13,12 @@ class GenreViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun insert(genre: Genre) = viewModelScope.launch {
         repository.insertGenre(genre)
     }
+    fun setFavorite(id: Int, favorite: Boolean) = viewModelScope.launch {
+        repository.setFavoriteGenre(id, favorite)
+    }
+    fun delete(genre: Genre) = viewModelScope.launch {
+        repository.deleteGenre(genre)
+    }
 }
 class GenreViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

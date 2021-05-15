@@ -12,13 +12,18 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="toolbarStyle">@style/MyToolbar</item>
+        <item name="toolbarStyle">@style/MainToolbar</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeStyle">@style/ContextualToolbar</item>
     </style>
-    <style name="MyToolbar" parent="Widget.MaterialComponents.Toolbar">
-        <item name="titleTextColor">@color/white</item>
+    <style name="MainToolbar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="titleTextColor">@color/Toolbar_Primary</item>
         <item name="android:theme">@style/ToolbarIcons</item>
     </style>
-    <style name="ToolbarIcons">
-        <item name="colorControlNormal">@color/white</item>
+    <style name="ToolbarIcons" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
+        <item name="colorControlNormal">@color/Toolbar_Primary</item>
+    </style>
+    <style name="ContextualToolbar" parent="Widget.AppCompat.ActionMode">
+        <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
     </style>
 </resources>

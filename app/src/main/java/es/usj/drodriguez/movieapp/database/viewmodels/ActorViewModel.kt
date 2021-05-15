@@ -13,6 +13,12 @@ class ActorViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun insert(actor: Actor) = viewModelScope.launch {
         repository.insertActor(actor)
     }
+    fun setFavorite(id: Int, favorite: Boolean) = viewModelScope.launch {
+        repository.setFavoriteActor(id, favorite)
+    }
+    fun delete(actor: Actor) = viewModelScope.launch {
+        repository.deleteActor(actor)
+    }
 }
 class ActorViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

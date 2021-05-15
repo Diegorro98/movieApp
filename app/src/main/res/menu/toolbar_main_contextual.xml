@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/ToolbarIcons">
+    <item
+        android:title="@string/title_contextual_edit"
+        android:id="@+id/btn_edit"
+        android:icon="@drawable/ic_baseline_edit_24"
+        app:showAsAction="ifRoom">
+    </item>
+    <item
+            android:id="@+id/btn_set_fav"
+            android:title="@string/title_contextual_add_fav"
+            android:checkable="true"
+            app:showAsAction="ifRoom"
+            android:icon="@drawable/ic_baseline_star_24"
+            />
+    <item
+        android:title="@string/title_contextual_delete"
+        android:id="@+id/btn_delete"
+        android:icon="@drawable/ic_baseline_delete_24"
+        app:showAsAction="ifRoom">
+    </item>
+</menu>

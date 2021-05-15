@@ -1,19 +1,22 @@
 package es.usj.drodriguez.movieapp.database.adapters
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import android.content.res.ColorStateList
+import android.view.*
 import androidx.annotation.NonNull
-import androidx.cardview.widget.CardView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import es.usj.drodriguez.movieapp.MainActivity
 import es.usj.drodriguez.movieapp.R
 import es.usj.drodriguez.movieapp.database.classes.Genre
+import es.usj.drodriguez.movieapp.database.viewmodels.ActorGenreHolder
+import es.usj.drodriguez.movieapp.database.viewmodels.GenreViewModel
 import es.usj.drodriguez.movieapp.editors.ActorGenreEditor
 import es.usj.drodriguez.movieapp.utils.App
 import kotlinx.coroutines.CoroutineScope
@@ -22,15 +25,16 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class GenreListAdapter: ListAdapter<Genre,GenreListAdapter.GenreViewHolder>(GenreComparator) {
+
+class GenreListAdapter(private val activity: Activity?, private val genreViewModel: GenreViewModel): ListAdapter<Genre,ActorGenreHolder>(GenreComparator) {
     private lateinit var context : Context
     @NonNull
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GenreViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActorGenreHolder {
         context = parent.context
-        return GenreViewHolder.create(parent)
+        return ActorGenreHolder.create(parent)
     }
 
-    override fun onBindViewHolder(holder: GenreViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ActorGenreHolder, position: Int) {
         val currentGenre = getItem(position)
         holder.name.text = currentGenre.name
         CoroutineScope(IO).launch{
@@ -46,33 +50,71 @@ class GenreListAdapter: ListAdapter<Genre,GenreListAdapter.GenreViewHolder>(Genr
                 )
             }
         }
+        holder.favorite.visibility = if(currentGenre.favorite) View.VISIBLE else View.INVISIBLE
         holder.cardView.setOnClickListener {
-            startActivity(
-                context,
-                Intent(context, ActorGenreEditor::class.java)
-                    .putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.GENRE)
-                    .putExtra(ActorGenreEditor.OBJECT, currentGenre),
-                null
-            )
+            TODO("startActivity(context ,Intent(context, ActorGenreVisor::class.java).putExtra(ActorGenreVisor.OBJECT, currentMovie), null)")
         }
-    }
+        holder.cardView.setOnLongClickListener {
+            if (!it.isSelected) {
+                holder.cardView.backgroundTintList =  ColorStateList.valueOf(context.getColor(R.color.selected_item))
+                it.isSelected = true
+                val callback = object : ActionMode.Callback {
+                    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                        MainActivity.contextualToolbar = mode
+                        activity?.menuInflater?.inflate(R.menu.toolbar_main_contextual, menu)
+                        if (currentGenre.favorite){
+                            menu?.getItem(1)?.icon = getDrawable(context,R.drawable.ic_baseline_star_border_24)
+                            menu?.getItem(1)?.title = context.getString(R.string.title_contextual_rmv_fav)
+                        }else{
+                            menu?.getItem(1)?.icon = getDrawable(context,R.drawable.ic_baseline_star_24)
+                            menu?.getItem(1)?.title = context.getString(R.string.title_contextual_add_fav)
+                        }
+                        return true
+                    }
 
-    class GenreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        internal var name: TextView = itemView.findViewById(R.id.tv_actor_genre_name)
-        internal var movies: TextView = itemView.findViewById(R.id.tv_actor_genre_movies)
-        internal var cardView: CardView = itemView.findViewById(R.id.card_view_actor_genre)
-        companion object {
-            fun create(parent: ViewGroup): GenreViewHolder {
-                val view: View = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.actor_genre_item, parent, false)
-                return GenreViewHolder(view)
+                    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean =
+                        false
+
+                    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+                        mode?.finish()
+                        return when (item?.itemId) {
+                            R.id.btn_edit -> {
+                                startActivity(
+                                    context,
+                                    Intent(context, ActorGenreEditor::class.java)
+                                        .putExtra(ActorGenreEditor.OBJECT, currentGenre)
+                                        .putExtra(ActorGenreEditor.CLASS,ActorGenreEditor.GENRE),
+                                    null
+                                )
+                                true
+                            }
+                            R.id.btn_set_fav -> {
+                                genreViewModel.setFavorite(currentGenre.id, !currentGenre.favorite)
+                                true
+                            }
+                            R.id.btn_delete -> {
+                                genreViewModel.delete(currentGenre)
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+
+                    override fun onDestroyActionMode(mode: ActionMode?) {
+                        MainActivity.contextualToolbar = null
+                        it.isSelected = false
+                        holder.cardView.backgroundTintList = null
+                    }
+                }
+                (activity as AppCompatActivity?)?.startSupportActionMode(callback)
+            } else {
+                MainActivity.contextualToolbar?.finish()
             }
+            return@setOnLongClickListener true
         }
     }
     object GenreComparator: DiffUtil.ItemCallback<Genre>(){
         override fun areItemsTheSame(oldItem: Genre, newItem: Genre): Boolean = oldItem.id == newItem.id
-
         override fun areContentsTheSame(oldItem: Genre, newItem: Genre): Boolean = oldItem == newItem
-
     }
 }

@@ -2,7 +2,6 @@ package es.usj.drodriguez.movieapp
 
 import android.animation.ObjectAnimator
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -37,7 +36,7 @@ class SplashScreen : AppCompatActivity() {
             //initJob()
             fetcherJob = Job()
 
-            DatabaseFetcher.fetch(this@SplashScreen, fetcherJob, /*this.application,*/
+            DatabaseFetcher.fetch(this@SplashScreen, fetcherJob, this.application,
                 onPing = {
                     GlobalScope.launch(Main){
                         binding.tvSplashscreenInfo.text = getString(R.string.tv_splashscreen_info_connecting)

@@ -1,7 +1,6 @@
 package es.usj.drodriguez.movieapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,11 +8,17 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import es.usj.drodriguez.movieapp.databinding.ActivityMainBinding
 import es.usj.drodriguez.movieapp.editors.*
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -69,7 +74,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }.attach()
+        binding.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                contextualToolbar?.finish()
+            }
 
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
         setSupportActionBar(binding.toolbarMovieList)
         binding.toolbarMovieList.showOverflowMenu()
 
@@ -90,5 +102,8 @@ class MainActivity : AppCompatActivity() {
             }, 2000)
             return@setOnLongClickListener true
         }
+    }
+    companion object{
+        var contextualToolbar: ActionMode? = null
     }
 }

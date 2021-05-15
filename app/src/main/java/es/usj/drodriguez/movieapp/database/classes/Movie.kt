@@ -22,7 +22,8 @@ data class Movie(
         @ColumnInfo(name = REVENUE) @SerializedName(REVENUE) var revenue: Float,
         @ColumnInfo(name = GENRES) @SerializedName(GENRES) var genres: List<Int>,
         @ColumnInfo(name = ACTORS) @SerializedName(ACTORS)  var actors: List<Int>,
-        @ColumnInfo(name = POSTER) @Transient var posterPath: File): Serializable{
+        @ColumnInfo(name = POSTER) @Transient var posterPath: File,
+        @ColumnInfo(name = FAVORITE) @Transient var favorite: Boolean): Serializable{
     companion object{
         const val ID = "id"
         const val TITLE = "title"
@@ -37,6 +38,7 @@ data class Movie(
         const val ACTORS = "actors"
         const val TABLE_NAME = "movies"
         const val POSTER = "poster"
+        const val FAVORITE = "favorite"
     }
 }
 class IntListConverter{

@@ -40,4 +40,8 @@
     <string name="actor_editor_new_title">Add an actor</string>
     <string name="genre_editor_edit_title">Edit the genre</string>
     <string name="genre_editor_new_title">Add an genre</string>
+    <string name="title_contextual_delete">Delete</string>
+    <string name="title_contextual_add_fav">Add to favorites</string>
+    <string name="title_contextual_rmv_fav">remove from favorites</string>
+    <string name="title_contextual_edit">Edit</string>
 </resources>

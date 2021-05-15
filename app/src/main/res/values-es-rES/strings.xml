@@ -33,4 +33,8 @@
     <string name="actor_editor_new_title">Añadir un actor</string>
     <string name="genre_editor_edit_title">Editar el genero</string>
     <string name="genre_editor_new_title">Añadir un genero</string>
+    <string name="title_contextual_delete">Eliminar</string>
+    <string name="title_contextual_add_fav">Añadir a favoritos</string>
+    <string name="title_contextual_rmv_fav">Quitar de favoritos</string>
+    <string name="title_contextual_edit">Editar</string>
 </resources>

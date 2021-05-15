@@ -13,7 +13,7 @@ class MovieEditor : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMovieEditorBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val movie = intent?.extras?.getSerializable(MOVIE_OBJECT) as Movie?
+        val movie = intent?.extras?.getSerializable(OBJECT) as Movie?
         if (movie == null){
             binding.toolbarEditor.title = getString(R.string.movie_editor_new_title)
         } else {
@@ -25,6 +25,6 @@ class MovieEditor : AppCompatActivity() {
     }
 
     companion object {
-        const val MOVIE_OBJECT = "Movie object"
+        const val OBJECT = "Movie object"
     }
 }

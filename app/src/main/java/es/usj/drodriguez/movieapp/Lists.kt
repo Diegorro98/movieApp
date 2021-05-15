@@ -1,14 +1,16 @@
 package es.usj.drodriguez.movieapp
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.usj.drodriguez.movieapp.database.DatabaseFetcher
-import es.usj.drodriguez.movieapp.database.adapters.*
+import es.usj.drodriguez.movieapp.database.adapters.ActorListAdapter
+import es.usj.drodriguez.movieapp.database.adapters.GenreListAdapter
+import es.usj.drodriguez.movieapp.database.adapters.MovieListAdapter
 import es.usj.drodriguez.movieapp.database.viewmodels.*
 import es.usj.drodriguez.movieapp.databinding.FragmentListsBinding
 import es.usj.drodriguez.movieapp.utils.App
@@ -47,28 +49,32 @@ class Lists : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.listRefresh.setOnRefreshListener {
             this.context?.let {
-                DatabaseFetcher.fetch(it, onFinish = {
-                    binding.listRefresh.isRefreshing = false
-                })
+                activity?.application?.let { application ->
+                    DatabaseFetcher.fetch(it, application = application,
+                        onFinish = {
+                            binding.listRefresh.isRefreshing = false
+                        }
+                    )
+                }
             }
         }
         when(type){
             MOVIES -> {
-                val adapter = MovieListAdapter()
+                val adapter = MovieListAdapter(activity, movieViewModel)
                 binding.recyclerView.adapter = adapter
                 movieViewModel.allMovies.observe(viewLifecycleOwner) { movies ->
                     movies.let { adapter.submitList(it) }
                 }
             }
             ACTORS ->{
-                val adapter = ActorListAdapter()
+                val adapter = ActorListAdapter(activity, actorViewModel)
                 binding.recyclerView.adapter = adapter
                 actorViewModel.allActors.observe(viewLifecycleOwner) { actors ->
                     actors.let { adapter.submitList(it) }
                 }
             }
             GENRES ->{
-                val adapter = GenreListAdapter()
+                val adapter = GenreListAdapter(activity, genreViewModel)
                 binding.recyclerView.adapter = adapter
                 genreViewModel.allGenres.observe(viewLifecycleOwner) { genres ->
                     genres.let { adapter.submitList(it) }

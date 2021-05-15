@@ -13,6 +13,12 @@ class MovieViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun insert(movie: Movie) = viewModelScope.launch {
         repository.insertMovie(movie)
     }
+    fun setFavorite(id: Int, favorite: Boolean) = viewModelScope.launch {
+        repository.setFavoriteMovie(id, favorite)
+    }
+    fun delete(movie: Movie) = viewModelScope.launch {
+        repository.deleteMovie(movie)
+    }
 }
 class MovieViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

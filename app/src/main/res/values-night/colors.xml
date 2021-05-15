@@ -15,5 +15,5 @@
     <color name="mid_rating">#F5F501</color>
     <color name="mid_bad_rating">#FF7F00</color>
     <color name="bad_rating">#FFFF0000</color>
-    <color name="selected_item">#DDDDDD</color>
+    <color name="selected_item">#1E1E1E</color>
 </resources>
