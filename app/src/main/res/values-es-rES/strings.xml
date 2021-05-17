@@ -37,4 +37,5 @@
     <string name="title_contextual_add_fav">Añadir a favoritos</string>
     <string name="title_contextual_rmv_fav">Quitar de favoritos</string>
     <string name="title_contextual_edit">Editar</string>
+    <string name="tv_editor_empty_name">El nombre no puede estar vacio</string>
 </resources>

@@ -44,4 +44,5 @@
     <string name="title_contextual_add_fav">Add to favorites</string>
     <string name="title_contextual_rmv_fav">remove from favorites</string>
     <string name="title_contextual_edit">Edit</string>
+    <string name="tv_editor_empty_name">The name can\'t not be empty</string>
 </resources>
