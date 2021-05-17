@@ -75,14 +75,26 @@ class Lists : Fragment() {
                 }
             }
             ACTORS ->{
-                val adapter = ActorListAdapter(activity, actorViewModel)
+                val adapter = ActorListAdapter(activity, actorViewModel, this,
+                onFavorite = { currentActor ->
+                    actorViewModel.setFavorite(currentActor.id, !currentActor.favorite)
+                },
+                onDelete = { currentActor ->
+                    actorViewModel.delete(currentActor)
+                })
                 binding.rvAGMovies.adapter = adapter
                 actorViewModel.allActors.observe(viewLifecycleOwner) { actors ->
                     actors.let { adapter.submitList(it) }
                 }
             }
             GENRES ->{
-                val adapter = GenreListAdapter(activity, genreViewModel)
+                val adapter = GenreListAdapter(activity, genreViewModel, this,
+                    onFavorite = { currentGenre ->
+                        genreViewModel.setFavorite(currentGenre.id, !currentGenre.favorite)
+                    },
+                    onDelete = { currentGenre ->
+                        genreViewModel.delete(currentGenre)
+                    })
                 binding.rvAGMovies.adapter = adapter
                 genreViewModel.allGenres.observe(viewLifecycleOwner) { genres ->
                     genres.let { adapter.submitList(it) }

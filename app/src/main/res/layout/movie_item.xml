@@ -57,25 +57,8 @@
                 android:layout_marginStart="16dp"
                 android:text="Runtime"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_movie_year"
-                app:layout_constraintEnd_toStartOf="@+id/tv_movie_genre"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/tv_movie_year" />
-
-            <TextView
-                android:id="@+id/tv_movie_genre"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:ellipsize="end"
-                android:maxLength="80"
-                android:singleLine="true"
-                android:text="Genre"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_movie_runtime"
-                app:layout_constraintEnd_toStartOf="@+id/im_movie_ratingBackground"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toEndOf="@+id/tv_movie_runtime" />
-
             <ImageView
                 android:id="@+id/im_movie_ratingBackground"
                 android:layout_width="0dp"

@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 
 class MovieListAdapter(
     private val activity: Activity?,
-    //private val movieViewModel: MovieViewModel, todo delete
     private val editButton: Boolean = true,
     private val onFavorite: ( (currentMovie: Movie) -> Unit)? = null,
     private val onDelete: ( (currentMovie: Movie) -> Unit)? = null
@@ -45,11 +44,6 @@ class MovieListAdapter(
         val currentMovie = getItem(position)
         holder.title.text = currentMovie.title
         holder.year.text = currentMovie.year.toString()
-        /*CoroutineScope(Dispatchers.IO).launch{
-            val text = DatabaseApp().repository.getMovieGenres(currentMovie.id).toList().joinToString()
-            println("genres: $text")
-            holder.genre.text = text
-        }*/
         holder.runtime.text = String.format(context.getString(R.string.tv_movie_item_runtime),currentMovie.runtime)
         holder.rating.text = currentMovie.rating.toString()
         DrawableCompat.setTint(DrawableCompat.wrap(holder.ratingBackground.drawable), context.getColor(when{
@@ -110,11 +104,10 @@ class MovieListAdapter(
                             }
                             R.id.btn_set_fav -> {
                                 onFavorite?.invoke(currentMovie)
-                                //movieViewModel.setFavorite(currentMovie.id, !currentMovie.favorite) TODO delete
                                 true
                             }
                             R.id.btn_delete -> {
-                                //movieViewModel.delete(currentMovie) TODO delete
+                                onDelete?.invoke(currentMovie)
                                 true
                             }
                             else -> false
@@ -138,7 +131,6 @@ class MovieListAdapter(
     class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         internal var title: TextView = itemView.findViewById(R.id.tv_movie_title)
         internal var year: TextView = itemView.findViewById(R.id.tv_movie_year)
-        internal var genre: TextView = itemView.findViewById(R.id.tv_movie_genre)
         internal var runtime: TextView = itemView.findViewById(R.id.tv_movie_runtime)
         internal var rating: TextView = itemView.findViewById(R.id.tv_movie_rating)
         internal var ratingBackground: ImageView = itemView.findViewById(R.id.im_movie_ratingBackground)
