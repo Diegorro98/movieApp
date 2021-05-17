@@ -9,13 +9,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 
-@androidx.room.Database(entities = [Movie::class, Actor::class, Genre::class], version = 1, exportSchema = false)
+@androidx.room.Database(entities = [Movie::class, Actor::class, Genre::class, MovieActor::class, MovieGenre::class], version = 1, exportSchema = false)
 @TypeConverters(IntListConverter::class, FileConverter::class)
 abstract class Database : RoomDatabase() {
     abstract fun movieDao(): MovieDao
     abstract fun actorDao(): ActorDao
     abstract fun genreDao(): GenreDao
-
+    abstract fun movieActorDao(): MovieActorDao
+    abstract fun movieGenreDao(): MovieGenreDao
     companion object {
         @Volatile
         private var INSTANCE: Database? = null

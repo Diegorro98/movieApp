@@ -13,7 +13,7 @@ import es.usj.drodriguez.movieapp.database.adapters.GenreListAdapter
 import es.usj.drodriguez.movieapp.database.adapters.MovieListAdapter
 import es.usj.drodriguez.movieapp.database.viewmodels.*
 import es.usj.drodriguez.movieapp.databinding.FragmentListsBinding
-import es.usj.drodriguez.movieapp.utils.App
+import es.usj.drodriguez.movieapp.utils.DatabaseApp
 
 /**
  * A simple [Fragment] subclass.
@@ -22,9 +22,9 @@ import es.usj.drodriguez.movieapp.utils.App
  */
 class Lists : Fragment() {
     private var type: String? = null
-    private val movieViewModel: MovieViewModel by viewModels { MovieViewModelFactory((activity?.application as App).repository) }
-    private val actorViewModel: ActorViewModel by viewModels { ActorViewModelFactory((activity?.application as App).repository) }
-    private val genreViewModel: GenreViewModel by viewModels { GenreViewModelFactory((activity?.application as App).repository) }
+    private val movieViewModel: MovieViewModel by viewModels { MovieViewModelFactory((activity?.application as DatabaseApp).repository) }
+    private val actorViewModel: ActorViewModel by viewModels { ActorViewModelFactory((activity?.application as DatabaseApp).repository) }
+    private val genreViewModel: GenreViewModel by viewModels { GenreViewModelFactory((activity?.application as DatabaseApp).repository) }
 
     private var _binding : FragmentListsBinding? = null
     private val binding get() = _binding!!
@@ -60,29 +60,37 @@ class Lists : Fragment() {
         }
         when(type){
             MOVIES -> {
-                val adapter = MovieListAdapter(activity, movieViewModel)
-                binding.recyclerView.adapter = adapter
+                val adapter = MovieListAdapter(
+                    activity,
+                    onFavorite = { currentMovie ->
+                    movieViewModel.setFavorite(currentMovie.id, !currentMovie.favorite)
+                    },
+                    onDelete = { currentMovie ->
+                        movieViewModel.delete(currentMovie)
+                    }
+                )
+                binding.rvAGMovies.adapter = adapter
                 movieViewModel.allMovies.observe(viewLifecycleOwner) { movies ->
                     movies.let { adapter.submitList(it) }
                 }
             }
             ACTORS ->{
                 val adapter = ActorListAdapter(activity, actorViewModel)
-                binding.recyclerView.adapter = adapter
+                binding.rvAGMovies.adapter = adapter
                 actorViewModel.allActors.observe(viewLifecycleOwner) { actors ->
                     actors.let { adapter.submitList(it) }
                 }
             }
             GENRES ->{
                 val adapter = GenreListAdapter(activity, genreViewModel)
-                binding.recyclerView.adapter = adapter
+                binding.rvAGMovies.adapter = adapter
                 genreViewModel.allGenres.observe(viewLifecycleOwner) { genres ->
                     genres.let { adapter.submitList(it) }
                 }
             }
         }
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        binding.rvAGMovies.layoutManager = LinearLayoutManager(context)
 
     }
     companion object {

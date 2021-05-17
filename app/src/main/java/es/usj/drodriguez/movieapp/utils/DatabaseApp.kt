@@ -4,7 +4,7 @@ import android.app.Application
 import es.usj.drodriguez.movieapp.database.Database
 import es.usj.drodriguez.movieapp.database.DatabaseRepository
 
-class App : Application() {
+class DatabaseApp : Application() {
      val database by lazy { Database.getDatabase(this) }
-    val repository by lazy { database.let { DatabaseRepository(it.movieDao(), it.genreDao(), it.actorDao()) } }
+    val repository by lazy { database.let { DatabaseRepository(it.movieDao(), it.genreDao(), it.actorDao(), it.movieActorDao(), it.movieGenreDao()) } }
 }

@@ -15,18 +15,18 @@ import androidx.recyclerview.widget.ListAdapter
 import es.usj.drodriguez.movieapp.MainActivity
 import es.usj.drodriguez.movieapp.R
 import es.usj.drodriguez.movieapp.database.classes.Genre
-import es.usj.drodriguez.movieapp.database.viewmodels.ActorGenreHolder
 import es.usj.drodriguez.movieapp.database.viewmodels.GenreViewModel
 import es.usj.drodriguez.movieapp.editors.ActorGenreEditor
-import es.usj.drodriguez.movieapp.utils.App
+import es.usj.drodriguez.movieapp.utils.DatabaseApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 
-class GenreListAdapter(private val activity: Activity?, private val genreViewModel: GenreViewModel): ListAdapter<Genre,ActorGenreHolder>(GenreComparator) {
+class GenreListAdapter(private val activity: Activity?, private val genreViewModel: GenreViewModel): ListAdapter<Genre, ActorGenreHolder>(GenreComparator) {
     private lateinit var context : Context
     @NonNull
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActorGenreHolder {
@@ -37,19 +37,16 @@ class GenreListAdapter(private val activity: Activity?, private val genreViewMod
     override fun onBindViewHolder(holder: ActorGenreHolder, position: Int) {
         val currentGenre = getItem(position)
         holder.name.text = currentGenre.name
-        CoroutineScope(IO).launch{
-            val genreMovies = App().repository.getGenreMovies(currentGenre.id)
-            val movies = mutableListOf<String>()
-            genreMovies.forEach {
-                movies.add(it.title)
-            }
+        /*CoroutineScope(IO).launch{
+            //TODO integrate flow
+            val movies = DatabaseApp().repository.getGenreMovies(currentGenre.id).toList()
             GlobalScope.launch(Dispatchers.Main) {
                 holder.movies.text = String.format(
                     context.getString(R.string.tv_actor_genre_item_movies),
                     movies.size
                 )
             }
-        }
+        }*/
         holder.favorite.visibility = if(currentGenre.favorite) View.VISIBLE else View.INVISIBLE
         holder.cardView.setOnClickListener {
             TODO("startActivity(context ,Intent(context, ActorGenreVisor::class.java).putExtra(ActorGenreVisor.OBJECT, currentMovie), null)")

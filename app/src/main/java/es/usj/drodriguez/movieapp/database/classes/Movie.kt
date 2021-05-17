@@ -8,22 +8,19 @@ import java.io.File
 import java.io.Serializable
 import java.lang.reflect.Type
 
-
 @Entity(tableName = Movie.TABLE_NAME)
 data class Movie(
         @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) @SerializedName(ID) val id: Int,
-        @ColumnInfo(name = TITLE) @SerializedName(TITLE) var title: String,
-        @ColumnInfo(name = DESCRIPTION) @SerializedName(DESCRIPTION) var description: String,
-        @ColumnInfo(name = DIRECTOR) @SerializedName(DIRECTOR) var director: String,
-        @ColumnInfo(name = YEAR) @SerializedName(YEAR) var year: Int,
-        @ColumnInfo(name = RUNTIME) @SerializedName(RUNTIME) var runtime: Int,
-        @ColumnInfo(name = RATING) @SerializedName(RATING) var rating: Float,
-        @ColumnInfo(name = VOTES) @SerializedName(VOTES) var votes: Int,
-        @ColumnInfo(name = REVENUE) @SerializedName(REVENUE) var revenue: Float,
-        @ColumnInfo(name = GENRES) @SerializedName(GENRES) var genres: List<Int>,
-        @ColumnInfo(name = ACTORS) @SerializedName(ACTORS)  var actors: List<Int>,
-        @ColumnInfo(name = POSTER) @Transient var posterPath: File,
-        @ColumnInfo(name = FAVORITE) @Transient var favorite: Boolean): Serializable{
+        @ColumnInfo(name = TITLE) var title: String,
+        @ColumnInfo(name = DESCRIPTION) var description: String,
+        @ColumnInfo(name = DIRECTOR) var director: String,
+        @ColumnInfo(name = YEAR) var year: Int,
+        @ColumnInfo(name = RUNTIME) var runtime: Int,
+        @ColumnInfo(name = RATING) var rating: Float,
+        @ColumnInfo(name = VOTES) var votes: Int,
+        @ColumnInfo(name = REVENUE) var revenue: Float,
+        @ColumnInfo(name = POSTER) var posterPath: File?,
+        @ColumnInfo(name = FAVORITE) var favorite: Boolean): Serializable{
     companion object{
         const val ID = "id"
         const val TITLE = "title"
@@ -41,16 +38,67 @@ data class Movie(
         const val FAVORITE = "favorite"
     }
 }
+class MovieFetcher(
+    @SerializedName(Movie.ID) val id: Int,
+    @SerializedName(Movie.TITLE) var title: String,
+    @SerializedName(Movie.DESCRIPTION) var description: String,
+    @SerializedName(Movie.DIRECTOR) var director: String,
+    @SerializedName(Movie.YEAR) var year: Int,
+    @SerializedName(Movie.RUNTIME) var runtime: Int,
+    @SerializedName(Movie.RATING) var rating: Float,
+    @SerializedName(Movie.VOTES) var votes: Int,
+    @SerializedName(Movie.REVENUE) var revenue: Float,
+    @SerializedName(Movie.GENRES) var genres: List<Int>,
+    @SerializedName(Movie.ACTORS)  var actors: List<Int>,
+){
+    constructor(normalMovie: Movie, genresOfMovie: List<MovieGenre>, actorsOfMovie: List<MovieActor>) : this(
+        normalMovie.id,
+        normalMovie.title,
+        normalMovie.description,
+        normalMovie.director,
+        normalMovie.year,
+        normalMovie.runtime,
+        normalMovie.rating,
+        normalMovie.votes,
+        normalMovie.revenue,
+        List(genresOfMovie.size) {
+            genresOfMovie[it].genreID
+        },
+        List(actorsOfMovie.size) {
+            actorsOfMovie[it].actorID
+        }
+    )
+    fun asNormalMovie(movieToUpdate : Movie? =  null) = Movie(
+        id,
+        title,
+        description,
+        director,
+        year,
+        runtime,
+        rating,
+        votes,
+        revenue,
+        movieToUpdate?.posterPath,
+        movieToUpdate?.favorite ?: false
+    )
+    fun asMovieGenres() = List(genres.size) {
+        MovieGenre(id, genres[it])
+    }
+    fun asMovieActors() = List(genres.size) {
+        MovieActor(id, actors[it])
+    }
+
+}
 class IntListConverter{
     private val gson = Gson()
     @TypeConverter
-    fun stringToIntList(json: String):List<Int>{
-        val listType: Type = object : TypeToken<List<Int?>?>() {}.type
+    fun stringToIntList(json: String):MutableList<Int>{
+        val listType: Type = object : TypeToken<MutableList<Int?>?>() {}.type
         return gson.fromJson(json, listType)
     }
 
     @TypeConverter
-    fun intListToString(someObjects: List<Int?>?): String? {
+    fun intListToString(someObjects: MutableList<Int?>?): String? {
         return gson.toJson(someObjects)
     }
 }

@@ -1,4 +1,4 @@
-package es.usj.drodriguez.movieapp.database.viewmodels
+package es.usj.drodriguez.movieapp.database.adapters
 
 import android.view.LayoutInflater
 import android.view.View

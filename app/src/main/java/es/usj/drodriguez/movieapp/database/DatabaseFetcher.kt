@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentManager
 import com.google.gson.Gson
 import es.usj.drodriguez.movieapp.database.*
 import es.usj.drodriguez.movieapp.database.classes.*
-import es.usj.drodriguez.movieapp.utils.App
+import es.usj.drodriguez.movieapp.utils.DatabaseApp
 import es.usj.drodriguez.movieapp.utils.DatabasePreferences
 import es.usj.drodriguez.movieapp.utils.HostDialogFragment
 import kotlinx.coroutines.*
@@ -45,14 +45,14 @@ class DatabaseFetcher(
             false
         }
     }
-    fun movies(id: Int? = null) : List<Movie>{
+    fun movies(id: Int? = null) : List<MovieFetcher>{
         var url = "http://$hostname:$port/user/getMovies.php?user=$user&pass=$password"
         if (id != null) {
             url += "&id=$id"
         }
         val response = getResponse(URL(url))
         return if(response != null){
-            gson.fromJson(response, Array<Movie>::class.java).toList()
+            gson.fromJson(response, Array<MovieFetcher>::class.java).toList()
         }else{
             Collections.emptyList()
         }
@@ -106,20 +106,33 @@ class DatabaseFetcher(
         return total.toString()
     }
     suspend fun updateDatabase(lastUpdate : Long, job: CompletableJob, application: Application){
-        //val database = DatabaseRepository(context)
+        val repository = (application as DatabaseApp).repository
         when(lastUpdate){
             0L ->  {
                 withContext(IO + job){
                     listOf(
                             launch{
-                                (application as App).repository.insertMovies(movies())
+                                val rawMovies = movies()
+                                repository.insertMovies(List(rawMovies.size){
+                                    rawMovies[it].asNormalMovie()
+                                })
+                                rawMovies.forEach { movie ->
+                                    movie.asMovieActors().forEach {
+                                        repository.insertMovieActor(it)
+                                    }
+                                }
+                                rawMovies.forEach { movie ->
+                                    movie.asMovieGenres().forEach {
+                                        repository.insertMovieGenre(it)
+                                    }
+                                }
                             },
                             launch {
                                 //database.insertActors(actors())
-                                (application as App).repository.insertActors(actors())
+                                repository.insertActors(actors())
                             },
                             launch {
-                                (application as App).repository.insertGenres(genres())
+                                repository.insertGenres(genres())
                             }
                     ).joinAll()
                     println("All ended")

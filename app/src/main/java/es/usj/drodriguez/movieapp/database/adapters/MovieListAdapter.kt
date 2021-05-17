@@ -20,16 +20,20 @@ import androidx.recyclerview.widget.RecyclerView
 import es.usj.drodriguez.movieapp.MainActivity
 import es.usj.drodriguez.movieapp.R
 import es.usj.drodriguez.movieapp.database.classes.Movie
-import es.usj.drodriguez.movieapp.database.viewmodels.MovieViewModel
 import es.usj.drodriguez.movieapp.editors.MovieEditor
-import es.usj.drodriguez.movieapp.utils.App
+import es.usj.drodriguez.movieapp.utils.DatabaseApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
-class MovieListAdapter(private val activity: Activity?, private val movieViewModel: MovieViewModel): ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(MovieComparator) {
+class MovieListAdapter(
+    private val activity: Activity?,
+    //private val movieViewModel: MovieViewModel, todo delete
+    private val editButton: Boolean = true,
+    private val onFavorite: ( (currentMovie: Movie) -> Unit)? = null,
+    private val onDelete: ( (currentMovie: Movie) -> Unit)? = null
+    ): ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(MovieComparator) {
     private lateinit var context : Context
     @NonNull
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
@@ -41,15 +45,11 @@ class MovieListAdapter(private val activity: Activity?, private val movieViewMod
         val currentMovie = getItem(position)
         holder.title.text = currentMovie.title
         holder.year.text = currentMovie.year.toString()
-        CoroutineScope(IO).launch{
-            val genres = mutableListOf<String>()
-            currentMovie.genres.forEach {
-                genres.add(App().repository.getGenreByID(it).name)
-                GlobalScope.launch(Dispatchers.Main) {
-                    holder.genre.text = genres.joinToString()
-                }
-            }
-        }
+        /*CoroutineScope(Dispatchers.IO).launch{
+            val text = DatabaseApp().repository.getMovieGenres(currentMovie.id).toList().joinToString()
+            println("genres: $text")
+            holder.genre.text = text
+        }*/
         holder.runtime.text = String.format(context.getString(R.string.tv_movie_item_runtime),currentMovie.runtime)
         holder.rating.text = currentMovie.rating.toString()
         DrawableCompat.setTint(DrawableCompat.wrap(holder.ratingBackground.drawable), context.getColor(when{
@@ -70,12 +70,25 @@ class MovieListAdapter(private val activity: Activity?, private val movieViewMod
                     override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
                         MainActivity.contextualToolbar = mode
                         activity?.menuInflater?.inflate(R.menu.toolbar_main_contextual, menu)
-                        if (currentMovie.favorite){
-                            menu?.getItem(1)?.icon = getDrawable(context,R.drawable.ic_baseline_star_border_24)
-                            menu?.getItem(1)?.title = context.getString(R.string.title_contextual_rmv_fav)
-                        }else{
-                            menu?.getItem(1)?.icon = getDrawable(context,R.drawable.ic_baseline_star_24)
-                            menu?.getItem(1)?.title = context.getString(R.string.title_contextual_add_fav)
+                        if (!editButton){
+                            menu?.getItem(0)?.isVisible = false
+                            menu?.getItem(0)?.isEnabled = false
+                        }
+                        if (onFavorite != null) {
+                            if (currentMovie.favorite) {
+                                menu?.getItem(1)?.icon = getDrawable(context, R.drawable.ic_baseline_star_border_24)
+                                menu?.getItem(1)?.title = context.getString(R.string.title_contextual_rmv_fav)
+                            } else {
+                                menu?.getItem(1)?.icon = getDrawable(context, R.drawable.ic_baseline_star_24)
+                                menu?.getItem(1)?.title = context.getString(R.string.title_contextual_add_fav)
+                            }
+                        } else {
+                            menu?.getItem(1)?.isVisible = false
+                            menu?.getItem(1)?.isEnabled = false
+                        }
+                        if (onDelete == null){
+                            menu?.getItem(2)?.isVisible = false
+                            menu?.getItem(2)?.isEnabled = false
                         }
                         return true
                     }
@@ -96,11 +109,12 @@ class MovieListAdapter(private val activity: Activity?, private val movieViewMod
                                 true
                             }
                             R.id.btn_set_fav -> {
-                                movieViewModel.setFavorite(currentMovie.id, !currentMovie.favorite)
+                                onFavorite?.invoke(currentMovie)
+                                //movieViewModel.setFavorite(currentMovie.id, !currentMovie.favorite) TODO delete
                                 true
                             }
                             R.id.btn_delete -> {
-                                movieViewModel.delete(currentMovie)
+                                //movieViewModel.delete(currentMovie) TODO delete
                                 true
                             }
                             else -> false

@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 
 class MovieViewModel(private val repository: DatabaseRepository):ViewModel() {
     val allMovies : LiveData<List<Movie>> = repository.allMovies.asLiveData()
+
     /**
      * Launching a new coroutine to insert the data in a non-blocking way
      */
@@ -19,6 +20,7 @@ class MovieViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun delete(movie: Movie) = viewModelScope.launch {
         repository.deleteMovie(movie)
     }
+    fun getByID(moviesID: List<Int>) = repository.getByID(moviesID).asLiveData()
 }
 class MovieViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
