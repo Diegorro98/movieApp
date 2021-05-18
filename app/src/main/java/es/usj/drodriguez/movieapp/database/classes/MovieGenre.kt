@@ -2,11 +2,24 @@ package es.usj.drodriguez.movieapp.database.classes
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 
-@Entity(tableName = MovieGenre.TABLE_NAME, primaryKeys = [MovieGenre.MOVIE_ID, MovieGenre.GENRE_ID])
+@Entity(tableName = MovieGenre.TABLE_NAME,
+    primaryKeys = [MovieGenre.MOVIE_ID, MovieGenre.GENRE_ID],
+    foreignKeys =
+    [ForeignKey(entity = Movie::class,
+        parentColumns = [Movie.ID],
+        childColumns = [MovieGenre.MOVIE_ID],
+        onDelete = ForeignKey.CASCADE
+    ),
+        ForeignKey(entity = Genre::class,
+            parentColumns = [Genre.ID],
+            childColumns = [MovieGenre.GENRE_ID],
+            onDelete = ForeignKey.CASCADE
+        )])
 data class MovieGenre(
-    @ColumnInfo(name = MOVIE_ID) var movieID: Int,
-    @ColumnInfo(name = GENRE_ID) var genreID: Int
+    @ColumnInfo(name = MOVIE_ID, index = true) var movieID: Int,
+    @ColumnInfo(name = GENRE_ID, index = true) var genreID: Int
 ) {
     companion object {
         const val TABLE_NAME = "movies_genres"

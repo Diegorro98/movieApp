@@ -19,8 +19,8 @@ class DatabaseRepository(
 
         suspend fun insertMovie(movie: Movie) = movieDao.insert(movie)
         suspend fun insertMovies(movies: List<Movie>) = movieDao.insertMultiple(movies)
-        suspend fun updateMovies(movie: Movie) = movieDao.update(movie)
-        suspend fun updateAllMovies(movies: List<Movie>) = movieDao.updateAll(movies)
+        suspend fun updateMovie(movie: Movie) = movieDao.update(movie)
+        suspend fun updateMovies(movies: List<Movie>) = movieDao.updateAll(movies)
         suspend fun deleteMovie(movie: Movie) = movieDao.delete(movie)
         suspend fun setFavoriteMovie(id: Int, favorite: Boolean) = movieDao.setFavorite(id, favorite)
         fun getByID(moviesID: List<Int>) = movieDao.getByID(moviesID)
@@ -28,8 +28,8 @@ class DatabaseRepository(
 
         suspend fun insertGenre(genre: Genre) = genreDao.insert(genre)
         suspend fun insertGenres(genres: List<Genre>) = genreDao.insertMultiple(genres)
-        suspend fun updateGenres(genre: Genre) = genreDao.update(genre)
-        suspend fun updateAllGenres(genres: List<Genre>) = genreDao.updateAll(genres)
+        suspend fun updateGenre(genre: Genre) = genreDao.update(genre)
+        suspend fun updateGenres(genres: List<Genre>) = genreDao.updateAll(genres)
         suspend fun deleteGenre(genre: Genre) = genreDao.delete(genre)
         suspend fun setFavoriteGenre(id: Int, favorite: Boolean) = genreDao.setFavorite(id, favorite)
         fun getGenreByID(id: Int): Genre = genreDao.getByID(id)
@@ -37,20 +37,20 @@ class DatabaseRepository(
 
         suspend fun insertActor(actor: Actor) = actorDao.insert(actor)
         suspend fun insertActors(actors: List<Actor>) = actorDao.insertMultiple(actors)
-        suspend fun updateActors(actor: Actor) = actorDao.update(actor)
-        suspend fun updateAllActors(actors: List<Actor>) = actorDao.updateAll(actors)
+        suspend fun updateActor(actor: Actor) = actorDao.update(actor)
+        suspend fun updateActors(actors: List<Actor>) = actorDao.updateAll(actors)
         suspend fun deleteActor(actor: Actor) = actorDao.delete(actor)
         suspend fun setFavoriteActor(id: Int, favorite: Boolean) = actorDao.setFavorite(id, favorite)
         fun getActorByID(id: Int): Actor = actorDao.getByID(id)
 
         suspend fun insertMovieActor(movieActor: MovieActor) = movieActorDao.insert(movieActor)
         suspend fun deleteMovieActor(movieActor: MovieActor) = movieActorDao.delete(movieActor)
-        fun getActorMovies(actorID: Int): Flow<List<MovieActor>> = movieActorDao.getMovies(actorID)
-        fun getMovieActors(movieID: Int): Flow<List<MovieActor>> = movieActorDao.getActors(movieID)
+        fun getActorMovies(actorID: Int) = movieActorDao.getMovies(actorID)
+        fun getMovieActors(movieID: Int) = movieActorDao.getActors(movieID)
 
         suspend fun insertMovieGenre(movieGenre: MovieGenre) = movieGenreDao.insert(movieGenre)
         suspend fun deleteMovieGenre(movieGenre: MovieGenre) = movieGenreDao.delete(movieGenre)
-        fun getGenreMovies(genreID: Int): Flow<List<MovieGenre>> = movieGenreDao.getMovies(genreID)
-        fun getMovieGenres(movieID: Int): Flow<List<MovieGenre>> = movieGenreDao.getGenres(movieID)
+        fun getGenreMovies(genreID: Int) = movieGenreDao.getMovies(genreID)
+        fun getMovieGenres(movieID: Int) = movieGenreDao.getGenres(movieID)
 
 }

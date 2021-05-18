@@ -23,11 +23,14 @@ import es.usj.drodriguez.movieapp.database.classes.Movie
 import es.usj.drodriguez.movieapp.editors.MovieEditor
 
 class MovieListAdapter(
-    private val activity: Activity?,
+    private val activity: Activity,
     private val editButton: Boolean = true,
     private val onFavorite: ( (currentMovie: Movie) -> Unit)? = null,
-    private val onDelete: ( (currentMovie: Movie) -> Unit)? = null
-    ): ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(MovieComparator) {
+    private val onDelete: ( (currentMovie: Movie) -> Unit)? = null,
+    private val onCardClick: (cardView: View, currentMovie: Movie) -> Unit = { _, currentMovie: Movie ->
+        TODO("startActivity(context ,Intent(context, MovieVisor::class.java).putExtra(MovieVisor.OBJECT, currentMovie), null)")
+    }): ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(MovieComparator) {
+    var selectedMovies: List<Int> = emptyList()
     private lateinit var context : Context
     @NonNull
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
@@ -48,81 +51,96 @@ class MovieListAdapter(
             else -> R.color.bad_rating
         }))
         holder.favorite.visibility = if(currentMovie.favorite) View.VISIBLE else View.INVISIBLE
-        holder.cardView.setOnClickListener {
-            TODO("startActivity(context ,Intent(context, MovieVisor::class.java).putExtra(MovieVisor.OBJECT, currentMovie), null)")
+        if (selectedMovies.contains(currentMovie.id)){
+            setSelect(true, holder.cardView)
+        }else{
+            setSelect(false, holder.cardView)
         }
-        holder.cardView.setOnLongClickListener {
-            if (!it.isSelected) {
-                it.isSelected = true
-                holder.cardView.backgroundTintList =  ColorStateList.valueOf(context.getColor(R.color.selected_item))
-                val callback = object : ActionMode.Callback {
-                    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-                        MainActivity.contextualToolbar = mode
-                        activity?.menuInflater?.inflate(R.menu.toolbar_main_contextual, menu)
-                        if (!editButton){
-                            menu?.getItem(0)?.isVisible = false
-                            menu?.getItem(0)?.isEnabled = false
-                        }
-                        if (onFavorite != null) {
-                            if (currentMovie.favorite) {
-                                menu?.getItem(1)?.icon = getDrawable(context, R.drawable.ic_baseline_star_border_24)
-                                menu?.getItem(1)?.title = context.getString(R.string.title_contextual_rmv_fav)
+        holder.cardView.setOnClickListener {
+            onCardClick.invoke(it,currentMovie)
+        }
+        if (editButton || onFavorite != null || onDelete != null) {
+            holder.cardView.setOnLongClickListener {
+                if (!it.isSelected) {
+                    setSelect(true, it)
+                    val callback = object : ActionMode.Callback {
+                        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+                            MainActivity.contextualToolbar = mode
+                            activity.menuInflater.inflate(R.menu.toolbar_main_contextual, menu)
+                            if (!editButton) {
+                                menu?.getItem(0)?.isVisible = false
+                                menu?.getItem(0)?.isEnabled = false
+                            }
+                            if (onFavorite != null) {
+                                if (currentMovie.favorite) {
+                                    menu?.getItem(1)?.icon =
+                                        getDrawable(context, R.drawable.ic_baseline_star_border_24)
+                                    menu?.getItem(1)?.title =
+                                        context.getString(R.string.title_contextual_rmv_fav)
+                                } else {
+                                    menu?.getItem(1)?.icon =
+                                        getDrawable(context, R.drawable.ic_baseline_star_24)
+                                    menu?.getItem(1)?.title =
+                                        context.getString(R.string.title_contextual_add_fav)
+                                }
                             } else {
-                                menu?.getItem(1)?.icon = getDrawable(context, R.drawable.ic_baseline_star_24)
-                                menu?.getItem(1)?.title = context.getString(R.string.title_contextual_add_fav)
+                                menu?.getItem(1)?.isVisible = false
+                                menu?.getItem(1)?.isEnabled = false
                             }
-                        } else {
-                            menu?.getItem(1)?.isVisible = false
-                            menu?.getItem(1)?.isEnabled = false
+                            if (onDelete == null) {
+                                menu?.getItem(2)?.isVisible = false
+                                menu?.getItem(2)?.isEnabled = false
+                            }
+                            return true
                         }
-                        if (onDelete == null){
-                            menu?.getItem(2)?.isVisible = false
-                            menu?.getItem(2)?.isEnabled = false
+
+                        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean =
+                            false
+
+                        override fun onActionItemClicked(
+                            mode: ActionMode?,
+                            item: MenuItem?
+                        ): Boolean {
+                            mode?.finish()
+                            return when (item?.itemId) {
+                                R.id.btn_edit -> {
+                                    startActivity(
+                                        context,
+                                        Intent(context, MovieEditor::class.java)
+                                            .putExtra(MovieEditor.OBJECT, currentMovie),
+                                        null
+                                    )
+                                    true
+                                }
+                                R.id.btn_set_fav -> {
+                                    onFavorite?.invoke(currentMovie)
+                                    true
+                                }
+                                R.id.btn_delete -> {
+                                    onDelete?.invoke(currentMovie)
+                                    true
+                                }
+                                else -> false
+                            }
                         }
-                        return true
-                    }
 
-                    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean =
-                        false
-
-                    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-                        mode?.finish()
-                        return when (item?.itemId) {
-                            R.id.btn_edit -> {
-                                startActivity(
-                                    context,
-                                    Intent(context, MovieEditor::class.java)
-                                        .putExtra(MovieEditor.OBJECT, currentMovie),
-                                    null
-                                )
-                                true
-                            }
-                            R.id.btn_set_fav -> {
-                                onFavorite?.invoke(currentMovie)
-                                true
-                            }
-                            R.id.btn_delete -> {
-                                onDelete?.invoke(currentMovie)
-                                true
-                            }
-                            else -> false
+                        override fun onDestroyActionMode(mode: ActionMode?) {
+                            MainActivity.contextualToolbar = null
+                            setSelect(false, it)
                         }
                     }
-
-                    override fun onDestroyActionMode(mode: ActionMode?) {
-                        MainActivity.contextualToolbar = null
-                        it.isSelected = false
-                        holder.cardView.backgroundTintList = null
-                    }
+                    (activity as AppCompatActivity?)?.startSupportActionMode(callback)
+                } else {
+                    MainActivity.contextualToolbar?.finish()
                 }
-                (activity as AppCompatActivity?)?.startSupportActionMode(callback)
-            } else {
-                MainActivity.contextualToolbar?.finish()
+                return@setOnLongClickListener true
             }
-            return@setOnLongClickListener true
         }
     }
-
+    private fun setSelect(selected: Boolean, cardView: View){
+        cardView.isSelected = selected
+        cardView.backgroundTintList = if(selected) ColorStateList.valueOf(context.getColor(R.color.selected_item)) else null
+    }
     class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         internal var title: TextView = itemView.findViewById(R.id.tv_movie_title)
         internal var year: TextView = itemView.findViewById(R.id.tv_movie_year)

@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="es.usj.drodriguez.movieapp">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".utils.DatabaseApp"
-        android:usesCleartextTraffic="true"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MovieApp">
-        <activity android:name=".editors.MovieEditor"/>
-        <activity android:name=".editors.ActorGenreEditor"/>
+        android:theme="@style/Theme.MovieApp"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".editors.ItemPicker"/>
+        <activity android:name=".editors.MovieEditor" />
+        <activity android:name=".editors.ActorGenreEditor" />
         <activity
             android:name=".Contact"
             android:parentActivityName=".MainActivity" />

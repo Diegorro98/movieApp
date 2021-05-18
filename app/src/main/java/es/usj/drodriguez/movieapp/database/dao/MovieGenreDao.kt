@@ -11,10 +11,10 @@ interface MovieGenreDao {
     @Delete
     suspend fun delete(movieGenre: MovieGenre)
 
-    @Query("SELECT * FROM ${MovieGenre.TABLE_NAME} WHERE ${MovieGenre.GENRE_ID} = :genreID ORDER BY ${MovieGenre.GENRE_ID}")
-    fun getMovies(genreID: Int): Flow<List<MovieGenre>>
-    @Query("SELECT * FROM ${MovieGenre.TABLE_NAME} WHERE ${MovieGenre.MOVIE_ID} = :movieID ORDER BY ${MovieGenre.MOVIE_ID}")
-    fun getGenres(movieID: Int): Flow<List<MovieGenre>>
+    @Query("SELECT ${MovieGenre.MOVIE_ID}  FROM ${MovieGenre.TABLE_NAME} WHERE ${MovieGenre.GENRE_ID} = :genreID ORDER BY ${MovieGenre.GENRE_ID}")
+    fun getMovies(genreID: Int): Flow<List<Int>>
+    @Query("SELECT ${MovieGenre.GENRE_ID} FROM ${MovieGenre.TABLE_NAME} WHERE ${MovieGenre.MOVIE_ID} = :movieID ORDER BY ${MovieGenre.MOVIE_ID}")
+    fun getGenres(movieID: Int): Flow<List<Int>>
 
     @Query ("SELECT * FROM ${MovieGenre.TABLE_NAME}")
     fun getAll(): Flow<List<MovieGenre>>

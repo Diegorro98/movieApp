@@ -19,8 +19,11 @@ class ActorViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun delete(actor: Actor) = viewModelScope.launch {
         repository.deleteActor(actor)
     }
-
+    fun update(actor: Actor) = viewModelScope.launch {
+        repository.updateActor(actor)
+    }
     fun getMovies(actorID: Int) = repository.getActorMovies(actorID).asLiveData()
+
 }
 class ActorViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

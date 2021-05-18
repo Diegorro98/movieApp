@@ -15,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/baseline_arrow_back_24" />
+        app:navigationIcon="@drawable/baseline_arrow_back_24"
+        app:menu="@menu/toolbar_editor"/>
 
     <TextView
         android:id="@+id/tv_a_g_name"

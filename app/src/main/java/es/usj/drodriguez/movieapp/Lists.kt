@@ -47,63 +47,64 @@ class Lists : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.listRefresh.setOnRefreshListener {
-            this.context?.let {
-                activity?.application?.let { application ->
-                    DatabaseFetcher.fetch(it, application = application,
-                        onFinish = {
-                            binding.listRefresh.isRefreshing = false
+        if (activity!= null) {
+            binding.listRefresh.setOnRefreshListener {
+                this.context?.let {
+                    activity?.application?.let { application ->
+                        DatabaseFetcher.fetch(it, application = application,
+                            onFinish = {
+                                binding.listRefresh.isRefreshing = false
+                            }
+                        )
+                    }
+                }
+            }
+            when (type) {
+                MOVIES -> {
+                    val adapter = MovieListAdapter(
+                        requireActivity(),
+                        onFavorite = { currentMovie ->
+                            movieViewModel.setFavorite(currentMovie.id, !currentMovie.favorite)
+                        },
+                        onDelete = { currentMovie ->
+                            movieViewModel.delete(currentMovie)
                         }
                     )
-                }
-            }
-        }
-        when(type){
-            MOVIES -> {
-                val adapter = MovieListAdapter(
-                    activity,
-                    onFavorite = { currentMovie ->
-                    movieViewModel.setFavorite(currentMovie.id, !currentMovie.favorite)
-                    },
-                    onDelete = { currentMovie ->
-                        movieViewModel.delete(currentMovie)
+                    binding.rvAGMovies.adapter = adapter
+                    movieViewModel.allMovies.observe(viewLifecycleOwner) { movies ->
+                        movies.let { adapter.submitList(it) }
                     }
-                )
-                binding.rvAGMovies.adapter = adapter
-                movieViewModel.allMovies.observe(viewLifecycleOwner) { movies ->
-                    movies.let { adapter.submitList(it) }
+                }
+                ACTORS -> {
+                    val adapter = ActorListAdapter(requireActivity(), actorViewModel, this,
+                        onFavorite = { currentActor ->
+                            actorViewModel.setFavorite(currentActor.id, !currentActor.favorite)
+                        },
+                        onDelete = { currentActor ->
+                            actorViewModel.delete(currentActor)
+                        })
+                    binding.rvAGMovies.adapter = adapter
+                    actorViewModel.allActors.observe(viewLifecycleOwner) { actors ->
+                        actors.let { adapter.submitList(it) }
+                    }
+                }
+                GENRES -> {
+                    val adapter = GenreListAdapter(requireActivity(), genreViewModel, this,
+                        onFavorite = { currentGenre ->
+                            genreViewModel.setFavorite(currentGenre.id, !currentGenre.favorite)
+                        },
+                        onDelete = { currentGenre ->
+                            genreViewModel.delete(currentGenre)
+                        })
+                    binding.rvAGMovies.adapter = adapter
+                    genreViewModel.allGenres.observe(viewLifecycleOwner) { genres ->
+                        genres.let { adapter.submitList(it) }
+                    }
                 }
             }
-            ACTORS ->{
-                val adapter = ActorListAdapter(activity, actorViewModel, this,
-                onFavorite = { currentActor ->
-                    actorViewModel.setFavorite(currentActor.id, !currentActor.favorite)
-                },
-                onDelete = { currentActor ->
-                    actorViewModel.delete(currentActor)
-                })
-                binding.rvAGMovies.adapter = adapter
-                actorViewModel.allActors.observe(viewLifecycleOwner) { actors ->
-                    actors.let { adapter.submitList(it) }
-                }
-            }
-            GENRES ->{
-                val adapter = GenreListAdapter(activity, genreViewModel, this,
-                    onFavorite = { currentGenre ->
-                        genreViewModel.setFavorite(currentGenre.id, !currentGenre.favorite)
-                    },
-                    onDelete = { currentGenre ->
-                        genreViewModel.delete(currentGenre)
-                    })
-                binding.rvAGMovies.adapter = adapter
-                genreViewModel.allGenres.observe(viewLifecycleOwner) { genres ->
-                    genres.let { adapter.submitList(it) }
-                }
-            }
+
+            binding.rvAGMovies.layoutManager = LinearLayoutManager(context)
         }
-
-        binding.rvAGMovies.layoutManager = LinearLayoutManager(context)
-
     }
     companion object {
         /**
