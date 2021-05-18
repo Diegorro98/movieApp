@@ -45,7 +45,8 @@ class MovieListAdapter(
         holder.runtime.text = String.format(context.getString(R.string.tv_movie_item_runtime),currentMovie.runtime)
         holder.rating.text = currentMovie.rating.toString()
         DrawableCompat.setTint(DrawableCompat.wrap(holder.ratingBackground.drawable), context.getColor(when{
-            8 <= currentMovie.rating -> R.color.good_rating
+            9 <= currentMovie.rating -> R.color.good_rating
+            8 <= currentMovie.rating && currentMovie.rating < 9 -> R.color.mid_good_rating
             6 <= currentMovie.rating && currentMovie.rating < 8 -> R.color.mid_rating
             5 <= currentMovie.rating && currentMovie.rating < 6 -> R.color.mid_bad_rating
             else -> R.color.bad_rating
