@@ -2,7 +2,6 @@ package es.usj.drodriguez.movieapp.database.classes
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 @Entity(tableName = MovieActor.TABLE_NAME, primaryKeys = [MovieActor.MOVIE_ID, MovieActor.ACTOR_ID])
 class MovieActor (

@@ -21,11 +21,6 @@ import es.usj.drodriguez.movieapp.MainActivity
 import es.usj.drodriguez.movieapp.R
 import es.usj.drodriguez.movieapp.database.classes.Movie
 import es.usj.drodriguez.movieapp.editors.MovieEditor
-import es.usj.drodriguez.movieapp.utils.DatabaseApp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
 
 class MovieListAdapter(
     private val activity: Activity?,

@@ -2,12 +2,12 @@ package es.usj.drodriguez.movieapp
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import es.usj.drodriguez.movieapp.databinding.ActivityContactBinding
 
 class Contact : AppCompatActivity() {
-    lateinit var binding: ActivityContactBinding
+    private lateinit var binding: ActivityContactBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityContactBinding.inflate(layoutInflater)

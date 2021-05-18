@@ -1,12 +1,12 @@
 package es.usj.drodriguez.movieapp.database.classes
 
-import androidx.room.*
-import com.google.gson.Gson
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
 import com.google.gson.annotations.SerializedName
-import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.Serializable
-import java.lang.reflect.Type
 
 @Entity(tableName = Movie.TABLE_NAME)
 data class Movie(
@@ -89,27 +89,14 @@ class MovieFetcher(
     }
 
 }
-class IntListConverter{
-    private val gson = Gson()
-    @TypeConverter
-    fun stringToIntList(json: String):MutableList<Int>{
-        val listType: Type = object : TypeToken<MutableList<Int?>?>() {}.type
-        return gson.fromJson(json, listType)
-    }
-
-    @TypeConverter
-    fun intListToString(someObjects: MutableList<Int?>?): String? {
-        return gson.toJson(someObjects)
-    }
-}
 class FileConverter{
     @TypeConverter
-    fun stringToPath(filePath: String):File{
+    fun stringToFilePath(filePath: String):File{
         return File(filePath)
     }
 
     @TypeConverter
-    fun pathToString(Object: File?): String {
+    fun filePathToString(Object: File?): String {
         return Object.toString()
     }
 }
