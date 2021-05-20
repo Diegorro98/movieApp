@@ -102,12 +102,14 @@ class MainActivity : AppCompatActivity() {
             CoroutineScope(IO).launch{
                 startActivity(when(tabPosition){
                     Lists.MOVIES -> TODO() /*Intent(this@MainActivity, MovieEditor::class.java)
-                        .putExtra(MovieEditor.OBJECT, (application as DatabaseApp).repository.getNewMovie())
-                        .putExtra(MovieEditor.NEW, true)*/
+                        .putExtra(MovieEditor.NEW, true)
+                        .putExtra(MovieEditor.OBJECT, (application as DatabaseApp).repository.getNewMovie())*/
                     Lists.GENRES -> Intent(this@MainActivity, ActorGenreEditor::class.java)
+                        .putExtra(ActorGenreEditor.NEW, true)
                         .putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.GENRE)
                         .putExtra(ActorGenreEditor.OBJECT, (application as DatabaseApp).repository.getNewGenre())
                     Lists.ACTORS -> Intent(this@MainActivity, ActorGenreEditor::class.java)
+                        .putExtra(ActorGenreEditor.NEW, true)
                         .putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.ACTOR)
                         .putExtra(ActorGenreEditor.OBJECT, (application as DatabaseApp).repository.getNewActor())
                     else -> null

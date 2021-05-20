@@ -2,8 +2,11 @@ package es.usj.drodriguez.movieapp.editors
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -27,7 +30,7 @@ class ActorGenreEditor : AppCompatActivity() {
     private val actorViewModel: ActorViewModel by viewModels { ActorViewModelFactory((application as DatabaseApp).repository) }
     private val genreViewModel: GenreViewModel by viewModels { GenreViewModelFactory((application as DatabaseApp).repository) }
     private lateinit var editClass: String
-
+    private var new = false
     private lateinit var save: () -> Unit
     private lateinit var delete: () -> Unit
     private lateinit var favorite: () -> Unit
@@ -60,9 +63,10 @@ class ActorGenreEditor : AppCompatActivity() {
         binding.tbAG.setNavigationOnClickListener {
             finish()
         }
+        new = intent?.extras?.getBoolean(NEW, false) == true
         when(editClass){
             ACTOR -> {
-                supportActionBar?.title = if (intent?.extras?.getBoolean(NEW) == true) getString(R.string.actor_editor_new_title) else getString(R.string.actor_editor_edit_title)
+                supportActionBar?.title = if (new) getString(R.string.actor_editor_new_title) else getString(R.string.actor_editor_edit_title)
                 val actor = intent?.extras?.getSerializable(OBJECT) as Actor?
                 if (actor != null){
                     save = {
@@ -151,13 +155,21 @@ class ActorGenreEditor : AppCompatActivity() {
                 }
             }
         }
-        binding.tbAG.setNavigationOnClickListener {
-            finish()
-        }
+        binding.etAGName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                binding.tvAGEmpty.visibility = if (s.toString().isEmpty()) View.VISIBLE else View.GONE
+            }
+        })
     }
 
     override fun onDestroy() {
-        save.invoke()
+        if(binding.etAGName.text.toString().trim().isNotEmpty()){
+            save.invoke()
+        }else if(new){
+            delete.invoke()
+        }
         super.onDestroy()
     }
     companion object {
