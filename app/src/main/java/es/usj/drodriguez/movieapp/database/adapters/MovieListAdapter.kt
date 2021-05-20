@@ -30,7 +30,7 @@ class MovieListAdapter(
     private val onCardClick: (cardView: View, currentMovie: Movie) -> Unit = { _, currentMovie: Movie ->
         TODO("startActivity(context ,Intent(context, MovieVisor::class.java).putExtra(MovieVisor.OBJECT, currentMovie), null)")
     }): ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(MovieComparator) {
-    var selectedMovies: List<Int> = emptyList()
+    var selectedMovies: List<Long> = emptyList()
     private lateinit var context : Context
     @NonNull
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {

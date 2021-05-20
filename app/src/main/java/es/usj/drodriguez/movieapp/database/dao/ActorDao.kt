@@ -6,6 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ActorDao {
+    @Query("INSERT INTO ${Actor.TABLE_NAME} (${Actor.NAME}, ${Actor.FAVORITE}) VALUES ('',0)")
+    suspend fun insertNew(): Long
+    @Transaction
+    suspend fun getNew() = getByIDNoFlow(insertNew())
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(actor: Actor)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -20,10 +25,14 @@ interface ActorDao {
     suspend fun delete(actor: Actor)
 
     @Query("UPDATE ${Actor.TABLE_NAME} SET ${Actor.FAVORITE} = :favorite WHERE ${Actor.ID} = :id")
-    suspend fun setFavorite(id: Int, favorite: Boolean)
+    suspend fun setFavorite(id: Long, favorite: Boolean)
 
     @Query ("SELECT * FROM ${Actor.TABLE_NAME} ORDER BY ${Actor.NAME} ASC")
     fun getAll(): Flow<List<Actor>>
-    @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.ID} = :id")
-    fun getByID(id: Int): Actor
+    @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.ID} = :ID")
+    fun getByID(ID: Long): Flow<Actor>
+    @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.ID} in (:IDs)")
+    fun getByID(IDs: List<Long>): Flow<List<Actor>>
+    @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.ID} = :ID")
+    suspend fun getByIDNoFlow(ID: Long): Actor
 }

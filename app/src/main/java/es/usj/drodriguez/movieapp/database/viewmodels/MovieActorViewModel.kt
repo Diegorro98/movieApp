@@ -18,8 +18,8 @@ class MovieActorViewModel (private val repository: DatabaseRepository):ViewModel
         repository.deleteMovieActor(movieActor)
     }
 
-    fun getMovies(actorID: Int) = repository.getActorMovies(actorID).asLiveData()
-    fun getActors(movieID: Int) = repository.getMovieActors(movieID).asLiveData()
+    fun getMovies(actorID: Long) = repository.getActorMovies(actorID).asLiveData()
+    fun getActors(movieID: Long) = repository.getMovieActors(movieID).asLiveData()
 }
 class MovieActorViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

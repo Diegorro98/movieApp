@@ -7,13 +7,11 @@ import kotlinx.coroutines.launch
 
 class ActorViewModel(private val repository: DatabaseRepository):ViewModel() {
     val allActors : LiveData<List<Actor>> = repository.allActors.asLiveData()
-    /**
-     * Launching a new coroutine to insert the data in a non-blocking way
-     */
+    suspend fun getNew() = repository.getNewActor()
     fun insert(actor: Actor) = viewModelScope.launch {
         repository.insertActor(actor)
     }
-    fun setFavorite(id: Int, favorite: Boolean) = viewModelScope.launch {
+    fun setFavorite(id: Long, favorite: Boolean) = viewModelScope.launch {
         repository.setFavoriteActor(id, favorite)
     }
     fun delete(actor: Actor) = viewModelScope.launch {
@@ -22,7 +20,7 @@ class ActorViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun update(actor: Actor) = viewModelScope.launch {
         repository.updateActor(actor)
     }
-    fun getMovies(actorID: Int) = repository.getActorMovies(actorID).asLiveData()
+    fun getMovies(actorID: Long) = repository.getActorMovies(actorID).asLiveData()
 
 }
 class ActorViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {

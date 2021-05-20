@@ -10,7 +10,7 @@ import java.io.Serializable
 
 @Entity(tableName = Movie.TABLE_NAME)
 data class Movie(
-        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) @SerializedName(ID) val id: Int,
+        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) @SerializedName(ID) val id: Long,
         @ColumnInfo(name = TITLE) var title: String,
         @ColumnInfo(name = DESCRIPTION) var description: String,
         @ColumnInfo(name = DIRECTOR) var director: String,
@@ -39,7 +39,7 @@ data class Movie(
     }
 }
 class MovieFetcher(
-    @SerializedName(Movie.ID) val id: Int,
+    @SerializedName(Movie.ID) val id: Long,
     @SerializedName(Movie.TITLE) var title: String,
     @SerializedName(Movie.DESCRIPTION) var description: String,
     @SerializedName(Movie.DIRECTOR) var director: String,
@@ -48,8 +48,8 @@ class MovieFetcher(
     @SerializedName(Movie.RATING) var rating: Float,
     @SerializedName(Movie.VOTES) var votes: Int,
     @SerializedName(Movie.REVENUE) var revenue: Float,
-    @SerializedName(Movie.GENRES) var genres: List<Int>,
-    @SerializedName(Movie.ACTORS)  var actors: List<Int>,
+    @SerializedName(Movie.GENRES) var genres: List<Long>,
+    @SerializedName(Movie.ACTORS)  var actors: List<Long>,
 ){
     constructor(normalMovie: Movie, genresOfMovie: List<MovieGenre>, actorsOfMovie: List<MovieActor>) : this(
         normalMovie.id,
@@ -91,12 +91,12 @@ class MovieFetcher(
 }
 class FileConverter{
     @TypeConverter
-    fun stringToFilePath(filePath: String):File{
-        return File(filePath)
+    fun stringToFilePath(filePath: String?):File?{
+        return filePath?.let{File(it)}
     }
 
     @TypeConverter
     fun filePathToString(Object: File?): String {
-        return Object.toString()
+        return Object.let {it.toString()}
     }
 }

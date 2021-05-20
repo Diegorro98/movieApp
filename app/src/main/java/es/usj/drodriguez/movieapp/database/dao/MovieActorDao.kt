@@ -12,9 +12,9 @@ interface MovieActorDao {
     suspend fun delete(movieActor: MovieActor)
 
     @Query("SELECT ${MovieActor.MOVIE_ID} FROM ${MovieActor.TABLE_NAME} WHERE ${MovieActor.ACTOR_ID} = :actorID ORDER BY ${MovieActor.ACTOR_ID} ASC")
-    fun getMovies(actorID: Int): Flow<List<Int>>
+    fun getMovies(actorID: Long): Flow<List<Long>>
     @Query("SELECT ${MovieActor.ACTOR_ID} FROM ${MovieActor.TABLE_NAME} WHERE ${MovieActor.MOVIE_ID} = :movieID ORDER BY ${MovieActor.MOVIE_ID} ASC")
-    fun getActors(movieID: Int): Flow<List<Int>>
+    fun getActors(movieID: Long): Flow<List<Long>>
 
     @Query ("SELECT * FROM ${MovieActor.TABLE_NAME}")
     fun getAll(): Flow<List<MovieActor>>

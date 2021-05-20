@@ -1,27 +1,31 @@
 package es.usj.drodriguez.movieapp.database.viewmodels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import es.usj.drodriguez.movieapp.database.DatabaseRepository
 import es.usj.drodriguez.movieapp.database.classes.Movie
 import kotlinx.coroutines.launch
 
 class MovieViewModel(private val repository: DatabaseRepository):ViewModel() {
-    val allMovies : LiveData<List<Movie>> = repository.allMovies.asLiveData()
-
-    /**
-     * Launching a new coroutine to insert the data in a non-blocking way
-     */
+    val allMovies = repository.allMovies.asLiveData()
+    suspend fun getNew() = repository.getNewMovie()
     fun insert(movie: Movie) = viewModelScope.launch {
         repository.insertMovie(movie)
     }
-    fun setFavorite(id: Int, favorite: Boolean) = viewModelScope.launch {
+    fun setFavorite(id: Long, favorite: Boolean) = viewModelScope.launch {
         repository.setFavoriteMovie(id, favorite)
     }
     fun delete(movie: Movie) = viewModelScope.launch {
         repository.deleteMovie(movie)
     }
-    fun getByID(moviesID: List<Int>) = repository.getByID(moviesID).asLiveData()
+    fun getByID(IDs: List<Long>) = repository.getMovieByID(IDs).asLiveData()
+
+    fun getActors(movieID: Long) = repository.getMovieActors(movieID)
+    fun getGenres(movieID: Long) = repository.getMovieGenres(movieID)
 }
+
 class MovieViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MovieViewModel::class.java)) {

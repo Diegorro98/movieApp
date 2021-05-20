@@ -8,7 +8,7 @@ import java.io.Serializable
 
 @Entity (tableName = Actor.TABLE_NAME)
 data class Actor (
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) @SerializedName(ID)val id: Int,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) @SerializedName(ID)val id: Long,
     @ColumnInfo (name = NAME) @SerializedName(NAME)var name: String,
     @ColumnInfo(name = Movie.FAVORITE) @Transient var favorite: Boolean): Serializable{
     companion object{

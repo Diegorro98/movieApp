@@ -6,6 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GenreDao {
+    @Query("INSERT INTO ${Genre.TABLE_NAME} (${Genre.NAME}, ${Genre.FAVORITE}) VALUES ('',0)")
+    suspend fun insertNew(): Long
+    @Transaction
+    suspend fun getNew() = getByIDNoFlow(insertNew())
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(genre: Genre)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -20,10 +25,14 @@ interface GenreDao {
     suspend fun delete(genre: Genre)
 
     @Query("UPDATE ${Genre.TABLE_NAME} SET ${Genre.FAVORITE} = :favorite WHERE ${Genre.ID} = :id")
-    suspend fun setFavorite(id: Int, favorite: Boolean)
+    suspend fun setFavorite(id: Long, favorite: Boolean)
 
     @Query ("SELECT * FROM ${Genre.TABLE_NAME} ORDER BY ${Genre.NAME} ASC")
     fun getAll(): Flow<List<Genre>>
-    @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.ID} = :id")
-    fun getByID(id: Int): Genre
+    @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.ID} = :ID")
+    fun getByID(ID: Long): Flow<Genre>
+    @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.ID} in (:IDs)")
+    fun getByID(IDs: List<Long>): Flow<List<Genre>>
+    @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.ID} = :ID")
+    suspend fun getByIDNoFlow(ID: Long): Genre
 }

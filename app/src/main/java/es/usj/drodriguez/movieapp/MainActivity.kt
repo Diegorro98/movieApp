@@ -12,11 +12,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.*
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
 import es.usj.drodriguez.movieapp.databinding.ActivityMainBinding
 import es.usj.drodriguez.movieapp.editors.*
+import es.usj.drodriguez.movieapp.utils.DatabaseApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -77,6 +82,13 @@ class MainActivity : AppCompatActivity() {
         binding.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 contextualToolbar?.finish()
+                tabPosition = when(tab.position){
+                    0 -> Lists.MOVIES
+                    1 -> Lists.GENRES
+                    2 -> Lists.ACTORS
+                    else -> ""
+                }
+                println(tab.position)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}
@@ -87,13 +99,20 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnAddMovie.shrink()
         binding.btnAddMovie.setOnClickListener {
-            val addItemIntent = when(MainViewPagerAdapter.page){
-                Lists.MOVIES -> Intent(this, MovieEditor::class.java)
-                Lists.GENRES -> Intent(this, ActorGenreEditor::class.java).putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.GENRE)
-                Lists.ACTORS -> Intent(this, ActorGenreEditor::class.java).putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.ACTOR)
-                else -> null
+            CoroutineScope(IO).launch{
+                startActivity(when(tabPosition){
+                    Lists.MOVIES -> TODO() /*Intent(this@MainActivity, MovieEditor::class.java)
+                        .putExtra(MovieEditor.OBJECT, (application as DatabaseApp).repository.getNewMovie())
+                        .putExtra(MovieEditor.NEW, true)*/
+                    Lists.GENRES -> Intent(this@MainActivity, ActorGenreEditor::class.java)
+                        .putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.GENRE)
+                        .putExtra(ActorGenreEditor.OBJECT, (application as DatabaseApp).repository.getNewGenre())
+                    Lists.ACTORS -> Intent(this@MainActivity, ActorGenreEditor::class.java)
+                        .putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.ACTOR)
+                        .putExtra(ActorGenreEditor.OBJECT, (application as DatabaseApp).repository.getNewActor())
+                    else -> null
+                })
             }
-            startActivity(addItemIntent)
         }
         binding.btnAddMovie.setOnLongClickListener {
             binding.btnAddMovie.extend()
@@ -105,5 +124,6 @@ class MainActivity : AppCompatActivity() {
     }
     companion object{
         var contextualToolbar: ActionMode? = null
+        var tabPosition: String = Lists.MOVIES
     }
 }

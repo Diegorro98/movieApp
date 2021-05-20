@@ -8,7 +8,7 @@ import java.io.Serializable
 
 @Entity (tableName = Genre.TABLE_NAME)
 data class Genre (
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) @SerializedName(ID)val id: Int,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) @SerializedName(ID)val id: Long,
     @ColumnInfo (name = NAME) @SerializedName(NAME)var name: String,
     @ColumnInfo(name = FAVORITE) @Transient var favorite: Boolean): Serializable{
     companion object{

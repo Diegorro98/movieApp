@@ -18,8 +18,8 @@ import androidx.room.ForeignKey
             onDelete = ForeignKey.CASCADE
         )])
 data class MovieGenre(
-    @ColumnInfo(name = MOVIE_ID, index = true) var movieID: Int,
-    @ColumnInfo(name = GENRE_ID, index = true) var genreID: Int
+    @ColumnInfo(name = MOVIE_ID, index = true) var movieID: Long,
+    @ColumnInfo(name = GENRE_ID, index = true) var genreID: Long
 ) {
     companion object {
         const val TABLE_NAME = "movies_genres"

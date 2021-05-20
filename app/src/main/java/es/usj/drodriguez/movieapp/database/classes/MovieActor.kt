@@ -19,8 +19,8 @@ import androidx.room.ForeignKey.CASCADE
         childColumns = [MovieActor.ACTOR_ID],
         onDelete = CASCADE)])
 class MovieActor (
-    @ColumnInfo(name = MOVIE_ID, index = true)var movieID: Int,
-    @ColumnInfo(name = ACTOR_ID, index = true)var actorID: Int
+    @ColumnInfo(name = MOVIE_ID, index = true)var movieID: Long,
+    @ColumnInfo(name = ACTOR_ID, index = true)var actorID: Long
 ) {
     companion object {
         const val TABLE_NAME = "movies_actors"

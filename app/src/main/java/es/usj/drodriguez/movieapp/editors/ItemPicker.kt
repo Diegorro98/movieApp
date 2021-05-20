@@ -23,7 +23,7 @@ class ItemPicker : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityItemPickerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val objectID = intent?.extras?.getInt(OBJECT_ID)
+        val objectID = intent?.extras?.getLong(OBJECT_ID)
         if(objectID != null) {
             when (intent?.extras?.getString(PICKED)) {
                 MOVIE -> {
@@ -66,6 +66,9 @@ class ItemPicker : AppCompatActivity() {
 
                 }
             }
+        }
+        binding.tbPicker.setNavigationOnClickListener {
+            finish()
         }
     }
     companion object{

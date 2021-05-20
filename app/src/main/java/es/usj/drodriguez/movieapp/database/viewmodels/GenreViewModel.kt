@@ -7,13 +7,11 @@ import kotlinx.coroutines.launch
 
 class GenreViewModel(private val repository: DatabaseRepository):ViewModel() {
     val allGenres : LiveData<List<Genre>> = repository.allGenres.asLiveData()
-    /**
-     * Launching a new coroutine to insert the data in a non-blocking way
-     */
+    suspend fun getNew() = repository.getNewGenre()
     fun insert(genre: Genre) = viewModelScope.launch {
         repository.insertGenre(genre)
     }
-    fun setFavorite(id: Int, favorite: Boolean) = viewModelScope.launch {
+    fun setFavorite(id: Long, favorite: Boolean) = viewModelScope.launch {
         repository.setFavoriteGenre(id, favorite)
     }
     fun delete(genre: Genre) = viewModelScope.launch {
@@ -22,7 +20,7 @@ class GenreViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun update(genre: Genre) = viewModelScope.launch {
         repository.updateGenre(genre)
     }
-    fun getMovies(genreID: Int) = repository.getGenreMovies(genreID).asLiveData()
+    fun getMovies(genreID: Long) = repository.getGenreMovies(genreID).asLiveData()
 }
 class GenreViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

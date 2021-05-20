@@ -62,6 +62,7 @@ class ActorGenreEditor : AppCompatActivity() {
         }
         when(editClass){
             ACTOR -> {
+                supportActionBar?.title = if (intent?.extras?.getBoolean(NEW) == true) getString(R.string.actor_editor_new_title) else getString(R.string.actor_editor_edit_title)
                 val actor = intent?.extras?.getSerializable(OBJECT) as Actor?
                 if (actor != null){
                     save = {
@@ -74,7 +75,6 @@ class ActorGenreEditor : AppCompatActivity() {
                     favorite = {
                         actorViewModel.setFavorite(actor.id, !actor.favorite)
                     }
-                    binding.tbAG.title = getString(R.string.actor_editor_edit_title)
                     binding.etAGName.setText(actor.name, TextView.BufferType.EDITABLE)
                     val adapter = MovieListAdapter(this, editButton = false,
                         onDelete = { currentMovie ->
@@ -103,13 +103,12 @@ class ActorGenreEditor : AppCompatActivity() {
                         }
                     }
                     binding.rvAGMovies.layoutManager = LinearLayoutManager(this)
-                } else {
-                    binding.tbAG.title = getString(R.string.actor_editor_new_title)
                 }
             }
 
             GENRE -> {
                 val genre = intent?.extras?.getSerializable(OBJECT) as Genre?
+                supportActionBar?.title = if (intent?.extras?.getBoolean(NEW, false) == true) getString(R.string.actor_editor_new_title) else getString(R.string.genre_editor_edit_title)
                 if (genre != null) {
                     save =  {
                         genre.name = binding.etAGName.text.toString().trim()
@@ -121,7 +120,6 @@ class ActorGenreEditor : AppCompatActivity() {
                     favorite = {
                         genreViewModel.setFavorite(genre.id, !genre.favorite)
                     }
-                    binding.tbAG.title = getString(R.string.actor_editor_edit_title)
                     binding.etAGName.setText(genre.name, TextView.BufferType.EDITABLE)
                     val adapter = MovieListAdapter(this, editButton = false,
                         onDelete = { currentMovie ->
@@ -150,8 +148,6 @@ class ActorGenreEditor : AppCompatActivity() {
                         }
                     }
                     binding.rvAGMovies.layoutManager = LinearLayoutManager(this)
-                } else {
-                    binding.tbAG.title = getString(R.string.actor_editor_new_title)
                 }
             }
         }
@@ -169,5 +165,6 @@ class ActorGenreEditor : AppCompatActivity() {
         const val GENRE = "genre"
         const val CLASS = "class"
         const val OBJECT = "object"
+        const val NEW = "new?"
     }
 }

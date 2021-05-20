@@ -199,9 +199,9 @@ class DatabaseFetcher(
             return dialog.hostName
         }
         object Updates{
-            val movies = mutableListOf<Int>()
-            val actors = mutableListOf<Int>()
-            val genres = mutableListOf<Int>()
+            val movies = mutableListOf<Long>()
+            val actors = mutableListOf<Long>()
+            val genres = mutableListOf<Long>()
         }
     }
 }

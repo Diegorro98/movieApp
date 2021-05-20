@@ -18,8 +18,8 @@ class MovieGenreViewModel (private val repository: DatabaseRepository): ViewMode
         repository.deleteMovieGenre(movieGenre)
     }
 
-    fun getMovies(genreID: Int) = repository.getGenreMovies(genreID).asLiveData()
-    fun getGenres(movieID: Int) = repository.getMovieGenres(movieID).asLiveData()
+    fun getMovies(genreID: Long) = repository.getGenreMovies(genreID).asLiveData()
+    fun getGenres(movieID: Long) = repository.getMovieGenres(movieID).asLiveData()
 }
 class MovieGenreViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
