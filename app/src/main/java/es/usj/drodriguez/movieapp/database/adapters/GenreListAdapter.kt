@@ -26,9 +26,17 @@ class GenreListAdapter(
     private val viewLifecycleOwner: LifecycleOwner,
     private val editButton: Boolean = true,
     private val onFavorite: ( (currentGenre: Genre) -> Unit)? = null,
-    private val onDelete: ( (currentGenre: Genre) -> Unit)? = null
-    ): ListAdapter<Genre, ActorGenreHolder>(GenreComparator) {
+    private val onDelete: ( (currentGenre: Genre) -> Unit)? = null,
+    private val onCardClick: (cardView: View, currentGenre: Genre) -> Unit = { _, currentGenre: Genre ->
+        TODO("startActivity(context ,Intent(context, MovieVisor::class.java).putExtra(MovieVisor.OBJECT, currentMovie), null)")
+    }): ListAdapter<Genre, ActorGenreHolder>(GenreComparator) {
     private lateinit var context : Context
+
+
+    var showOnlyFavorites = false
+    var textFiler: String = ""
+    private var originalList = emptyList<Genre>()
+
     @NonNull
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActorGenreHolder {
         context = parent.context
@@ -37,6 +45,7 @@ class GenreListAdapter(
 
     override fun onBindViewHolder(holder: ActorGenreHolder, position: Int) {
         val currentGenre = getItem(position)
+        holder.cardView.visibility = if(showOnlyFavorites && !currentGenre.favorite) View.GONE else View.VISIBLE
         holder.name.text = currentGenre.name
         genreViewModel.getMovies(currentGenre.id).observe(viewLifecycleOwner) { movies ->
             movies.let {
@@ -48,7 +57,7 @@ class GenreListAdapter(
         }
         holder.favorite.visibility = if(currentGenre.favorite) View.VISIBLE else View.INVISIBLE
         holder.cardView.setOnClickListener {
-            TODO("startActivity(context ,Intent(context, ActorGenreVisor::class.java).putExtra(ActorGenreVisor.OBJECT, currentMovie), null)")
+            onCardClick.invoke(it,currentGenre)
         }
         holder.cardView.setOnLongClickListener {
             if (!it.isSelected) {
@@ -121,6 +130,39 @@ class GenreListAdapter(
             }
             return@setOnLongClickListener true
         }
+    }
+    override fun submitList(list: List<Genre>?) {
+        var listToSubmit = list
+        if (list != null) {
+            originalList = list
+            when {
+                showOnlyFavorites && textFiler.isEmpty()-> listToSubmit = filterFavorites(list)
+                showOnlyFavorites && textFiler.isNotEmpty() -> listToSubmit = filterTitles(filterFavorites(list))
+                !showOnlyFavorites && textFiler.isNotEmpty() -> listToSubmit = filterTitles(list)
+            }
+        }
+        super.submitList(listToSubmit)
+    }
+    fun resubmitList(){
+        submitList(originalList.toMutableList())
+    }
+    private fun filterFavorites(list: List<Genre>): List<Genre> {
+        val favoriteList = mutableListOf<Genre>()
+        list.forEach {
+            if (it.favorite){
+                favoriteList.add(it)
+            }
+        }
+        return favoriteList
+    }
+    private fun filterTitles(list: List<Genre>): List<Genre> {
+        val filteredTitles = mutableListOf<Genre>()
+        list.forEach{
+            if (it.name.lowercase().contains(textFiler)){
+                filteredTitles.add(it)
+            }
+        }
+        return filteredTitles
     }
     object GenreComparator: DiffUtil.ItemCallback<Genre>(){
         override fun areItemsTheSame(oldItem: Genre, newItem: Genre): Boolean = oldItem.id == newItem.id

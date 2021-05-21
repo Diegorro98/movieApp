@@ -6,8 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.CheckBox
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
@@ -28,26 +26,27 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_main, menu)
+        val searchInList =  menu?.findItem(R.id.btn_search)?.actionView as SearchView
+        searchInList.queryHint = getString(R.string.searchMovie)
+        searchInList.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String) = false
 
-        //Fav-checkbox configuration (Because it is not possible to configure it on the XML)
-        val searchMovieList =  menu?.findItem(R.id.btn_search)?.actionView as SearchView
-        searchMovieList.queryHint = getString(R.string.searchMovie)
-        val favButton = menu.findItem(R.id.btn_fav)?.actionView as CheckBox
-        val favIcon = ContextCompat.getDrawable(this,R.drawable.favorite_check)
-        favIcon?.setTint(getColor(R.color.Toolbar_Primary))
-        favButton.buttonDrawable  =  favIcon
-        //onOptionsItemsSelected no triggered when neither checkbox or fav-checkbox is clicked, so is configured this way
-        favButton.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked){
-                Toast.makeText(this,"Favorites on!", Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(this,"Favorites off!", Toast.LENGTH_SHORT).show()
+            override fun onQueryTextChange(newText: String): Boolean {
+                Lists.textFilter.postValue(newText.lowercase())
+                return false
             }
-        }
-
+        })
         return super.onCreateOptionsMenu(menu)
        }
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.btn_fav -> {
+            item.isChecked = !item.isChecked
+            Lists.onlyFavs.postValue(item.isChecked)
+            val favIcon = if(item.isChecked) ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_24) else ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_border_24)
+            favIcon?.setTint(getColor(R.color.Toolbar_Primary))
+            item.icon = favIcon
+            true
+        }
         R.id.btn_contact -> {
             startActivity(Intent(this, Contact::class.java))
             true

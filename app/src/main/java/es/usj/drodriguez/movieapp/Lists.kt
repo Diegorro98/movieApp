@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.usj.drodriguez.movieapp.database.DatabaseFetcher
 import es.usj.drodriguez.movieapp.database.adapters.ActorListAdapter
@@ -74,6 +75,18 @@ class Lists : Fragment() {
                     movieViewModel.allMovies.observe(viewLifecycleOwner) { movies ->
                         movies.let { adapter.submitList(it) }
                     }
+                    onlyFavs.observe(viewLifecycleOwner){ onlyFavsValue ->
+                        onlyFavsValue.let {
+                            adapter.showOnlyFavorites = it
+                            adapter.resubmitList()
+                        }
+                    }
+                    textFilter.observe(viewLifecycleOwner){ text ->
+                        text.let {
+                            adapter.textFiler = it
+                            adapter.resubmitList()
+                        }
+                    }
                 }
                 ACTORS -> {
                     val adapter = ActorListAdapter(requireActivity(), actorViewModel, this,
@@ -87,6 +100,18 @@ class Lists : Fragment() {
                     actorViewModel.allActors.observe(viewLifecycleOwner) { actors ->
                         actors.let { adapter.submitList(it) }
                     }
+                    onlyFavs.observe(viewLifecycleOwner){ onlyFavsValue ->
+                        onlyFavsValue.let {
+                            adapter.showOnlyFavorites = it
+                            adapter.resubmitList()
+                        }
+                    }
+                    textFilter.observe(viewLifecycleOwner){ text ->
+                        text.let {
+                            adapter.textFiler = it
+                            adapter.resubmitList()
+                        }
+                    }
                 }
                 GENRES -> {
                     val adapter = GenreListAdapter(requireActivity(), genreViewModel, this,
@@ -99,6 +124,18 @@ class Lists : Fragment() {
                     binding.rvAGMovies.adapter = adapter
                     genreViewModel.allGenres.observe(viewLifecycleOwner) { genres ->
                         genres.let { adapter.submitList(it) }
+                    }
+                    onlyFavs.observe(viewLifecycleOwner){ onlyFavsValue ->
+                        onlyFavsValue.let {
+                            adapter.showOnlyFavorites = it
+                            adapter.resubmitList()
+                        }
+                    }
+                    textFilter.observe(viewLifecycleOwner){ text ->
+                        text.let {
+                            adapter.textFiler = it
+                            adapter.resubmitList()
+                        }
                     }
                 }
             }
@@ -125,6 +162,7 @@ class Lists : Fragment() {
         const val MOVIES = "movies"
         const val ACTORS = "actors"
         const val GENRES = "genres"
-
+        var onlyFavs: MutableLiveData<Boolean> = MutableLiveData(false)
+        var textFilter: MutableLiveData<String> = MutableLiveData("")
     }
 }

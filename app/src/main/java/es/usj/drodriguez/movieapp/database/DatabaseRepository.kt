@@ -24,6 +24,7 @@ class DatabaseRepository(
     suspend fun updateMovies(movies: List<Movie>) = movieDao.updateAll(movies)
     suspend fun deleteMovie(movie: Movie) = movieDao.delete(movie)
     suspend fun setFavoriteMovie(id: Long, favorite: Boolean) = movieDao.setFavorite(id, favorite)
+    fun getFavoriteMovies() = movieDao.getFavorites()
     fun getMovieByID(IDs: List<Long>) = movieDao.getByID(IDs)
     fun getMovieByID(id: Long) = movieDao.getByID(id)
 
@@ -34,6 +35,7 @@ class DatabaseRepository(
     suspend fun updateGenres(genres: List<Genre>) = genreDao.updateAll(genres)
     suspend fun deleteGenre(genre: Genre) = genreDao.delete(genre)
     suspend fun setFavoriteGenre(id: Long, favorite: Boolean) = genreDao.setFavorite(id, favorite)
+    fun getFavoriteGenres() = genreDao.getFavorites()
     fun getGenreByID(IDs: List<Long>) = genreDao.getByID(IDs)
     fun getGenreByID(id: Long) = genreDao.getByID(id)
 
@@ -44,6 +46,7 @@ class DatabaseRepository(
     suspend fun updateActors(actors: List<Actor>) = actorDao.updateAll(actors)
     suspend fun deleteActor(actor: Actor) = actorDao.delete(actor)
     suspend fun setFavoriteActor(id: Long, favorite: Boolean) = actorDao.setFavorite(id, favorite)
+    fun getFavoriteActors() = actorDao.getFavorites()
     fun getActorByID(IDs: List<Long>) = actorDao.getByID(IDs)
     fun getActorByID(id: Long) = actorDao.getByID(id)
 

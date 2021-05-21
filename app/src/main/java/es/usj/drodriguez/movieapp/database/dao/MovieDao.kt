@@ -29,6 +29,8 @@ interface MovieDao {
 
     @Query ("SELECT * FROM ${Movie.TABLE_NAME} ORDER BY ${Movie.TITLE} ASC")
     fun getAll(): Flow<List<Movie>>
+    @Query ("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.FAVORITE} = 1 ORDER BY ${Movie.TITLE} ASC")
+    fun getFavorites(): Flow<List<Movie>>
     @Query("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.ID} = :ID")
     fun getByID(ID: Long): Flow<Movie>
     @Query("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.ID} in (:IDs)")

@@ -32,6 +32,9 @@ class MovieListAdapter(
     }): ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(MovieComparator) {
     var selectedMovies: List<Long> = emptyList()
     private lateinit var context : Context
+    var showOnlyFavorites = false
+    var textFiler: String = ""
+    private var originalList = emptyList<Movie>()
     @NonNull
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         context = parent.context
@@ -40,6 +43,7 @@ class MovieListAdapter(
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val currentMovie = getItem(position)
+        holder.cardView.visibility = if(showOnlyFavorites && !currentMovie.favorite) View.GONE else View.VISIBLE
         holder.title.text = currentMovie.title
         holder.year.text = currentMovie.year.toString()
         holder.runtime.text = String.format(context.getString(R.string.tv_movie_item_runtime),currentMovie.runtime)
@@ -141,6 +145,39 @@ class MovieListAdapter(
     private fun setSelect(selected: Boolean, cardView: View){
         cardView.isSelected = selected
         cardView.backgroundTintList = if(selected) ColorStateList.valueOf(context.getColor(R.color.selected_item)) else null
+    }
+    override fun submitList(list: List<Movie>?) {
+        var listToSubmit = list
+        if (list != null) {
+            originalList = list
+            when {
+                showOnlyFavorites && textFiler.isEmpty()-> listToSubmit = filterFavorites(list)
+                showOnlyFavorites && textFiler.isNotEmpty() -> listToSubmit = filterTitles(filterFavorites(list))
+                !showOnlyFavorites && textFiler.isNotEmpty() -> listToSubmit = filterTitles(list)
+            }
+        }
+        super.submitList(listToSubmit)
+    }
+    fun resubmitList(){
+        submitList(originalList.toMutableList())
+    }
+    private fun filterFavorites(list: List<Movie>): List<Movie> {
+        val favoriteList = mutableListOf<Movie>()
+        list.forEach {
+            if (it.favorite){
+                favoriteList.add(it)
+            }
+        }
+        return favoriteList
+    }
+    private fun filterTitles(list: List<Movie>): List<Movie> {
+        val filteredTitles = mutableListOf<Movie>()
+        list.forEach{
+            if (it.title.lowercase().contains(textFiler)){
+                filteredTitles.add(it)
+            }
+        }
+        return filteredTitles
     }
     class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         internal var title: TextView = itemView.findViewById(R.id.tv_movie_title)

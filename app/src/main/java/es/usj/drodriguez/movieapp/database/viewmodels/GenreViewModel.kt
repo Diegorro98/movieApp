@@ -20,6 +20,7 @@ class GenreViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun update(genre: Genre) = viewModelScope.launch {
         repository.updateGenre(genre)
     }
+    fun getFavorites() = repository.getFavoriteGenres().asLiveData()
     fun getMovies(genreID: Long) = repository.getGenreMovies(genreID).asLiveData()
 }
 class GenreViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {

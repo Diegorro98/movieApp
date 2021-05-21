@@ -29,6 +29,8 @@ interface GenreDao {
 
     @Query ("SELECT * FROM ${Genre.TABLE_NAME} ORDER BY ${Genre.NAME} ASC")
     fun getAll(): Flow<List<Genre>>
+    @Query ("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.FAVORITE} = 1 ORDER BY ${Genre.NAME} ASC")
+    fun getFavorites(): Flow<List<Genre>>
     @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.ID} = :ID")
     fun getByID(ID: Long): Flow<Genre>
     @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.ID} in (:IDs)")

@@ -29,6 +29,8 @@ interface ActorDao {
 
     @Query ("SELECT * FROM ${Actor.TABLE_NAME} ORDER BY ${Actor.NAME} ASC")
     fun getAll(): Flow<List<Actor>>
+    @Query ("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.FAVORITE} = 1 ORDER BY ${Actor.NAME} ASC")
+    fun getFavorites(): Flow<List<Actor>>
     @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.ID} = :ID")
     fun getByID(ID: Long): Flow<Actor>
     @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.ID} in (:IDs)")

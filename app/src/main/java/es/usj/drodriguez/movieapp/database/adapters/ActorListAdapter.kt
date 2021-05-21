@@ -25,9 +25,16 @@ class ActorListAdapter(
     private val viewLifecycleOwner: LifecycleOwner,
     private val editButton: Boolean = true,
     private val onFavorite: ( (currentActor: Actor) -> Unit)? = null,
-    private val onDelete: ( (currentActor: Actor) -> Unit)? = null
-    ): ListAdapter<Actor, ActorGenreHolder>(ActorComparator) {
+    private val onDelete: ( (currentActor: Actor) -> Unit)? = null,
+    private val onCardClick: (cardView: View, currentActor: Actor) -> Unit = { _, currentActor: Actor ->
+        TODO("startActivity(context ,Intent(context, MovieVisor::class.java).putExtra(MovieVisor.OBJECT, currentMovie), null)")
+    }): ListAdapter<Actor, ActorGenreHolder>(ActorComparator) {
     private lateinit var context : Context
+
+    var showOnlyFavorites = false
+    var textFiler: String = ""
+    private var originalList = emptyList<Actor>()
+
     @NonNull
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActorGenreHolder {
         context = parent.context
@@ -36,6 +43,7 @@ class ActorListAdapter(
 
     override fun onBindViewHolder(holder: ActorGenreHolder, position: Int) {
         val currentActor = getItem(position)
+        holder.cardView.visibility = if(showOnlyFavorites && !currentActor.favorite) View.GONE else View.VISIBLE
         holder.name.text = currentActor.name
         actorViewModel.getMovies(currentActor.id).observe(viewLifecycleOwner) { movies ->
             movies.let {
@@ -47,8 +55,7 @@ class ActorListAdapter(
         }
         holder.favorite.visibility = if(currentActor.favorite) View.VISIBLE else View.INVISIBLE
         holder.cardView.setOnClickListener {
-            TODO("startActivity(context ,Intent(context, ActorGenreVisor::class.java).putExtra(ActorGenreVisor.OBJECT, currentMovie), null)")
-
+            onCardClick.invoke(it,currentActor)
         }
         holder.cardView.setOnLongClickListener {
             if (!it.isSelected) {
@@ -121,6 +128,39 @@ class ActorListAdapter(
             }
             return@setOnLongClickListener true
         }
+    }
+    override fun submitList(list: List<Actor>?) {
+        var listToSubmit = list
+        if (list != null) {
+            originalList = list
+            when {
+                showOnlyFavorites && textFiler.isEmpty()-> listToSubmit = filterFavorites(list)
+                showOnlyFavorites && textFiler.isNotEmpty() -> listToSubmit = filterTitles(filterFavorites(list))
+                !showOnlyFavorites && textFiler.isNotEmpty() -> listToSubmit = filterTitles(list)
+            }
+        }
+        super.submitList(listToSubmit)
+    }
+    fun resubmitList(){
+        submitList(originalList.toMutableList())
+    }
+    private fun filterFavorites(list: List<Actor>): List<Actor> {
+        val favoriteList = mutableListOf<Actor>()
+        list.forEach {
+            if (it.favorite){
+                favoriteList.add(it)
+            }
+        }
+        return favoriteList
+    }
+    private fun filterTitles(list: List<Actor>): List<Actor> {
+        val filteredTitles = mutableListOf<Actor>()
+        list.forEach{
+            if (it.name.lowercase().contains(textFiler)){
+                filteredTitles.add(it)
+            }
+        }
+        return filteredTitles
     }
     object ActorComparator: DiffUtil.ItemCallback<Actor>(){
         override fun areItemsTheSame(oldItem: Actor, newItem: Actor): Boolean = oldItem.id == newItem.id

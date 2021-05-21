@@ -21,7 +21,7 @@ class MovieViewModel(private val repository: DatabaseRepository):ViewModel() {
         repository.deleteMovie(movie)
     }
     fun getByID(IDs: List<Long>) = repository.getMovieByID(IDs).asLiveData()
-
+    fun getFavorites() = repository.getFavoriteMovies().asLiveData()
     fun getActors(movieID: Long) = repository.getMovieActors(movieID)
     fun getGenres(movieID: Long) = repository.getMovieGenres(movieID)
 }
