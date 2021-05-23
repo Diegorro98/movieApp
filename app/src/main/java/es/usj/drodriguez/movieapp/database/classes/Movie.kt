@@ -3,25 +3,51 @@ package es.usj.drodriguez.movieapp.database.classes
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import java.io.File
+import es.usj.drodriguez.movieapp.database.DatabaseFetcher
+import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.Job
 import java.io.Serializable
+import java.net.URL
+
 
 @Entity(tableName = Movie.TABLE_NAME)
 data class Movie(
-        @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) @SerializedName(ID) val id: Long,
-        @ColumnInfo(name = TITLE) var title: String,
-        @ColumnInfo(name = DESCRIPTION) var description: String,
-        @ColumnInfo(name = DIRECTOR) var director: String,
-        @ColumnInfo(name = YEAR) var year: Int,
-        @ColumnInfo(name = RUNTIME) var runtime: Int,
-        @ColumnInfo(name = RATING) var rating: Float,
-        @ColumnInfo(name = VOTES) var votes: Int,
-        @ColumnInfo(name = REVENUE) var revenue: Float,
-        @ColumnInfo(name = POSTER) var posterPath: File?,
-        @ColumnInfo(name = FAVORITE) var favorite: Boolean): Serializable{
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = ID) @SerializedName(ID) val id: Long,
+    @ColumnInfo(name = TITLE) var title: String,
+    @ColumnInfo(name = DESCRIPTION) var description: String,
+    @ColumnInfo(name = DIRECTOR) var director: String,
+    @ColumnInfo(name = YEAR) var year: Int,
+    @ColumnInfo(name = RUNTIME) var runtime: Int,
+    @ColumnInfo(name = RATING) var rating: Float,
+    @ColumnInfo(name = VOTES) var votes: Int,
+    @ColumnInfo(name = REVENUE) var revenue: Float,
+    @ColumnInfo(name = POSTER) var posterURL: String?,
+    @ColumnInfo(name = FAVORITE) var favorite: Boolean): Serializable{
+
+    fun getPosterURLFromOMDbAPI() = askAPI()?.poster
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private fun askAPI(): OMDbMovie? {
+        val response = DatabaseFetcher.getResponse(URL("http://www.omdbapi.com/?apikey=${DatabaseFetcher.OMDbAPIKey}&type=movie&plot=full&r=json&t=${title.replace(' ','+')}"))
+        return gson.fromJson(response, OMDbMovie::class.java)
+    }
+
+    private class OMDbMovie(
+        @SerializedName("Title") var title: String,
+        @SerializedName("Plot") var plot: String,
+        @SerializedName("Director") var director: String,
+        @SerializedName("Year") var year: Int,
+        @SerializedName("Runtime") var runtime: String,
+        @SerializedName("imdbRating") var rating: Float,
+        @SerializedName("imdbVotes") var votes: String,
+        @SerializedName("Genre") var genres: String,
+        @SerializedName("Actors")  var actors: String,
+        @SerializedName("Poster")  var poster: String,
+    ){}
     companion object{
+        private val gson = Gson()
         const val ID = "id"
         const val TITLE = "title"
         const val DESCRIPTION ="description"
@@ -36,12 +62,14 @@ data class Movie(
         const val TABLE_NAME = "movies"
         const val POSTER = "poster"
         const val FAVORITE = "favorite"
+        const val MOVIE_NOT_FOUND = "movie not found"
+        val posterFetcherJob: CompletableJob = Job()
     }
 }
 class MovieFetcher(
     @SerializedName(Movie.ID) val id: Long,
     @SerializedName(Movie.TITLE) var title: String,
-    @SerializedName(Movie.DESCRIPTION) var description: String,
+    @SerializedName(Movie.DESCRIPTION) var plot: String,
     @SerializedName(Movie.DIRECTOR) var director: String,
     @SerializedName(Movie.YEAR) var year: Int,
     @SerializedName(Movie.RUNTIME) var runtime: Int,
@@ -71,14 +99,14 @@ class MovieFetcher(
     fun asNormalMovie(movieToUpdate : Movie? =  null) = Movie(
         id,
         title,
-        description,
+        plot,
         director,
         year,
         runtime,
         rating,
         votes,
         revenue,
-        movieToUpdate?.posterPath,
+        movieToUpdate?.posterURL,
         movieToUpdate?.favorite ?: false
     )
     fun asMovieGenres() = List(genres.size) {
@@ -88,15 +116,4 @@ class MovieFetcher(
         MovieActor(id, actors[it])
     }
 
-}
-class FileConverter{
-    @TypeConverter
-    fun stringToFilePath(filePath: String?):File?{
-        return filePath?.let{File(it)}
-    }
-
-    @TypeConverter
-    fun filePathToString(Object: File?): String {
-        return Object.let {it.toString()}
-    }
 }

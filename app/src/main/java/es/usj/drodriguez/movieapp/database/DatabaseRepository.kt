@@ -24,6 +24,7 @@ class DatabaseRepository(
     suspend fun updateMovies(movies: List<Movie>) = movieDao.updateAll(movies)
     suspend fun deleteMovie(movie: Movie) = movieDao.delete(movie)
     suspend fun setFavoriteMovie(id: Long, favorite: Boolean) = movieDao.setFavorite(id, favorite)
+    suspend fun setMoviePoster(id:Long, url: String) = movieDao.setPosterURL(id, url)
     fun getFavoriteMovies() = movieDao.getFavorites()
     fun getMovieByID(IDs: List<Long>) = movieDao.getByID(IDs)
     fun getMovieByID(id: Long) = movieDao.getByID(id)

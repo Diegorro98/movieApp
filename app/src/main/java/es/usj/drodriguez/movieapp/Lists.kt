@@ -62,8 +62,7 @@ class Lists : Fragment() {
             }
             when (type) {
                 MOVIES -> {
-                    val adapter = MovieListAdapter(
-                        requireActivity(),
+                    val adapter = MovieListAdapter(requireActivity(),movieViewModel,
                         onFavorite = { currentMovie ->
                             movieViewModel.setFavorite(currentMovie.id, !currentMovie.favorite)
                         },

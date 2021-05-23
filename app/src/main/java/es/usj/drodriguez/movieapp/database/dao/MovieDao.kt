@@ -26,6 +26,8 @@ interface MovieDao {
 
     @Query("UPDATE ${Movie.TABLE_NAME} SET ${Movie.FAVORITE} = :favorite WHERE ${Movie.ID} = :id")
     suspend fun setFavorite(id: Long, favorite: Boolean)
+    @Query("UPDATE ${Movie.TABLE_NAME} SET ${Movie.POSTER} = :url WHERE ${Movie.ID} = :id")
+    suspend fun setPosterURL(id: Long, url: String)
 
     @Query ("SELECT * FROM ${Movie.TABLE_NAME} ORDER BY ${Movie.TITLE} ASC")
     fun getAll(): Flow<List<Movie>>

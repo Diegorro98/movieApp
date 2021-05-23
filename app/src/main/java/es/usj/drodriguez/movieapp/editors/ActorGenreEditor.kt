@@ -80,7 +80,7 @@ class ActorGenreEditor : AppCompatActivity() {
                         actorViewModel.setFavorite(actor.id, !actor.favorite)
                     }
                     binding.etAGName.setText(actor.name, TextView.BufferType.EDITABLE)
-                    val adapter = MovieListAdapter(this, editButton = false,
+                    val adapter = MovieListAdapter(this, movieViewModel, false,
                         onDelete = { currentMovie ->
                             movieActorViewModel.delete(MovieActor(currentMovie.id, actor.id))
                             if (currentMovie.id !in DatabaseFetcher.Companion.Updates.movies){
@@ -125,7 +125,7 @@ class ActorGenreEditor : AppCompatActivity() {
                         genreViewModel.setFavorite(genre.id, !genre.favorite)
                     }
                     binding.etAGName.setText(genre.name, TextView.BufferType.EDITABLE)
-                    val adapter = MovieListAdapter(this, editButton = false,
+                    val adapter = MovieListAdapter(this, movieViewModel, false,
                         onDelete = { currentMovie ->
                             movieGenreViewModel.delete(MovieGenre(currentMovie.id, genre.id))
                             if (currentMovie.id !in DatabaseFetcher.Companion.Updates.movies){

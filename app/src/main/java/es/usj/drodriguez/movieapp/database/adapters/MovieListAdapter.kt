@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.text.Layout
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,13 +18,22 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
 import es.usj.drodriguez.movieapp.MainActivity
 import es.usj.drodriguez.movieapp.R
 import es.usj.drodriguez.movieapp.database.classes.Movie
+import es.usj.drodriguez.movieapp.database.viewmodels.MovieViewModel
 import es.usj.drodriguez.movieapp.editors.MovieEditor
+import es.usj.drodriguez.movieapp.utils.TextDrawable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+
 
 class MovieListAdapter(
     private val activity: Activity,
+    private val movieViewModel: MovieViewModel,
     private val editButton: Boolean = true,
     private val onFavorite: ( (currentMovie: Movie) -> Unit)? = null,
     private val onDelete: ( (currentMovie: Movie) -> Unit)? = null,
@@ -32,19 +42,52 @@ class MovieListAdapter(
     }): ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(MovieComparator) {
     var selectedMovies: List<Long> = emptyList()
     private lateinit var context : Context
+    private lateinit var picasso : Picasso.Builder
     var showOnlyFavorites = false
     var textFiler: String = ""
     private var originalList = emptyList<Movie>()
     @NonNull
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         context = parent.context
+        picasso = Picasso.Builder(context)
         return MovieViewHolder.create(parent)
     }
 
+    override fun onViewRecycled(holder: MovieViewHolder) {
+        super.onViewRecycled(holder)
+        holder.poster.setImageBitmap(null)
+    }
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         val currentMovie = getItem(position)
-        holder.cardView.visibility = if(showOnlyFavorites && !currentMovie.favorite) View.GONE else View.VISIBLE
+        holder.cardView.visibility =
+            if (showOnlyFavorites && !currentMovie.favorite) View.GONE else View.VISIBLE
+
+        if (currentMovie.posterURL != null && currentMovie.posterURL != Movie.MOVIE_NOT_FOUND) {
+            Picasso.get().load(currentMovie.posterURL).into(holder.poster, object: Callback {
+                override fun onSuccess() {}
+                override fun onError(e: Exception?) {
+                    e?.printStackTrace()
+                    val errorText = TextDrawable(context)
+                    errorText.text = "error"
+                    errorText.textAlign = Layout.Alignment.ALIGN_CENTER
+                    holder.poster.setImageDrawable(errorText)
+                }
+            })
+        } else if(currentMovie.posterURL == Movie.MOVIE_NOT_FOUND){
+            val movieNotFound = TextDrawable(context)
+            movieNotFound.text = Movie.MOVIE_NOT_FOUND
+            movieNotFound.textAlign = Layout.Alignment.ALIGN_CENTER
+            holder.poster.setImageDrawable(movieNotFound)
+
+        }else {
+            CoroutineScope(IO + Movie.posterFetcherJob).launch{
+                currentMovie.getPosterURLFromOMDbAPI()?.let { posterURL->
+                    movieViewModel.setPosterURL(currentMovie, posterURL)
+                } ?: movieViewModel.setPosterURL(currentMovie, Movie.MOVIE_NOT_FOUND)
+            }
+        }
         holder.title.text = currentMovie.title
+        holder.description.text = currentMovie.description
         holder.year.text = currentMovie.year.toString()
         holder.runtime.text = String.format(context.getString(R.string.tv_movie_item_runtime),currentMovie.runtime)
         holder.rating.text = currentMovie.rating.toString()
@@ -187,6 +230,8 @@ class MovieListAdapter(
         internal var ratingBackground: ImageView = itemView.findViewById(R.id.im_movie_ratingBackground)
         internal var favorite: ImageView = itemView.findViewById(R.id.iv_movie_item_fav)
         internal var cardView: CardView = itemView.findViewById(R.id.card_view_movie)
+        internal var poster: ImageView = itemView.findViewById(R.id.im_movie_poster)
+        internal var description:TextView = itemView.findViewById(R.id.tv_movie_description)
         companion object {
             fun create(parent: ViewGroup): MovieViewHolder {
                 val view: View = LayoutInflater.from(parent.context)

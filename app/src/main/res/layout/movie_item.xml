@@ -25,30 +25,47 @@
             android:padding="8dp"
             tools:ignore="HardcodedText">
 
+            <ImageView
+                android:id="@+id/im_movie_poster"
+                android:layout_width="0dp"
+                android:layout_height="130dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="22:33"
+                app:layout_constraintEnd_toStartOf="@+id/tv_movie_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
+
             <TextView
                 android:id="@+id/tv_movie_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
                 android:ellipsize="end"
                 android:maxLength="80"
                 android:singleLine="true"
                 android:text="Title"
                 android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/tv_movie_description"
                 app:layout_constraintEnd_toStartOf="@+id/im_movie_ratingBackground"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/im_movie_poster"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="spread" />
 
             <TextView
                 android:id="@+id/tv_movie_year"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:text="Year"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/tv_movie_runtime"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_movie_title" />
+                app:layout_constraintStart_toStartOf="@+id/tv_movie_title"
+                app:layout_constraintTop_toBottomOf="@+id/tv_movie_description" />
 
             <TextView
                 android:id="@+id/tv_movie_runtime"
@@ -59,14 +76,14 @@
                 app:layout_constraintBottom_toBottomOf="@+id/tv_movie_year"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/tv_movie_year" />
+
             <ImageView
                 android:id="@+id/im_movie_ratingBackground"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_movie_title"
                 app:srcCompat="@drawable/rating_circle"
                 tools:ignore="ContentDescription" />
 
@@ -79,8 +96,8 @@
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/im_movie_ratingBackground"
+                app:layout_constraintEnd_toEndOf="@+id/im_movie_ratingBackground"
                 app:layout_constraintStart_toStartOf="@+id/im_movie_ratingBackground"
                 app:layout_constraintTop_toTopOf="@+id/im_movie_ratingBackground" />
 
@@ -88,13 +105,29 @@
                 android:id="@+id/iv_movie_item_fav"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_movie_year"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/im_movie_ratingBackground"
+                app:layout_constraintStart_toStartOf="@+id/im_movie_ratingBackground"
+                app:layout_constraintTop_toBottomOf="@+id/im_movie_ratingBackground"
                 app:srcCompat="@drawable/ic_baseline_star_24"
                 app:tint="#54FFB700"
                 tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/tv_movie_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:lines="4"
+                android:maxLines="4"
+                android:text="TextView"
+                app:layout_constraintBottom_toTopOf="@+id/tv_movie_year"
+                app:layout_constraintEnd_toEndOf="@+id/tv_movie_title"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/tv_movie_title"
+                app:layout_constraintTop_toBottomOf="@+id/tv_movie_title" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

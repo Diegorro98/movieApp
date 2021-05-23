@@ -24,6 +24,9 @@ class MovieViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun getFavorites() = repository.getFavoriteMovies().asLiveData()
     fun getActors(movieID: Long) = repository.getMovieActors(movieID)
     fun getGenres(movieID: Long) = repository.getMovieGenres(movieID)
+    fun setPosterURL(movie: Movie, posterURL: String) = viewModelScope.launch {
+            repository.setMoviePoster(movie.id, posterURL)
+    }
 }
 
 class MovieViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {

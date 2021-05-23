@@ -28,7 +28,7 @@ class ItemPicker : AppCompatActivity() {
             when (intent?.extras?.getString(PICKED)) {
                 MOVIE -> {
                     val picker = intent?.extras?.getString(PICKER).toString()
-                    val adapter = MovieListAdapter(this, false,
+                    val adapter = MovieListAdapter(this, movieViewModel,false,
                         onCardClick = { cardView, currentMovie ->
                             DatabaseFetcher.Companion.Updates.movies.add(currentMovie.id)
                         if (cardView.isSelected) {
