@@ -83,28 +83,7 @@ class DatabaseFetcher(
 
     }
 
-    private fun getResponse(url: URL): String? {
-        val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
-        return try {
-            val input: InputStream
-            input = BufferedInputStream(urlConnection.inputStream)
-            readStream(input)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        } finally {
-            urlConnection.disconnect()
-        }
-    }
-    private fun readStream(inputStream: InputStream) : String {
-        val br = BufferedReader(InputStreamReader(inputStream))
-        val total = StringBuilder()
-        while (true) {
-            val line = br.readLine() ?: break
-            total.append(line).append('\n')
-        }
-        return total.toString()
-    }
+
     suspend fun updateDatabase(lastUpdate : Long, job: CompletableJob, application: Application){
         val repository = (application as DatabaseApp).repository
         when(lastUpdate){
@@ -120,8 +99,6 @@ class DatabaseFetcher(
                                     movie.asMovieActors().forEach {
                                         repository.insertMovieActor(it)
                                     }
-                                }
-                                rawMovies.forEach { movie ->
                                     movie.asMovieGenres().forEach {
                                         repository.insertMovieGenre(it)
                                     }
@@ -203,5 +180,28 @@ class DatabaseFetcher(
             val actors = mutableListOf<Long>()
             val genres = mutableListOf<Long>()
         }
+        fun getResponse(url: URL): String? {
+            val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
+            return try {
+                val input: InputStream
+                input = BufferedInputStream(urlConnection.inputStream)
+                readStream(input)
+            } catch (e: Exception) {
+                println(e.printStackTrace().toString())
+                null
+            } finally {
+                urlConnection.disconnect()
+            }
+        }
+        private fun readStream(inputStream: InputStream) : String {
+            val br = BufferedReader(InputStreamReader(inputStream))
+            val total = StringBuilder()
+            while (true) {
+                val line = br.readLine() ?: break
+                total.append(line).append('\n')
+            }
+            return total.toString()
+        }
+        const val OMDbAPIKey = "81d0dc32"
     }
 }
