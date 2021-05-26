@@ -38,8 +38,12 @@ class ActorGenreVisor : AppCompatActivity() {
         R.id.btn_tb_contextual_edit -> {
             val intent = Intent(this, ActorGenreEditor::class.java)
             when{
-                this::currentActor.isInitialized -> intent.putExtra(ActorGenreEditor.OBJECT, currentActor).putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.ACTOR)
-                this::currentGenre.isInitialized -> intent.putExtra(ActorGenreEditor.OBJECT, currentGenre).putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.GENRE)
+                this::currentActor.isInitialized -> intent.putExtra(ActorGenreEditor.OBJECT, currentActor)
+                    .putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.ACTOR)
+                    .putExtra(ActorGenreEditor.FAVORITE, currentActor.favorite)
+                this::currentGenre.isInitialized -> intent.putExtra(ActorGenreEditor.OBJECT, currentGenre)
+                    .putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.GENRE)
+                    .putExtra(ActorGenreEditor.FAVORITE, currentGenre.favorite)
             }
             startActivity(intent)
             true

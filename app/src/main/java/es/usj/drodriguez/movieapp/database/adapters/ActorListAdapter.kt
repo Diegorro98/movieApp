@@ -112,7 +112,8 @@ class ActorListAdapter(
                                     context,
                                     Intent(context, ActorGenreEditor::class.java)
                                         .putExtra(ActorGenreEditor.OBJECT, currentActor)
-                                        .putExtra(ActorGenreEditor.CLASS,ActorGenreEditor.ACTOR),
+                                        .putExtra(ActorGenreEditor.CLASS,ActorGenreEditor.ACTOR)
+                                        .putExtra(ActorGenreEditor.FAVORITE, currentActor.favorite),
                                     null
                                 )
                                 true

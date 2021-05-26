@@ -122,6 +122,7 @@ class ActorGenreEditor : AppCompatActivity() {
                 val genreViewModel: GenreViewModel by viewModels { GenreViewModelFactory((application as DatabaseApp).repository) }
                 supportActionBar?.title = if (intent?.extras?.getBoolean(NEW, false) == true) getString(R.string.actor_editor_new_title) else getString(R.string.genre_editor_edit_title)
                 currentGenre = intent?.extras?.getSerializable(OBJECT) as Genre
+                currentGenre.favorite = intent?.extras?.getBoolean(FAVORITE) == true
                 invalidateOptionsMenu()
                 save =  {
                     currentGenre.name = binding.etAGName.text.toString().trim()
