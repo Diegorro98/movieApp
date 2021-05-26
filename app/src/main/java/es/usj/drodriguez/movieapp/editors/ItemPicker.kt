@@ -5,6 +5,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.usj.drodriguez.movieapp.database.DatabaseFetcher
+import es.usj.drodriguez.movieapp.database.adapters.ActorListAdapter
+import es.usj.drodriguez.movieapp.database.adapters.GenreListAdapter
 import es.usj.drodriguez.movieapp.database.adapters.MovieListAdapter
 import es.usj.drodriguez.movieapp.database.classes.MovieActor
 import es.usj.drodriguez.movieapp.database.classes.MovieGenre
@@ -23,14 +25,13 @@ class ItemPicker : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityItemPickerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val objectID = intent?.extras?.getLong(OBJECT_ID)
-        if(objectID != null) {
-            when (intent?.extras?.getString(PICKED)) {
-                MOVIE -> {
-                    val picker = intent?.extras?.getString(PICKER).toString()
-                    val adapter = MovieListAdapter(this, movieViewModel,false,
-                        onCardClick = { cardView, currentMovie ->
-                            DatabaseFetcher.Companion.Updates.movies.add(currentMovie.id)
+        val objectID = intent?.extras?.getLong(OBJECT_ID)!!
+        when (intent?.extras?.getString(PICKED)) {
+            MOVIE -> {
+                val picker = intent?.extras?.getString(PICKER).toString()
+                val adapter = MovieListAdapter(this, movieViewModel,false,
+                    onCardClick = { cardView, currentMovie ->
+                        DatabaseFetcher.Companion.Updates.movies.add(currentMovie.id)
                         if (cardView.isSelected) {
                             when (picker) {
                                 ACTOR -> movieActorViewModel.delete(MovieActor(currentMovie.id, objectID))
@@ -40,31 +41,64 @@ class ItemPicker : AppCompatActivity() {
                             when (picker) {
                                 ACTOR -> movieActorViewModel.insert(MovieActor(currentMovie.id, objectID))
                                 GENRE ->  movieGenreViewModel.insert(MovieGenre(currentMovie.id, objectID))
-                            }
+                        }
+                    }
+                })
+                when(picker){
+                    ACTOR -> actorViewModel.getMovies(objectID).observe(this){
+                        adapter.selectedMovies = it
+                        adapter.notifyDataSetChanged()
+                    }
+                    GENRE -> genreViewModel.getMovies(objectID).observe(this) {
+                        adapter.selectedMovies = it
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+                binding.rvPicker.adapter = adapter
+                movieViewModel.allMovies.observe(this) { movies ->
+                    movies.let { adapter.submitList(it) }
+                }
+                binding.rvPicker.layoutManager = LinearLayoutManager(this)
+            }
+            ACTOR -> {
+                val adapter = ActorListAdapter(this, actorViewModel, this, false,
+                onCardClick = {cardView, currentActor ->
+                    DatabaseFetcher.Companion.Updates.movies.add(objectID)
+                    if (cardView.isSelected) {
+                        movieActorViewModel.delete(MovieActor(objectID, currentActor.id))
+                    } else {
+                        movieActorViewModel.insert(MovieActor(objectID, currentActor.id))
+                    }
+                })
+                movieViewModel.getActors(objectID).observe(this){
+                    adapter.selectedMovies = it
+                    adapter.notifyDataSetChanged()
+                }
+                binding.rvPicker.adapter = adapter
+                actorViewModel.allActors.observe(this) { movies ->
+                    movies.let { adapter.submitList(it) }
+                }
+                binding.rvPicker.layoutManager = LinearLayoutManager(this)
+            }
+            GENRE -> {
+                val adapter = GenreListAdapter(this, genreViewModel, this, false,
+                    onCardClick = {cardView, currentActor ->
+                        DatabaseFetcher.Companion.Updates.movies.add(objectID)
+                        if (cardView.isSelected) {
+                            movieGenreViewModel.delete(MovieGenre(objectID, currentActor.id))
+                        } else {
+                            movieGenreViewModel.insert(MovieGenre(objectID, currentActor.id))
                         }
                     })
-                    when(picker){
-                        ACTOR -> actorViewModel.getMovies(objectID).observe(this){
-                            adapter.selectedMovies = it
-                            adapter.notifyDataSetChanged()
-                        }
-                        GENRE -> genreViewModel.getMovies(objectID).observe(this) {
-                            adapter.selectedMovies = it
-                            adapter.notifyDataSetChanged()
-                        }
-                    }
-                    binding.rvPicker.adapter = adapter
-                    movieViewModel.allMovies.observe(this) { movies ->
-                        movies.let { adapter.submitList(it) }
-                    }
-                    binding.rvPicker.layoutManager = LinearLayoutManager(this)
+                movieViewModel.getGenres(objectID).observe(this){
+                    adapter.selectedMovies = it
+                    adapter.notifyDataSetChanged()
                 }
-                ACTOR -> {
-
+                binding.rvPicker.adapter = adapter
+                genreViewModel.allGenres.observe(this) { movies ->
+                    movies.let { adapter.submitList(it) }
                 }
-                GENRE -> {
-
-                }
+                binding.rvPicker.layoutManager = LinearLayoutManager(this)
             }
         }
         binding.tbPicker.setNavigationOnClickListener {

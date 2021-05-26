@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.text.Layout
 import android.view.*
 import android.widget.ImageView
@@ -35,8 +36,8 @@ class MovieListAdapter(
     private val activity: Activity,
     private val movieViewModel: MovieViewModel,
     private val editButton: Boolean = true,
-    private val onFavorite: ( (currentMovie: Movie) -> Unit)? = null,
-    private val onDelete: ( (currentMovie: Movie) -> Unit)? = null,
+    private val onFavorite: ((currentMovie: Movie) -> Unit)? = null,
+    private val onDelete: ((currentMovie: Movie) -> Unit)? = null,
     private val onCardClick: (cardView: View, currentMovie: Movie) -> Unit = { _, currentMovie: Movie ->
         TODO("startActivity(context ,Intent(context, MovieVisor::class.java).putExtra(MovieVisor.OBJECT, currentMovie), null)")
     }): ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(MovieComparator) {
@@ -121,13 +122,15 @@ class MovieListAdapter(
                             }
                             if (onFavorite != null) {
                                 if (currentMovie.favorite) {
-                                    menu?.getItem(1)?.icon =
-                                        getDrawable(context, R.drawable.ic_baseline_star_border_24)
+                                    val drawable = getDrawable(context, R.drawable.ic_baseline_star_border_24)
+                                    drawable?.setTint(Color.BLACK)
+                                    menu?.getItem(1)?.icon = drawable
                                     menu?.getItem(1)?.title =
                                         context.getString(R.string.title_contextual_rmv_fav)
                                 } else {
-                                    menu?.getItem(1)?.icon =
-                                        getDrawable(context, R.drawable.ic_baseline_star_24)
+                                    val drawable = getDrawable(context, R.drawable.ic_baseline_star_24)
+                                    drawable?.setTint(Color.BLACK)
+                                    menu?.getItem(1)?.icon = drawable
                                     menu?.getItem(1)?.title =
                                         context.getString(R.string.title_contextual_add_fav)
                                 }

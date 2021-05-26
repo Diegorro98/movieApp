@@ -12,7 +12,7 @@ interface GenreDao {
     suspend fun getNew() = getByIDNoFlow(insertNew())
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(genre: Genre)
+    suspend fun insert(genre: Genre): Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMultiple(genres: List<Genre>)
 
@@ -37,4 +37,6 @@ interface GenreDao {
     fun getByID(IDs: List<Long>): Flow<List<Genre>>
     @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.ID} = :ID")
     suspend fun getByIDNoFlow(ID: Long): Genre
+    @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.NAME} = :name")
+    suspend fun getByNameNoFlow(name: String): Genre
 }

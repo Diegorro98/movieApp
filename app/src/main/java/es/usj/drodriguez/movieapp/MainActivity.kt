@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
             val favIcon = if(item.isChecked) ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_24) else ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_border_24)
             favIcon?.setTint(getColor(R.color.Toolbar_Primary))
             item.icon = favIcon
+            item.title = getString(if(item.isChecked)R.string.btn_no_fav_title else R.string.btn_fav_title)
             true
         }
         R.id.btn_contact -> {
@@ -100,9 +101,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnAddMovie.setOnClickListener {
             CoroutineScope(IO).launch{
                 startActivity(when(tabPosition){
-                    Lists.MOVIES -> TODO() /*Intent(this@MainActivity, MovieEditor::class.java)
+                    Lists.MOVIES -> Intent(this@MainActivity, MovieEditor::class.java)
                         .putExtra(MovieEditor.NEW, true)
-                        .putExtra(MovieEditor.OBJECT, (application as DatabaseApp).repository.getNewMovie())*/
+                        .putExtra(MovieEditor.OBJECT, (application as DatabaseApp).repository.getNewMovie())
                     Lists.GENRES -> Intent(this@MainActivity, ActorGenreEditor::class.java)
                         .putExtra(ActorGenreEditor.NEW, true)
                         .putExtra(ActorGenreEditor.CLASS, ActorGenreEditor.GENRE)

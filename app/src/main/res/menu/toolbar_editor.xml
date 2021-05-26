@@ -2,14 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/btn_editor_autocomplete"
+        android:title="@string/tb_editor_autocomplete"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/autocomplete_24"/>
+    <item
         android:id="@+id/btn_editor_fav"
         android:title="@string/title_contextual_add_fav"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_baseline_star_border_24"/>
 
     <item
-        android:id="@+id/btn_editor_delete"
-        android:title="@string/title_contextual_delete"
+        android:id="@+id/btn_editor_save"
+        android:title="@string/tb_editor_save"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_baseline_delete_24"/>
+        android:icon="@drawable/ic_baseline_done_24"/>
 </menu>

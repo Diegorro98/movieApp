@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.*
 import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +20,6 @@ import es.usj.drodriguez.movieapp.database.classes.Genre
 import es.usj.drodriguez.movieapp.database.viewmodels.GenreViewModel
 import es.usj.drodriguez.movieapp.editors.ActorGenreEditor
 
-
 class GenreListAdapter(
     private val activity: Activity?,
     private val genreViewModel: GenreViewModel,
@@ -31,8 +31,7 @@ class GenreListAdapter(
         TODO("startActivity(context ,Intent(context, MovieVisor::class.java).putExtra(MovieVisor.OBJECT, currentMovie), null)")
     }): ListAdapter<Genre, ActorGenreHolder>(GenreComparator) {
     private lateinit var context : Context
-
-
+    var selectedMovies: List<Long> = emptyList()
     var showOnlyFavorites = false
     var textFiler: String = ""
     private var originalList = emptyList<Genre>()
@@ -56,6 +55,11 @@ class GenreListAdapter(
             }
         }
         holder.favorite.visibility = if(currentGenre.favorite) View.VISIBLE else View.INVISIBLE
+        if (selectedMovies.contains(currentGenre.id)){
+            setSelect(true, holder.cardView)
+        }else{
+            setSelect(false, holder.cardView)
+        }
         holder.cardView.setOnClickListener {
             onCardClick.invoke(it,currentGenre)
         }
@@ -73,11 +77,17 @@ class GenreListAdapter(
                         }
                         if (onFavorite != null) {
                             if (currentGenre.favorite) {
-                                menu?.getItem(1)?.icon = getDrawable(context, R.drawable.ic_baseline_star_border_24)
-                                menu?.getItem(1)?.title = context.getString(R.string.title_contextual_rmv_fav)
+                                val drawable = getDrawable(context, R.drawable.ic_baseline_star_border_24)
+                                drawable?.setTint(Color.BLACK)
+                                menu?.getItem(1)?.icon = drawable
+                                menu?.getItem(1)?.title =
+                                    context.getString(R.string.title_contextual_rmv_fav)
                             } else {
-                                menu?.getItem(1)?.icon = getDrawable(context, R.drawable.ic_baseline_star_24)
-                                menu?.getItem(1)?.title = context.getString(R.string.title_contextual_add_fav)
+                                val drawable = getDrawable(context, R.drawable.ic_baseline_star_24)
+                                drawable?.setTint(Color.BLACK)
+                                menu?.getItem(1)?.icon = drawable
+                                menu?.getItem(1)?.title =
+                                    context.getString(R.string.title_contextual_add_fav)
                             }
                         } else {
                             menu?.getItem(1)?.isVisible = false
@@ -130,6 +140,10 @@ class GenreListAdapter(
             }
             return@setOnLongClickListener true
         }
+    }
+    private fun setSelect(selected: Boolean, cardView: View){
+        cardView.isSelected = selected
+        cardView.backgroundTintList = if(selected) ColorStateList.valueOf(context.getColor(R.color.selected_item)) else null
     }
     override fun submitList(list: List<Genre>?) {
         var listToSubmit = list

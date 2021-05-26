@@ -39,6 +39,7 @@ class DatabaseRepository(
     fun getFavoriteGenres() = genreDao.getFavorites()
     fun getGenreByID(IDs: List<Long>) = genreDao.getByID(IDs)
     fun getGenreByID(id: Long) = genreDao.getByID(id)
+    suspend fun getGenreByNameNoFlow(name: String) = genreDao.getByNameNoFlow(name)
 
     suspend fun getNewActor()=actorDao.getNew()
     suspend fun insertActor(actor: Actor) = actorDao.insert(actor)
@@ -50,6 +51,7 @@ class DatabaseRepository(
     fun getFavoriteActors() = actorDao.getFavorites()
     fun getActorByID(IDs: List<Long>) = actorDao.getByID(IDs)
     fun getActorByID(id: Long) = actorDao.getByID(id)
+    suspend fun getActorByNameNoFlow(name: String) = actorDao.getByNameNoFlow(name)
 
     suspend fun insertMovieActor(movieActor: MovieActor) = movieActorDao.insert(movieActor)
     suspend fun deleteMovieActor(movieActor: MovieActor) = movieActorDao.delete(movieActor)

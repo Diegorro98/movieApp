@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
-    @Query("INSERT INTO ${Movie.TABLE_NAME}  (${Movie.TITLE}, ${Movie.DESCRIPTION}, ${Movie.DIRECTOR}, ${Movie.YEAR}, ${Movie.RUNTIME}, ${Movie.RATING}, ${Movie.VOTES}, ${Movie.REVENUE}, ${Movie.FAVORITE})VALUES ('','','',-1,-1,-1,-1,-1,0)")
+    @Query("INSERT INTO ${Movie.TABLE_NAME}  (${Movie.TITLE}, ${Movie.DESCRIPTION}, ${Movie.DIRECTOR}, ${Movie.YEAR}, ${Movie.RUNTIME}, ${Movie.RATING}, ${Movie.VOTES}, ${Movie.REVENUE}, ${Movie.FAVORITE})VALUES ('','','',${Movie.MIN_YEAR},-1,-1,-1,-1,0)")
     suspend fun insertNew(): Long
     @Transaction
     suspend fun getNew() = getByIDNoFlow(insertNew())

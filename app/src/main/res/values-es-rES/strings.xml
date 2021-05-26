@@ -4,11 +4,11 @@
     <string name="developed_by">Desarrollado por J. Diego Rodriguez</string>
     <string name="tb_main_title">Peliculas</string>
     <string name="contact_title">Contacto</string>
-    <string name="movieList_title">Titulo</string>
+    <string name="movieList_title">Titulos</string>
     <string name="movieList_genre">Generos</string>
     <string name="movieList_actors">Actores</string>
     <string name="searchMovie">Buscar una película</string>
-    <string name="btn_fav_title">Favortos</string>
+    <string name="btn_fav_title">Filtrar por favortos</string>
     <string name="btn_search_title">Buscar</string>
     <string name="btn_call_title">Teléfono</string>
     <string name="btn_mail_title">Correo</string>
@@ -38,4 +38,23 @@
     <string name="title_contextual_rmv_fav">Quitar de favoritos</string>
     <string name="title_contextual_edit">Editar</string>
     <string name="tv_editor_empty_name">El nombre no puede estar vacio</string>
+    <string name="movie_poster">Poster</string>
+    <string name="movie_title">Titulo</string>
+    <string name="movie_year">Año</string>
+    <string name="movie_runtime">Duracion</string>
+    <string name="movie_director">Director</string>
+    <string name="movie_description">Descripcion</string>
+    <string name="movie_revenue">Ingresos en mill.</string>
+    <string name="movie_votes">Votos</string>
+    <string name="movie_rating">Nota</string>
+    <string name="movie_actors">Actores</string>
+    <string name="movie_genres">Generos</string>
+    <string name="movie_editor_description_hint">Escribe una descripcion sobre la película</string>
+    <string name="movie_editor_director_hint">Nombre del director</string>
+    <string name="movie_editor_runtime_hint">Minutos</string>
+    <string name="movie_editor_title_hint">Titulo de la película</string>
+    <string name="actor_genre_name">Nombre</string>
+    <string name="tb_editor_autocomplete">Autocompletar</string>
+    <string name="tb_editor_save">Guardar</string>
+    <string name="btn_no_fav_title">Eliminar filtro por favoritos</string>
 </resources>

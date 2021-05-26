@@ -70,7 +70,7 @@ class Lists : Fragment() {
                             movieViewModel.delete(currentMovie)
                         }
                     )
-                    binding.rvAGMovies.adapter = adapter
+                    binding.rvItems.adapter = adapter
                     movieViewModel.allMovies.observe(viewLifecycleOwner) { movies ->
                         movies.let { adapter.submitList(it) }
                     }
@@ -95,7 +95,7 @@ class Lists : Fragment() {
                         onDelete = { currentActor ->
                             actorViewModel.delete(currentActor)
                         })
-                    binding.rvAGMovies.adapter = adapter
+                    binding.rvItems.adapter = adapter
                     actorViewModel.allActors.observe(viewLifecycleOwner) { actors ->
                         actors.let { adapter.submitList(it) }
                     }
@@ -120,7 +120,7 @@ class Lists : Fragment() {
                         onDelete = { currentGenre ->
                             genreViewModel.delete(currentGenre)
                         })
-                    binding.rvAGMovies.adapter = adapter
+                    binding.rvItems.adapter = adapter
                     genreViewModel.allGenres.observe(viewLifecycleOwner) { genres ->
                         genres.let { adapter.submitList(it) }
                     }
@@ -139,7 +139,7 @@ class Lists : Fragment() {
                 }
             }
 
-            binding.rvAGMovies.layoutManager = LinearLayoutManager(context)
+            binding.rvItems.layoutManager = LinearLayoutManager(context)
         }
     }
     companion object {

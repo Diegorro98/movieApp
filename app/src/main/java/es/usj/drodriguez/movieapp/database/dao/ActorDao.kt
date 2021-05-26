@@ -12,7 +12,7 @@ interface ActorDao {
     suspend fun getNew() = getByIDNoFlow(insertNew())
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(actor: Actor)
+    suspend fun insert(actor: Actor): Long
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMultiple(actors: List<Actor>)
     
@@ -37,4 +37,7 @@ interface ActorDao {
     fun getByID(IDs: List<Long>): Flow<List<Actor>>
     @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.ID} = :ID")
     suspend fun getByIDNoFlow(ID: Long): Actor
+    @Query("SELECT * FROM ${Actor.TABLE_NAME} WHERE ${Actor.NAME} = :name")
+    suspend fun getByNameNoFlow(name: String): Actor
+
 }

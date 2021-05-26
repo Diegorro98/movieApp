@@ -29,23 +29,25 @@ data class Movie(
     fun getPosterURLFromOMDbAPI() = askAPI()?.poster
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    private fun askAPI(): OMDbMovie? {
+    fun askAPI(): OMDbMovie? {
         val response = DatabaseFetcher.getResponse(URL("http://www.omdbapi.com/?apikey=${DatabaseFetcher.OMDbAPIKey}&type=movie&plot=full&r=json&t=${title.replace(' ','+')}"))
         return gson.fromJson(response, OMDbMovie::class.java)
     }
 
-    private class OMDbMovie(
+    class OMDbMovie(
         @SerializedName("Title") var title: String,
         @SerializedName("Plot") var plot: String,
         @SerializedName("Director") var director: String,
         @SerializedName("Year") var year: Int,
         @SerializedName("Runtime") var runtime: String,
-        @SerializedName("imdbRating") var rating: Float,
+        @SerializedName("imdbRating") var rating: String,
         @SerializedName("imdbVotes") var votes: String,
         @SerializedName("Genre") var genres: String,
+        @SerializedName("BoxOffice") var boxOffice: String,
         @SerializedName("Actors")  var actors: String,
         @SerializedName("Poster")  var poster: String,
-    ){}
+    )
+
     companion object{
         private val gson = Gson()
         const val ID = "id"
@@ -63,6 +65,7 @@ data class Movie(
         const val POSTER = "poster"
         const val FAVORITE = "favorite"
         const val MOVIE_NOT_FOUND = "movie not found"
+        const val MIN_YEAR = 1900
         val posterFetcherJob: CompletableJob = Job()
     }
 }

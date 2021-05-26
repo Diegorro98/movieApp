@@ -22,6 +22,7 @@
     </style>
     <style name="ToolbarIcons" parent="ThemeOverlay.MaterialComponents.Toolbar.Primary">
         <item name="colorControlNormal">@color/Toolbar_Primary</item>
+        <item name="android:editTextColor">@color/Toolbar_Primary</item>
     </style>
     <style name="ContextualToolbar" parent="Widget.AppCompat.ActionMode">
         <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>

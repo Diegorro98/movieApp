@@ -11,6 +11,7 @@ class ActorViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun insert(actor: Actor) = viewModelScope.launch {
         repository.insertActor(actor)
     }
+    suspend fun insertReturn(actor: Actor) = repository.insertActor(actor)
     fun setFavorite(id: Long, favorite: Boolean) = viewModelScope.launch {
         repository.setFavoriteActor(id, favorite)
     }
@@ -20,9 +21,10 @@ class ActorViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun update(actor: Actor) = viewModelScope.launch {
         repository.updateActor(actor)
     }
+    fun getByID(IDs: List<Long>) = repository.getActorByID(IDs).asLiveData()
     fun getFavorites() = repository.getFavoriteActors().asLiveData()
     fun getMovies(actorID: Long) = repository.getActorMovies(actorID).asLiveData()
-
+    suspend fun getByNameNoFlow(name: String) = repository.getActorByNameNoFlow(name)
 }
 class ActorViewModelFactory(private val repository: DatabaseRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

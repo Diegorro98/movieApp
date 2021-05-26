@@ -20,10 +20,13 @@ class MovieViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun delete(movie: Movie) = viewModelScope.launch {
         repository.deleteMovie(movie)
     }
+    fun update(movie: Movie) = viewModelScope.launch {
+        repository.updateMovie(movie)
+    }
     fun getByID(IDs: List<Long>) = repository.getMovieByID(IDs).asLiveData()
     fun getFavorites() = repository.getFavoriteMovies().asLiveData()
-    fun getActors(movieID: Long) = repository.getMovieActors(movieID)
-    fun getGenres(movieID: Long) = repository.getMovieGenres(movieID)
+    fun getActors(movieID: Long) = repository.getMovieActors(movieID).asLiveData()
+    fun getGenres(movieID: Long) = repository.getMovieGenres(movieID).asLiveData()
     fun setPosterURL(movie: Movie, posterURL: String) = viewModelScope.launch {
             repository.setMoviePoster(movie.id, posterURL)
     }

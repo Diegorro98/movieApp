@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/baseline_arrow_back_24"
+        app:navigationIcon="@drawable/ic_baseline_close_24"
         app:menu="@menu/toolbar_editor"/>
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Name"
+        android:text="@string/actor_genre_name"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tb_a_g" />
 
@@ -36,41 +36,34 @@
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="@+id/tv_a_g_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_a_g_name"
-        android:importantForAutofill="no" />
-
-    <TextView
-        android:id="@+id/tv_a_g_empty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/tv_editor_empty_name"
-        android:textColor="#AC0000"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/et_a_g_name"
-        app:layout_constraintTop_toBottomOf="@+id/et_a_g_name" />
+        android:importantForAutofill="no"
+        tools:ignore="LabelFor" />
 
     <TextView
         android:id="@+id/tv_a_g_movies_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/tb_main_title"
-        android:textSize="24sp"
-        app:layout_constraintStart_toStartOf="@+id/tv_a_g_empty"
-        app:layout_constraintTop_toBottomOf="@+id/tv_a_g_empty" />
+        app:layout_constraintEnd_toStartOf="@+id/ib_a_g_add"
+        app:layout_constraintStart_toStartOf="@+id/et_a_g_name"
+        app:layout_constraintTop_toBottomOf="@+id/et_a_g_name"/>
 
     <ImageButton
         android:id="@+id/ib_a_g_add"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="#00FFFFFF"
+        android:hapticFeedbackEnabled="true"
         app:layout_constraintBottom_toBottomOf="@+id/tv_a_g_movies_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_a_g_empty"
-        app:srcCompat="@drawable/outline_add_24" />
+        app:layout_constraintTop_toTopOf="@+id/tv_a_g_movies_title"
+        app:srcCompat="@drawable/outline_add_24"
+        tools:ignore="ContentDescription" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_a_g_movies"
+        android:id="@+id/rv_items"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
