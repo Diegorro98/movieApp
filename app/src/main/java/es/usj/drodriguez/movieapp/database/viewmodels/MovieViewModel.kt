@@ -23,6 +23,7 @@ class MovieViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun update(movie: Movie) = viewModelScope.launch {
         repository.updateMovie(movie)
     }
+    fun getByID(ID: Long) = repository.getMovieByID(ID).asLiveData()
     fun getByID(IDs: List<Long>) = repository.getMovieByID(IDs).asLiveData()
     fun getFavorites() = repository.getFavoriteMovies().asLiveData()
     fun getActors(movieID: Long) = repository.getMovieActors(movieID).asLiveData()

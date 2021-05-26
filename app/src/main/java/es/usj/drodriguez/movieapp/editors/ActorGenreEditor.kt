@@ -25,30 +25,29 @@ class ActorGenreEditor : AppCompatActivity() {
     private val movieViewModel: MovieViewModel by viewModels { MovieViewModelFactory((application as DatabaseApp).repository) }
     private val movieActorViewModel: MovieActorViewModel by viewModels { MovieActorViewModelFactory((application as DatabaseApp).repository) }
     private val movieGenreViewModel: MovieGenreViewModel by viewModels { MovieGenreViewModelFactory((application as DatabaseApp).repository) }
-    private val actorViewModel: ActorViewModel by viewModels { ActorViewModelFactory((application as DatabaseApp).repository) }
-    private val genreViewModel: GenreViewModel by viewModels { GenreViewModelFactory((application as DatabaseApp).repository) }
-    private lateinit var editClass: String
+    private lateinit var currentActor: Actor
+    private lateinit var currentGenre: Genre
     private var new = false
     private var saved = false
     private lateinit var save: () -> Unit
     private lateinit var delete: () -> Unit
     private lateinit var favorite: () -> Boolean
-    private var objectID: Long = -1L
     private var originalMovies: List<Long>? = null
     private var moviesInList: List<Long> = emptyList()
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_editor, menu)
+        when{
+            this::currentActor.isInitialized -> setFavoriteItem(currentActor.favorite,menu?.getItem(1)!!)
+            this::currentGenre.isInitialized -> setFavoriteItem(currentGenre.favorite,menu?.getItem(1)!!)
+        }
         menu?.getItem(0)?.isVisible = false
         return super.onCreateOptionsMenu(menu)
     }
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.btn_editor_fav -> {
             val favorite = favorite.invoke()
-            val favIcon = if(favorite) ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_24) else ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_border_24)
-            favIcon?.setTint(getColor(R.color.Toolbar_Primary))
-            item.icon = favIcon
-            item.title = getString(if(favorite)R.string.title_contextual_rmv_fav else R.string.title_contextual_add_fav)
+            setFavoriteItem(favorite, item)
             true
         }
         R.id.btn_editor_save -> {
@@ -57,47 +56,45 @@ class ActorGenreEditor : AppCompatActivity() {
             finish()
             true
         }
-        else -> {
-            super.onOptionsItemSelected(item)
-        }
+        else -> super.onOptionsItemSelected(item)
+
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityActorGenreEditorBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        editClass = intent?.extras?.getString(CLASS).toString()
-        setSupportActionBar(binding.tbAG)
-        binding.tbAG.showOverflowMenu()
-        binding.tbAG.setNavigationOnClickListener {
+        setSupportActionBar(binding.tbAGEditor)
+        binding.tbAGEditor.showOverflowMenu()
+        binding.tbAGEditor.setNavigationOnClickListener {
             finish()
         }
         new = intent?.extras?.getBoolean(NEW, false) == true
-        when(editClass){
+        when(intent?.extras?.getString(CLASS).toString()){
             ACTOR -> {
+                val actorViewModel: ActorViewModel by viewModels { ActorViewModelFactory((application as DatabaseApp).repository) }
                 supportActionBar?.title = if (new) getString(R.string.actor_editor_new_title) else getString(R.string.actor_editor_edit_title)
-                val actor = intent?.extras?.getSerializable(OBJECT) as Actor
-                objectID = actor.id
+                currentActor = intent?.extras?.getSerializable(OBJECT) as Actor
+                currentActor.favorite = intent?.extras?.getBoolean(FAVORITE) == true
+                invalidateOptionsMenu()
                 save = {
-                    actor.name = binding.etAGName.text.toString().trim()
-                    actorViewModel.update(actor)
+                    currentActor.name = binding.etAGName.text.toString().trim()
+                    actorViewModel.update(currentActor)
                 }
-                delete = {actorViewModel.delete(actor)}
+                delete = {actorViewModel.delete(currentActor)}
                 favorite = {
-                    actor.favorite = !actor.favorite
-                    actor.favorite
+                    currentActor.favorite = !currentActor.favorite
+                    currentActor.favorite
                 }
-                binding.etAGName.setText(actor.name, TextView.BufferType.EDITABLE)
+                binding.etAGName.setText(currentActor.name, TextView.BufferType.EDITABLE)
                 val adapter = MovieListAdapter(this, movieViewModel, false,
                     onDelete = { deletedMovie ->
-                        movieActorViewModel.delete(MovieActor(deletedMovie.id, actor.id))
+                        movieActorViewModel.delete(MovieActor(deletedMovie.id, currentActor.id))
                         if (deletedMovie.id !in DatabaseFetcher.Companion.Updates.movies){
                             DatabaseFetcher.Companion.Updates.movies.add(deletedMovie.id)
                         }
                     }
                 )
-                val movies =actorViewModel.getMovies(actor.id)
-                originalMovies = movies.value?: emptyList()
-                movies.observe(this) { moviesActors ->
+                actorViewModel.getMovies(currentActor.id).observe(this) { moviesActors ->
                     moviesActors.let { moviesActorsList ->
                         moviesInList = List(moviesActorsList.size){
                             moviesActorsList[it]
@@ -110,44 +107,43 @@ class ActorGenreEditor : AppCompatActivity() {
                         }
                     }
                 }
-                binding.rvItems.adapter = adapter
-                binding.rvItems.layoutManager = LinearLayoutManager(this)
+                binding.rvAGEditorItems.adapter = adapter
+                binding.rvAGEditorItems.layoutManager = LinearLayoutManager(this)
                 binding.ibAGAdd.setOnClickListener {
                     startActivity(Intent(this, ItemPicker::class.java)
                         .putExtra(ItemPicker.PICKED, ItemPicker.MOVIE)
                         .putExtra(ItemPicker.PICKER, ItemPicker.ACTOR)
-                        .putExtra(ItemPicker.OBJECT_ID, actor.id)
+                        .putExtra(ItemPicker.OBJECT_ID, currentActor.id)
                     )
                 }
             }
 
             GENRE -> {
+                val genreViewModel: GenreViewModel by viewModels { GenreViewModelFactory((application as DatabaseApp).repository) }
                 supportActionBar?.title = if (intent?.extras?.getBoolean(NEW, false) == true) getString(R.string.actor_editor_new_title) else getString(R.string.genre_editor_edit_title)
-                val genre = intent?.extras?.getSerializable(OBJECT) as Genre
-                objectID = genre.id
+                currentGenre = intent?.extras?.getSerializable(OBJECT) as Genre
+                invalidateOptionsMenu()
                 save =  {
-                    genre.name = binding.etAGName.text.toString().trim()
-                    genreViewModel.update(genre)
+                    currentGenre.name = binding.etAGName.text.toString().trim()
+                    genreViewModel.update(currentGenre)
                 }
                 delete = {
-                    genreViewModel.delete(genre)
+                    genreViewModel.delete(currentGenre)
                 }
                 favorite = {
-                    genre.favorite = !genre.favorite
-                    genre.favorite
+                    currentGenre.favorite = !currentGenre.favorite
+                    currentGenre.favorite
                 }
-                binding.etAGName.setText(genre.name, TextView.BufferType.EDITABLE)
+                binding.etAGName.setText(currentGenre.name, TextView.BufferType.EDITABLE)
                 val adapter = MovieListAdapter(this, movieViewModel, false,
                     onDelete = { currentMovie ->
-                        movieGenreViewModel.delete(MovieGenre(currentMovie.id, genre.id))
+                        movieGenreViewModel.delete(MovieGenre(currentMovie.id, currentGenre.id))
                         if (currentMovie.id !in DatabaseFetcher.Companion.Updates.movies){
                             DatabaseFetcher.Companion.Updates.movies.add(currentMovie.id)
                         }
                     }
                 )
-                val movies = genreViewModel.getMovies(genre.id)
-                originalMovies = movies.value?: emptyList()
-                movies.observe(this) { moviesGenres ->
+                genreViewModel.getMovies(currentGenre.id).observe(this) { moviesGenres ->
                     moviesGenres.let { moviesGenresList ->
                         moviesInList = List(moviesGenresList.size){
                             moviesGenresList[it]
@@ -160,13 +156,13 @@ class ActorGenreEditor : AppCompatActivity() {
                         }
                     }
                 }
-                binding.rvItems.adapter = adapter
-                binding.rvItems.layoutManager = LinearLayoutManager(this)
+                binding.rvAGEditorItems.adapter = adapter
+                binding.rvAGEditorItems.layoutManager = LinearLayoutManager(this)
                 binding.ibAGAdd.setOnClickListener {
                     startActivity(Intent(this, ItemPicker::class.java)
                         .putExtra(ItemPicker.PICKED, ItemPicker.MOVIE)
                         .putExtra(ItemPicker.PICKER, ItemPicker.GENRE)
-                        .putExtra(ItemPicker.OBJECT_ID, genre.id)
+                        .putExtra(ItemPicker.OBJECT_ID, currentGenre.id)
                     )
                 }
             }
@@ -174,32 +170,39 @@ class ActorGenreEditor : AppCompatActivity() {
     }
 
     override fun finish() {
-        if(!saved && objectID != -1L) {
+        if(!saved) {
             originalMovies?.forEach {
                 if (!moviesInList.contains(it)) {
-                    when(editClass){
-                        ACTOR -> movieActorViewModel.insert(MovieActor(it, objectID))
-                        GENRE -> movieGenreViewModel.insert(MovieGenre(it, objectID))
+                    when{
+                        this::currentActor.isInitialized -> movieActorViewModel.insert(MovieActor(it, currentActor.id))
+                        this::currentGenre.isInitialized -> movieGenreViewModel.insert(MovieGenre(it, currentGenre.id))
                     }
 
                 }
             }
             moviesInList.forEach {
                 if (originalMovies?.contains(it) == false) {
-                    when(editClass){
-                        ACTOR -> movieActorViewModel.delete(MovieActor(it, objectID))
-                        GENRE -> movieGenreViewModel.delete(MovieGenre(it, objectID))
+                    when{
+                        this::currentActor.isInitialized -> movieActorViewModel.delete(MovieActor(it, currentActor.id))
+                        this::currentGenre.isInitialized -> movieGenreViewModel.delete(MovieGenre(it, currentGenre.id))
                     }
                 }
             }
         }
         super.finish()
     }
+    private fun setFavoriteItem(favorite: Boolean, item: MenuItem){
+        val favIcon = if(favorite) ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_24) else ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_border_24)
+        favIcon?.setTint(getColor(R.color.Toolbar_Primary))
+        item.icon = favIcon
+        item.title = getString(if(favorite)R.string.title_contextual_rmv_fav else R.string.title_contextual_add_fav)
+    }
     companion object {
         const val ACTOR = "actor"
         const val GENRE = "genre"
         const val CLASS = "class"
         const val OBJECT = "object"
+        const val FAVORITE = "bugged favorite :)"
         const val NEW = "new?"
     }
 }

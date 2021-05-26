@@ -27,6 +27,7 @@ import es.usj.drodriguez.movieapp.database.classes.Movie
 import es.usj.drodriguez.movieapp.database.viewmodels.MovieViewModel
 import es.usj.drodriguez.movieapp.editors.MovieEditor
 import es.usj.drodriguez.movieapp.utils.TextDrawable
+import es.usj.drodriguez.movieapp.visors.MovieVisor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -38,8 +39,8 @@ class MovieListAdapter(
     private val editButton: Boolean = true,
     private val onFavorite: ((currentMovie: Movie) -> Unit)? = null,
     private val onDelete: ((currentMovie: Movie) -> Unit)? = null,
-    private val onCardClick: (cardView: View, currentMovie: Movie) -> Unit = { _, currentMovie: Movie ->
-        TODO("startActivity(context ,Intent(context, MovieVisor::class.java).putExtra(MovieVisor.OBJECT, currentMovie), null)")
+    private val onCardClick: (cardView: View, currentMovie: Movie, context: Context) -> Unit = { _, currentMovie, context ->
+        startActivity(context ,Intent(context, MovieVisor::class.java).putExtra(MovieVisor.OBJECT_ID, currentMovie.id), null)
     }): ListAdapter<Movie,MovieListAdapter.MovieViewHolder>(MovieComparator) {
     var selectedMovies: List<Long> = emptyList()
     private lateinit var context : Context
@@ -106,7 +107,7 @@ class MovieListAdapter(
             setSelect(false, holder.cardView)
         }
         holder.cardView.setOnClickListener {
-            onCardClick.invoke(it,currentMovie)
+            onCardClick.invoke(it,currentMovie, context)
         }
         if (editButton || onFavorite != null || onDelete != null) {
             holder.cardView.setOnLongClickListener {
@@ -154,7 +155,7 @@ class MovieListAdapter(
                         ): Boolean {
                             mode?.finish()
                             return when (item?.itemId) {
-                                R.id.btn_edit -> {
+                                R.id.btn_tb_contextual_edit -> {
                                     startActivity(
                                         context,
                                         Intent(context, MovieEditor::class.java)
@@ -163,11 +164,11 @@ class MovieListAdapter(
                                     )
                                     true
                                 }
-                                R.id.btn_set_fav -> {
+                                R.id.btn_tb_contextual_fav -> {
                                     onFavorite?.invoke(currentMovie)
                                     true
                                 }
-                                R.id.btn_delete -> {
+                                R.id.btn_tb_contextual_delete -> {
                                     onDelete?.invoke(currentMovie)
                                     true
                                 }

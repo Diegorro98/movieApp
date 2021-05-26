@@ -8,8 +8,8 @@ import android.os.Looper
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import androidx.appcompat.app.AppCompatActivity
-import es.usj.drodriguez.movieapp.databinding.ActivitySplashScreenBinding
 import es.usj.drodriguez.movieapp.database.DatabaseFetcher
+import es.usj.drodriguez.movieapp.databinding.ActivitySplashScreenBinding
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
 
@@ -75,6 +75,6 @@ class SplashScreen : AppCompatActivity() {
     }
     override fun onDestroy() {
         super.onDestroy()
-        loadingAnimation.end() //TODO ESTA CORRECTAMENTE APLICADO?
+        loadingAnimation.end()
     }
 }

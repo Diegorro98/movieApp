@@ -40,7 +40,7 @@ class MovieEditor : AppCompatActivity() {
     private val movieGenreViewModel: MovieGenreViewModel by viewModels { MovieGenreViewModelFactory((application as DatabaseApp).repository) }
     private val actorViewModel: ActorViewModel by viewModels { ActorViewModelFactory((application as DatabaseApp).repository) }
     private val genreViewModel: GenreViewModel by viewModels { GenreViewModelFactory((application as DatabaseApp).repository) }
-    private lateinit var movie: Movie
+    private lateinit var currentMovie: Movie
     private var new = false
     private var saved = false
     private var originalActors: List<Long>? = null
@@ -52,17 +52,21 @@ class MovieEditor : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_editor, menu)
+        if (this::currentMovie.isInitialized){
+            setFavoriteItem(currentMovie.favorite,menu?.getItem(1)!!)
+        }
         return super.onCreateOptionsMenu(menu)
     }
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.btn_editor_autocomplete -> {
-            movie.title = binding.etMovieEditorTitle.text.toString().trim()
+            currentMovie.title = binding.etMovieEditorTitle.text.toString().trim()
             CoroutineScope(IO + Movie.posterFetcherJob).launch{
-                val obtainedMovie = movie.askAPI()
+                val obtainedMovie = currentMovie.askAPI()
                 if (obtainedMovie != null){
                     CoroutineScope(Main).launch {
                         loadPoster(obtainedMovie.poster)
                         val thisYear: Int = Calendar.getInstance().get(Calendar.YEAR)
+                        binding.etMovieEditorTitle.setText(obtainedMovie.title, TextView.BufferType.EDITABLE)
                         if(obtainedMovie.year in Movie.MIN_YEAR..thisYear) {
                             binding.spinnerMovieEditorYear.setSelection(obtainedMovie.year - Movie.MIN_YEAR)
                         }
@@ -81,7 +85,7 @@ class MovieEditor : AppCompatActivity() {
                         }catch (e: java.lang.Exception){
                             actorViewModel.insertReturn(Actor(0,actorName,false))
                         }
-                        movieActorViewModel.insert(MovieActor(movie.id, actorID))
+                        movieActorViewModel.insert(MovieActor(currentMovie.id, actorID))
                     }
                     obtainedMovie.genres.split(',').forEach { genreName->
                         val genreID: Long = try {
@@ -89,29 +93,27 @@ class MovieEditor : AppCompatActivity() {
                         }catch (e: java.lang.Exception){
                             genreViewModel.insertReturn(Genre(0,genreName,false))
                         }
-                        movieGenreViewModel.insert(MovieGenre(movie.id, genreID))
+                        movieGenreViewModel.insert(MovieGenre(currentMovie.id, genreID))
                     }
                 }
             }
             true
         }
         R.id.btn_editor_fav -> {
-            movie.favorite = !movie.favorite
-            val favIcon = if(movie.favorite) ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_24) else ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_border_24)
-            favIcon?.setTint(getColor(R.color.Toolbar_Primary))
-            item.icon = favIcon
-            item.title = getString(if(movie.favorite)R.string.title_contextual_rmv_fav else R.string.title_contextual_add_fav)
+            currentMovie.favorite = !currentMovie.favorite
+            setFavoriteItem(currentMovie.favorite, item)
             true
         }
         R.id.btn_editor_save -> {
-            movie.title = binding.etMovieEditorTitle.text.toString().trim()
-            movie.description = binding.etMovieEditorDescription.text.toString().trim()
-            movie.year = Movie.MIN_YEAR + binding.spinnerMovieEditorYear.selectedItemPosition
-            movie.runtime = binding.etMovieEditorRuntime.text.toString().toIntOrNull()?:movie.runtime
-            if(validRating) {movie.rating = binding.etMovieEditorRating.text.toString().toFloat()}
-            movie.votes = binding.etMovieEditorVotes.text.toString().toIntOrNull()?:movie.votes
-            movie.revenue = binding.etMovieEditorRuntime.text.toString().toFloatOrNull()?:movie.revenue
-            movieViewModel.update(movie)
+            currentMovie.title = binding.etMovieEditorTitle.text.toString().trim()
+            currentMovie.description = binding.etMovieEditorDescription.text.toString().trim()
+            currentMovie.director = binding.etMovieEditorDirector.text.toString().trim()
+            currentMovie.year = Movie.MIN_YEAR + binding.spinnerMovieEditorYear.selectedItemPosition
+            currentMovie.runtime = binding.etMovieEditorRuntime.text.toString().toIntOrNull()?:currentMovie.runtime
+            if(validRating) {currentMovie.rating = binding.etMovieEditorRating.text.toString().toFloat()}
+            currentMovie.votes = binding.etMovieEditorVotes.text.toString().toIntOrNull()?:currentMovie.votes
+            currentMovie.revenue = binding.etMovieEditorRevenue.text.toString().toFloatOrNull()?:currentMovie.revenue
+            movieViewModel.update(currentMovie)
             saved = true
             finish()
             true
@@ -137,41 +139,42 @@ class MovieEditor : AppCompatActivity() {
         }
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, years)
         binding.spinnerMovieEditorYear.adapter = adapter
-        movie = (intent?.extras?.getSerializable(OBJECT) as Movie?)!!
+        currentMovie = (intent?.extras?.getSerializable(OBJECT) as Movie?)!!
+        invalidateOptionsMenu()
         binding.imMovieEditorPoster.setOnClickListener {
             CoroutineScope(IO + Movie.posterFetcherJob).launch{
-                movie.posterURL = movie.getPosterURLFromOMDbAPI() ?: Movie.MOVIE_NOT_FOUND
-                loadPoster(movie.posterURL)
+                currentMovie.posterURL = currentMovie.getPosterURLFromOMDbAPI() ?: Movie.MOVIE_NOT_FOUND
+                loadPoster(currentMovie.posterURL)
             }
         }
-        loadPoster(movie.posterURL)
-        binding.etMovieEditorTitle.setText(movie.title, TextView.BufferType.EDITABLE)
-        if(movie.year in Movie.MIN_YEAR..thisYear) {
-            binding.spinnerMovieEditorYear.setSelection(movie.year - Movie.MIN_YEAR)
+        loadPoster(currentMovie.posterURL)
+        binding.etMovieEditorTitle.setText(currentMovie.title, TextView.BufferType.EDITABLE)
+        if(currentMovie.year in Movie.MIN_YEAR..thisYear) {
+            binding.spinnerMovieEditorYear.setSelection(currentMovie.year - Movie.MIN_YEAR)
         }
-        if (movie.runtime != -1){
-            binding.etMovieEditorRuntime.setText(movie.runtime.toString(), TextView.BufferType.EDITABLE)
+        if (currentMovie.runtime != -1){
+            binding.etMovieEditorRuntime.setText(currentMovie.runtime.toString(), TextView.BufferType.EDITABLE)
         }
-        binding.etMovieEditorDirector.setText(movie.director, TextView.BufferType.EDITABLE)
-        binding.etMovieEditorDescription.setText(movie.description, TextView.BufferType.EDITABLE)
-        if (movie.revenue != -1F){
-            binding.etMovieEditorRevenue.setText(movie.revenue.toString(), TextView.BufferType.EDITABLE)
+        binding.etMovieEditorDirector.setText(currentMovie.director, TextView.BufferType.EDITABLE)
+        binding.etMovieEditorDescription.setText(currentMovie.description, TextView.BufferType.EDITABLE)
+        if (currentMovie.revenue != -1F){
+            binding.etMovieEditorRevenue.setText(currentMovie.revenue.toString(), TextView.BufferType.EDITABLE)
         }
-        if (movie.votes != -1){
-            binding.etMovieEditorVotes.setText(movie.votes.toString(), TextView.BufferType.EDITABLE)
+        if (currentMovie.votes != -1){
+            binding.etMovieEditorVotes.setText(currentMovie.votes.toString(), TextView.BufferType.EDITABLE)
         }
-        if (movie.rating != -1F){
-            binding.etMovieEditorRating.setText(movie.rating.toString(), TextView.BufferType.EDITABLE)
+        if (currentMovie.rating != -1F){
+            binding.etMovieEditorRating.setText(currentMovie.rating.toString(), TextView.BufferType.EDITABLE)
         }
         val actorsAdapter = ActorListAdapter(this, actorViewModel, this, false,
             onDelete = { deletedActor->
-                movieActorViewModel.delete(MovieActor(movie.id, deletedActor.id))
-                if (movie.id !in DatabaseFetcher.Companion.Updates.movies){
-                    DatabaseFetcher.Companion.Updates.movies.add(movie.id)
+                movieActorViewModel.delete(MovieActor(currentMovie.id, deletedActor.id))
+                if (currentMovie.id !in DatabaseFetcher.Companion.Updates.movies){
+                    DatabaseFetcher.Companion.Updates.movies.add(currentMovie.id)
                 }
             }
         )
-        movieViewModel.getActors(movie.id).observe(this){actorsInMovie ->
+        movieViewModel.getActors(currentMovie.id).observe(this){ actorsInMovie ->
             actorsInMovie.let { actorsInMovieNotNull->
                 actorsInList = List(actorsInMovieNotNull.size){
                     actorsInMovieNotNull[it]
@@ -184,25 +187,25 @@ class MovieEditor : AppCompatActivity() {
                 }
             }
         }
-        binding.rvActors.adapter = actorsAdapter
-        binding.rvActors.layoutManager = LinearLayoutManager(this)
+        binding.rvMovieEditorActors.adapter = actorsAdapter
+        binding.rvMovieEditorActors.layoutManager = LinearLayoutManager(this)
         binding.ibMovieEditorSelectActors.setOnClickListener {
             startActivity(
                 Intent(this, ItemPicker::class.java)
                 .putExtra(ItemPicker.PICKED, ItemPicker.ACTOR)
                 .putExtra(ItemPicker.PICKER, ItemPicker.MOVIE)
-                .putExtra(ItemPicker.OBJECT_ID, movie.id)
+                .putExtra(ItemPicker.OBJECT_ID, currentMovie.id)
             )
         }
         val genresAdapter = GenreListAdapter(this, genreViewModel, this, false,
             onDelete = { deletedGenre->
-                movieGenreViewModel.delete(MovieGenre(movie.id, deletedGenre.id))
-                if (movie.id !in DatabaseFetcher.Companion.Updates.movies){
-                    DatabaseFetcher.Companion.Updates.movies.add(movie.id)
+                movieGenreViewModel.delete(MovieGenre(currentMovie.id, deletedGenre.id))
+                if (currentMovie.id !in DatabaseFetcher.Companion.Updates.movies){
+                    DatabaseFetcher.Companion.Updates.movies.add(currentMovie.id)
                 }
             }
         )
-        movieViewModel.getGenres(movie.id).observe(this){genresInMovie ->
+        movieViewModel.getGenres(currentMovie.id).observe(this){ genresInMovie ->
             genresInMovie.let { genresInMovieNotNull->
                 genresInList = List(genresInMovieNotNull.size){
                     genresInMovieNotNull[it]
@@ -215,34 +218,34 @@ class MovieEditor : AppCompatActivity() {
                 }
             }
         }
-        binding.rvGenres.adapter = genresAdapter
-        binding.rvGenres.layoutManager = LinearLayoutManager(this)
+        binding.rvMovieEditorGenres.adapter = genresAdapter
+        binding.rvMovieEditorGenres.layoutManager = LinearLayoutManager(this)
         binding.ibMovieEditorSelectGenres.setOnClickListener {
             startActivity(
                 Intent(this, ItemPicker::class.java)
                     .putExtra(ItemPicker.PICKED, ItemPicker.GENRE)
                     .putExtra(ItemPicker.PICKER, ItemPicker.MOVIE)
-                    .putExtra(ItemPicker.OBJECT_ID, movie.id)
+                    .putExtra(ItemPicker.OBJECT_ID, currentMovie.id)
             )
         }
         binding.tvMovieEditorActors.setOnClickListener {
-            if (binding.rvActors.visibility == View.GONE){
-                binding.rvActors.visibility = View.VISIBLE
+            if (binding.rvMovieEditorActors.visibility == View.GONE){
+                binding.rvMovieEditorActors.visibility = View.VISIBLE
                 binding.ibMovieEditorSelectActors.visibility = View.VISIBLE
                 binding.ibMovieEditorShowActors.rotation =  binding.ibMovieEditorShowActors.rotation + 180
-            } else if (binding.rvActors.visibility == View.VISIBLE){
-                binding.rvActors.visibility = View.GONE
+            } else if (binding.rvMovieEditorActors.visibility == View.VISIBLE){
+                binding.rvMovieEditorActors.visibility = View.GONE
                 binding.ibMovieEditorSelectActors.visibility = View.GONE
                 binding.ibMovieEditorShowActors.rotation =  binding.ibMovieEditorShowActors.rotation - 180
             }
         }
         binding.tvMovieEditorGenres.setOnClickListener {
-            if (binding.rvGenres.visibility == View.GONE){
-                binding.rvGenres.visibility = View.VISIBLE
+            if (binding.rvMovieEditorGenres.visibility == View.GONE){
+                binding.rvMovieEditorGenres.visibility = View.VISIBLE
                 binding.ibMovieEditorSelectGenres.visibility = View.VISIBLE
                 binding.ibMovieEditorShowGenres.rotation =  binding.ibMovieEditorShowGenres.rotation + 180
-            } else if (binding.rvGenres.visibility == View.VISIBLE){
-                binding.rvGenres.visibility = View.GONE
+            } else if (binding.rvMovieEditorGenres.visibility == View.VISIBLE){
+                binding.rvMovieEditorGenres.visibility = View.GONE
                 binding.ibMovieEditorSelectGenres.visibility = View.GONE
                 binding.ibMovieEditorShowGenres.rotation =  binding.ibMovieEditorShowGenres.rotation - 180
             }
@@ -263,22 +266,22 @@ class MovieEditor : AppCompatActivity() {
         if(!saved){
             originalActors?.forEach {
                 if(!actorsInList.contains(it)){
-                    movieActorViewModel.insert(MovieActor(movie.id, it))
+                    movieActorViewModel.insert(MovieActor(currentMovie.id, it))
                 }
             }
             actorsInList.forEach {
                 if(originalActors?.contains(it) == false){
-                    movieActorViewModel.delete(MovieActor(movie.id, it))
+                    movieActorViewModel.delete(MovieActor(currentMovie.id, it))
                 }
             }
             originalGenres?.forEach {
                 if(!genresInList.contains(it)){
-                    movieActorViewModel.insert(MovieActor(movie.id, it))
+                    movieActorViewModel.insert(MovieActor(currentMovie.id, it))
                 }
             }
             genresInList.forEach {
                 if(originalGenres?.contains(it) == false){
-                    movieActorViewModel.delete(MovieActor(movie.id, it))
+                    movieActorViewModel.delete(MovieActor(currentMovie.id, it))
                 }
             }
         }
@@ -310,7 +313,12 @@ class MovieEditor : AppCompatActivity() {
             }
         }
     }
-
+    private fun setFavoriteItem(favorite: Boolean, item: MenuItem){
+        val favIcon = if(favorite) ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_24) else ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_border_24)
+        favIcon?.setTint(getColor(R.color.Toolbar_Primary))
+        item.icon = favIcon
+        item.title = getString(if(favorite)R.string.title_contextual_rmv_fav else R.string.title_contextual_add_fav)
+    }
     companion object {
         const val NEW = "New?"
         const val OBJECT = "Movie object"

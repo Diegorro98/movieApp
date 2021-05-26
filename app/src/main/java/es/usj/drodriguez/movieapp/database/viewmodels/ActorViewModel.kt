@@ -21,6 +21,7 @@ class ActorViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun update(actor: Actor) = viewModelScope.launch {
         repository.updateActor(actor)
     }
+    fun getByID(ID: Long) = repository.getActorByID(ID).asLiveData()
     fun getByID(IDs: List<Long>) = repository.getActorByID(IDs).asLiveData()
     fun getFavorites() = repository.getFavoriteActors().asLiveData()
     fun getMovies(actorID: Long) = repository.getActorMovies(actorID).asLiveData()

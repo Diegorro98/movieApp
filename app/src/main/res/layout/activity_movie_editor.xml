@@ -26,7 +26,6 @@
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tb_movie_editor"
-        app:layout_constraintVertical_bias="1.0"
         tools:layout_editor_absoluteX="0dp">
 
 
@@ -284,7 +283,7 @@
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_actors"
+                android:id="@+id/rv_movie_editor_actors"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -314,7 +313,7 @@
                 android:text="@string/movie_genres"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rv_actors"
+                app:layout_constraintTop_toBottomOf="@+id/rv_movie_editor_actors"
                 android:hapticFeedbackEnabled="true"/>
 
             <ImageButton
@@ -333,7 +332,7 @@
                 tools:ignore="ContentDescription" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_genres"
+                android:id="@+id/rv_movie_editor_genres"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

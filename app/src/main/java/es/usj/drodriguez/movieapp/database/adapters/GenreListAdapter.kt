@@ -19,6 +19,7 @@ import es.usj.drodriguez.movieapp.R
 import es.usj.drodriguez.movieapp.database.classes.Genre
 import es.usj.drodriguez.movieapp.database.viewmodels.GenreViewModel
 import es.usj.drodriguez.movieapp.editors.ActorGenreEditor
+import es.usj.drodriguez.movieapp.visors.ActorGenreVisor
 
 class GenreListAdapter(
     private val activity: Activity?,
@@ -27,8 +28,8 @@ class GenreListAdapter(
     private val editButton: Boolean = true,
     private val onFavorite: ( (currentGenre: Genre) -> Unit)? = null,
     private val onDelete: ( (currentGenre: Genre) -> Unit)? = null,
-    private val onCardClick: (cardView: View, currentGenre: Genre) -> Unit = { _, currentGenre: Genre ->
-        TODO("startActivity(context ,Intent(context, MovieVisor::class.java).putExtra(MovieVisor.OBJECT, currentMovie), null)")
+    private val onCardClick: (cardView: View, currentGenre: Genre, context : Context) -> Unit = { _, currentGenre, context ->
+        startActivity(context ,Intent(context, ActorGenreVisor::class.java).putExtra(ActorGenreVisor.OBJECT_ID, currentGenre.id).putExtra(ActorGenreVisor.CLASS,ActorGenreVisor.GENRE), null)
     }): ListAdapter<Genre, ActorGenreHolder>(GenreComparator) {
     private lateinit var context : Context
     var selectedMovies: List<Long> = emptyList()
@@ -61,7 +62,7 @@ class GenreListAdapter(
             setSelect(false, holder.cardView)
         }
         holder.cardView.setOnClickListener {
-            onCardClick.invoke(it,currentGenre)
+            onCardClick.invoke(it,currentGenre, context)
         }
         holder.cardView.setOnLongClickListener {
             if (!it.isSelected) {
@@ -106,7 +107,7 @@ class GenreListAdapter(
                     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
                         mode?.finish()
                         return when (item?.itemId) {
-                            R.id.btn_edit -> {
+                            R.id.btn_tb_contextual_edit -> {
                                 startActivity(
                                     context,
                                     Intent(context, ActorGenreEditor::class.java)
@@ -116,11 +117,11 @@ class GenreListAdapter(
                                 )
                                 true
                             }
-                            R.id.btn_set_fav -> {
+                            R.id.btn_tb_contextual_fav -> {
                                 onFavorite?.invoke(currentGenre)
                                 true
                             }
-                            R.id.btn_delete -> {
+                            R.id.btn_tb_contextual_delete -> {
                                 onDelete?.invoke(currentGenre)
                                 true
                             }

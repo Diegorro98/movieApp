@@ -23,6 +23,7 @@ class GenreViewModel(private val repository: DatabaseRepository):ViewModel() {
     fun update(genre: Genre) = viewModelScope.launch {
         repository.updateGenre(genre)
     }
+    fun getByID(ID: Long) = repository.getGenreByID(ID).asLiveData()
     fun getByID(IDs: List<Long>) = repository.getGenreByID(IDs).asLiveData()
     fun getFavorites() = repository.getFavoriteGenres().asLiveData()
     fun getMovies(genreID: Long) = repository.getGenreMovies(genreID).asLiveData()

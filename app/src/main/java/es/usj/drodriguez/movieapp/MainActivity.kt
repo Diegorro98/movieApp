@@ -26,7 +26,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_main, menu)
-        val searchInList =  menu?.findItem(R.id.btn_search)?.actionView as SearchView
+        val searchInList =  menu?.findItem(R.id.btn_tb_main_search)?.actionView as SearchView
         searchInList.queryHint = getString(R.string.searchMovie)
         searchInList.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String) = false
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
        }
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.btn_fav -> {
+        R.id.btn_tb_main_fav -> {
             item.isChecked = !item.isChecked
             Lists.onlyFavs.postValue(item.isChecked)
             val favIcon = if(item.isChecked) ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_24) else ContextCompat.getDrawable(this,R.drawable.ic_baseline_star_border_24)
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             item.title = getString(if(item.isChecked)R.string.btn_no_fav_title else R.string.btn_fav_title)
             true
         }
-        R.id.btn_contact -> {
+        R.id.btn_tb_main_contact -> {
             startActivity(Intent(this, Contact::class.java))
             true
         }

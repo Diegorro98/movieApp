@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".editors.ActorGenreEditor">
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tb_a_g"
+        android:id="@+id/tb_a_g_editor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -26,7 +26,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/actor_genre_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tb_a_g" />
+        app:layout_constraintTop_toBottomOf="@+id/tb_a_g_editor" />
 
     <EditText
         android:id="@+id/et_a_g_name"
@@ -63,7 +63,7 @@
         tools:ignore="ContentDescription" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_items"
+        android:id="@+id/rv_a_g_editor_items"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

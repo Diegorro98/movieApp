@@ -3,22 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:title="@string/btn_search_title"
-        android:id="@+id/btn_search"
+        android:id="@+id/btn_tb_main_search"
         android:icon="@drawable/baseline_search_24"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView"/>
-    <group android:checkableBehavior="all">
-        <item
-            android:id="@+id/btn_fav"
-            android:title="@string/btn_fav_title"
-            android:checkable="true"
-            android:icon="@drawable/ic_baseline_star_border_24"
-            app:showAsAction="ifRoom"
-            />
-    </group>
+    <item
+    android:id="@+id/btn_tb_main_fav"
+    android:title="@string/btn_fav_title"
+    android:checkable="true"
+    android:icon="@drawable/ic_baseline_star_border_24"
+    app:showAsAction="ifRoom"
+    />
+
     <item
         android:title="@string/contact_title"
-        android:id="@+id/btn_contact"
+        android:id="@+id/btn_tb_main_contact"
         android:icon="@drawable/outline_person_24"
         app:showAsAction="ifRoom">
     </item>

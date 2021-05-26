@@ -142,7 +142,7 @@ class DatabaseFetcher(
             var endedFetcher = false
             var fetcher: DatabaseFetcher
             val lastUpdate = DatabasePreferences(context).getLastUpdate(Context.MODE_PRIVATE)
-            val manager : FragmentManager = (context as FragmentActivity).supportFragmentManager //TODO is save to do this cast? It works, but...
+            val manager : FragmentManager = (context as FragmentActivity).supportFragmentManager
             CoroutineScope(IO + job).launch {
                 while (!endedFetcher) {
                     if (DatabasePreferences(context).isOnline(Context.MODE_PRIVATE)) {

@@ -13,7 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieApp"
         android:usesCleartextTraffic="true">
-        <activity android:name=".editors.ItemPicker"/>
+        <activity android:name=".visors.MovieVisor"/>
+        <activity android:name=".visors.ActorGenreVisor" />
+        <activity android:name=".editors.ItemPicker" />
         <activity android:name=".editors.MovieEditor" />
         <activity android:name=".editors.ActorGenreEditor" />
         <activity
