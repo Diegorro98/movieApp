@@ -140,27 +140,65 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_movie_visor_year" />
 
             <TextView
+                android:id="@+id/tv_movie_visor_revenue_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:text="@string/movie_revenue"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/tv_movie_visor_revenue"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_movie_visor_description" />
+
+            <TextView
                 android:id="@+id/tv_movie_visor_revenue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:maxLines="1"
                 android:text="@string/movie_revenue"
                 android:textSize="22sp"
                 app:layout_constraintEnd_toStartOf="@+id/tv_movie_visor_votes"
                 app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tv_movie_visor_dollar_sing"
+                app:layout_constraintTop_toBottomOf="@+id/tv_movie_visor_revenue_description" />
+
+            <TextView
+                android:id="@+id/tv_movie_visor_dollar_sing"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:maxLines="1"
+                android:text="$"
+                android:textSize="22sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_movie_visor_description" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_movie_visor_revenue_description"
+                tools:ignore="HardcodedText" />
 
             <TextView
                 android:id="@+id/tv_movie_visor_votes"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
                 android:maxLines="1"
                 android:text="@string/movie_votes"
                 android:textSize="22sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tv_movie_visor_revenue"
+                app:layout_constraintTop_toTopOf="@+id/tv_movie_visor_revenue" />
+
+            <TextView
+                android:id="@+id/tv_movie_visor_votes2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:text="@string/movie_votes"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/tv_movie_visor_revenue"

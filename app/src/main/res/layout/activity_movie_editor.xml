@@ -69,11 +69,11 @@
                 android:layout_marginStart="16dp"
                 android:ems="10"
                 android:hint="@string/movie_editor_title_hint"
+                android:importantForAutofill="no"
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/im_movie_editor_poster"
-                app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_title"
-                android:importantForAutofill="no" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_title" />
 
             <TextView
                 android:id="@+id/tv_movie_editor_year"
@@ -112,12 +112,12 @@
                 android:layout_marginStart="8dp"
                 android:ems="10"
                 android:hint="@string/movie_editor_runtime_hint"
+                android:importantForAutofill="no"
                 android:inputType="number"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/spinner_movie_editor_year"
-                app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_runtime"
-                android:importantForAutofill="no" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_runtime" />
 
             <TextView
                 android:id="@+id/tv_movie_editor_director"
@@ -134,11 +134,11 @@
                 android:layout_height="40dp"
                 android:ems="10"
                 android:hint="@string/movie_editor_director_hint"
+                android:importantForAutofill="no"
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_movie_editor_director"
-                app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_director"
-                android:importantForAutofill="no" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_director" />
 
             <TextView
                 android:id="@+id/tv_movie_editor_description"
@@ -153,13 +153,13 @@
                 android:id="@+id/et_movie_editor_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
                 android:hint="@string/movie_editor_description_hint"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_description"
-                android:importantForAutofill="no" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_description" />
 
 
             <TextView
@@ -177,27 +177,26 @@
                 android:layout_height="40dp"
                 android:ems="10"
                 android:hint="$$$.$$$"
+                android:importantForAutofill="no"
                 android:inputType="numberDecimal"
                 app:layout_constraintEnd_toStartOf="@+id/et_movie_editor_votes"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_movie_editor_dollar"
                 app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_revenue"
-                android:importantForAutofill="no"
                 tools:ignore="HardcodedText" />
 
             <EditText
                 android:id="@+id/et_movie_editor_votes"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="8dp"
                 android:ems="10"
                 android:hint="299792"
+                android:importantForAutofill="no"
                 android:inputType="number"
                 app:layout_constraintEnd_toStartOf="@+id/et_movie_editor_rating"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/et_movie_editor_revenue"
                 app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_votes"
-                android:importantForAutofill="no"
                 tools:ignore="HardcodedText" />
 
             <TextView
@@ -223,28 +222,28 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:textColor="#AC0000"
                 android:text="0-10"
+                android:textColor="#AC0000"
                 android:textSize="12sp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_movie_editor_rating"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tv_movie_editor_rating"
-                tools:ignore="HardcodedText"
-                android:visibility="gone"/>
+                tools:ignore="HardcodedText" />
+
             <EditText
                 android:id="@+id/et_movie_editor_rating"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:layout_marginStart="8dp"
                 android:ems="10"
                 android:hint="9.807"
+                android:importantForAutofill="no"
                 android:inputType="numberDecimal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/et_movie_editor_votes"
                 app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_rating"
-                tools:ignore="HardcodedText"
-                android:importantForAutofill="no" />
+                tools:ignore="HardcodedText" />
 
             <ImageButton
                 android:id="@+id/ib_movie_editor_show_actors"
@@ -256,6 +255,7 @@
                 app:layout_constraintTop_toTopOf="@+id/tv_movie_editor_actors"
                 app:srcCompat="@drawable/ic_baseline_keyboard_arrow_24"
                 tools:ignore="ContentDescription" />
+
             <TextView
                 android:id="@+id/tv_movie_editor_actors"
                 android:layout_width="0dp"
@@ -272,9 +272,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:backgroundTint="#00FFFFFF"
-                android:visibility="gone"
-                android:translationZ="5dp"
                 android:outlineProvider="none"
+                android:translationZ="5dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_movie_editor_actors"
                 app:layout_constraintEnd_toStartOf="@id/ib_movie_editor_show_actors"
                 app:layout_constraintTop_toTopOf="@+id/tv_movie_editor_actors"
@@ -303,32 +303,32 @@
                 app:layout_constraintEnd_toEndOf="@+id/tv_movie_editor_genres"
                 app:layout_constraintTop_toTopOf="@+id/tv_movie_editor_genres"
                 app:srcCompat="@drawable/ic_baseline_keyboard_arrow_24"
-                tools:ignore="ContentDescription"/>
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/tv_movie_editor_genres"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:hapticFeedbackEnabled="true"
                 android:text="@string/movie_genres"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/rv_movie_editor_actors"
-                android:hapticFeedbackEnabled="true"/>
+                app:layout_constraintTop_toBottomOf="@+id/rv_movie_editor_actors" />
 
             <ImageButton
                 android:id="@+id/ib_movie_editor_select_genres"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:backgroundTint="#00FFFFFF"
+                android:hapticFeedbackEnabled="true"
                 android:outlineProvider="none"
-                android:visibility="gone"
                 android:translationZ="5dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_movie_editor_genres"
                 app:layout_constraintEnd_toStartOf="@id/ib_movie_editor_show_genres"
                 app:layout_constraintTop_toTopOf="@+id/tv_movie_editor_genres"
                 app:srcCompat="@drawable/outline_add_24"
-                android:hapticFeedbackEnabled="true"
                 tools:ignore="ContentDescription" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -342,6 +342,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_genres"
                 tools:listitem="@layout/actor_genre_item" />
+
+            <TextView
+                android:id="@+id/tv_movie_editor_dollar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/et_movie_editor_revenue"
+                app:layout_constraintEnd_toStartOf="@+id/et_movie_editor_revenue"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_movie_editor_revenue"
+                app:layout_constraintVertical_bias="0.30"
+                tools:ignore="HardcodedText" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
