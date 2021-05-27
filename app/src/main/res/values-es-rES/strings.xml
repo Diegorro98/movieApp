@@ -23,7 +23,6 @@
     <string name="tv_splashscreen_info_first_fetch">Descargando la base de datos</string>
     <string name="tv_host_dialog_reconnect_title">No se ha podido conectar al host</string>
     <string name="tv_host_dialog_reconnect_message">" Especifique otro o reintentelo mas tarde"</string>
-    <string name="toast_host_dialog">Pulse atrás para continuar sin conexion</string>
     <string name="tv_splashscreen_info_update_complete">Actualizacion completada</string>
     <string name="tv_splashscreen_info_offline_mode">Modo sin conexion</string>
     <string name="tv_movie_item_runtime">%d minutos</string>
@@ -37,7 +36,6 @@
     <string name="title_contextual_add_fav">Añadir a favoritos</string>
     <string name="title_contextual_rmv_fav">Quitar de favoritos</string>
     <string name="title_contextual_edit">Editar</string>
-    <string name="tv_editor_empty_name">El nombre no puede estar vacio</string>
     <string name="movie_poster">Poster</string>
     <string name="movie_title">Titulo</string>
     <string name="movie_year">Año</string>

@@ -31,7 +31,7 @@ class ItemPicker : AppCompatActivity() {
                 val picker = intent?.extras?.getString(PICKER).toString()
                 val adapter = MovieListAdapter(this, movieViewModel,false,
                     onCardClick = { cardView, currentMovie, _ ->
-                        DatabaseFetcher.Companion.Updates.movies.add(currentMovie.id)
+                        DatabaseFetcher.updated.movies.add(currentMovie)
                         if (cardView.isSelected) {
                             when (picker) {
                                 ACTOR -> movieActorViewModel.delete(MovieActor(currentMovie.id, objectID))
@@ -63,7 +63,6 @@ class ItemPicker : AppCompatActivity() {
             ACTOR -> {
                 val adapter = ActorListAdapter(this, actorViewModel, this, false,
                 onCardClick = {cardView, currentActor, _ ->
-                    DatabaseFetcher.Companion.Updates.movies.add(objectID)
                     if (cardView.isSelected) {
                         movieActorViewModel.delete(MovieActor(objectID, currentActor.id))
                     } else {
@@ -83,7 +82,6 @@ class ItemPicker : AppCompatActivity() {
             GENRE -> {
                 val adapter = GenreListAdapter(this, genreViewModel, this, false,
                     onCardClick = {cardView, currentActor, _ ->
-                        DatabaseFetcher.Companion.Updates.movies.add(objectID)
                         if (cardView.isSelected) {
                             movieGenreViewModel.delete(MovieGenre(objectID, currentActor.id))
                         } else {

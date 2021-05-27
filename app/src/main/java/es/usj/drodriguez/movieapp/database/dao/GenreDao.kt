@@ -23,12 +23,16 @@ interface GenreDao {
 
     @Delete
     suspend fun delete(genre: Genre)
+    @Query("DELETE FROM ${Genre.TABLE_NAME}")
+    suspend fun nukeTable()
 
     @Query("UPDATE ${Genre.TABLE_NAME} SET ${Genre.FAVORITE} = :favorite WHERE ${Genre.ID} = :id")
     suspend fun setFavorite(id: Long, favorite: Boolean)
 
     @Query ("SELECT * FROM ${Genre.TABLE_NAME} ORDER BY ${Genre.NAME} ASC")
     fun getAll(): Flow<List<Genre>>
+    @Query ("SELECT * FROM ${Genre.TABLE_NAME} ORDER BY ${Genre.NAME} ASC")
+    suspend fun getAllNoFlow(): List<Genre>
     @Query ("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.FAVORITE} = 1 ORDER BY ${Genre.NAME} ASC")
     fun getFavorites(): Flow<List<Genre>>
     @Query("SELECT * FROM ${Genre.TABLE_NAME} WHERE ${Genre.ID} = :ID")

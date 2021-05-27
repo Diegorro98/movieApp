@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import es.usj.drodriguez.movieapp.R
+import es.usj.drodriguez.movieapp.database.DatabaseFetcher
 import es.usj.drodriguez.movieapp.database.adapters.ActorListAdapter
 import es.usj.drodriguez.movieapp.database.adapters.GenreListAdapter
 import es.usj.drodriguez.movieapp.database.classes.Movie
@@ -52,6 +53,14 @@ class MovieVisor : AppCompatActivity() {
         }
         R.id.btn_tb_contextual_delete -> {
             movieViewModel.delete(currentMovie)
+            if(DatabaseFetcher.added.movies.contains(currentMovie)){
+                DatabaseFetcher.added.movies.remove(currentMovie)
+            }else{
+                if (DatabaseFetcher.updated.movies.contains(currentMovie)){
+                    DatabaseFetcher.updated.movies.remove(currentMovie)
+                }
+                DatabaseFetcher.deleted.movies.add(currentMovie)
+            }
             finish()
             true
         }

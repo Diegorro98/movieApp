@@ -72,7 +72,7 @@ class MovieEditor : AppCompatActivity() {
                         }
                         val runtime = obtainedMovie.runtime.substringBefore(' ',"")
                         binding.etMovieEditorRuntime.setText(runtime, TextView.BufferType.EDITABLE)
-                        binding.etMovieEditorDirector.setText(obtainedMovie.director, TextView.BufferType.EDITABLE)
+                        binding.etMovieEditorDirector.setText(obtainedMovie.director.substringBefore(','), TextView.BufferType.EDITABLE)
                         binding.etMovieEditorDescription.setText(obtainedMovie.plot, TextView.BufferType.EDITABLE)
                         val revenue = obtainedMovie.boxOffice.replace(",","").replace("$","").toFloat()
                         binding.etMovieEditorRevenue.setText(revenue.div(1000000F).toString(), TextView.BufferType.EDITABLE)
@@ -81,17 +81,17 @@ class MovieEditor : AppCompatActivity() {
                     }
                     obtainedMovie.actors.split(',').forEach { actorName->
                         val actorID: Long = try {
-                            actorViewModel.getByNameNoFlow(actorName).id
+                            actorViewModel.getByNameNoFlow(actorName.trim()).id
                         }catch (e: java.lang.Exception){
-                            actorViewModel.insertReturn(Actor(0,actorName,false))
+                            actorViewModel.insertReturn(Actor(0,actorName.trim(),false))
                         }
                         movieActorViewModel.insert(MovieActor(currentMovie.id, actorID))
                     }
                     obtainedMovie.genres.split(',').forEach { genreName->
                         val genreID: Long = try {
-                            genreViewModel.getByNameNoFlow(genreName).id
+                            genreViewModel.getByNameNoFlow(genreName.trim()).id
                         }catch (e: java.lang.Exception){
-                            genreViewModel.insertReturn(Genre(0,genreName,false))
+                            genreViewModel.insertReturn(Genre(0,genreName.trim(),false))
                         }
                         movieGenreViewModel.insert(MovieGenre(currentMovie.id, genreID))
                     }
@@ -114,6 +114,14 @@ class MovieEditor : AppCompatActivity() {
             currentMovie.votes = binding.etMovieEditorVotes.text.toString().toIntOrNull()?:currentMovie.votes
             currentMovie.revenue = binding.etMovieEditorRevenue.text.toString().toFloatOrNull()?:currentMovie.revenue
             movieViewModel.update(currentMovie)
+            when(new){
+                true -> DatabaseFetcher.added.movies.add(currentMovie)
+                false -> {
+                    if(!DatabaseFetcher.added.movies.contains(currentMovie)) {
+                        DatabaseFetcher.updated.movies.add(currentMovie)
+                    }
+                }
+            }
             saved = true
             finish()
             true
@@ -130,8 +138,8 @@ class MovieEditor : AppCompatActivity() {
             finish()
         }
         picasso = Picasso.Builder(this)
-        new = intent?.extras?.getBoolean(ActorGenreEditor.NEW, false) == true
-        supportActionBar?.title = if(intent?.extras?.getBoolean(NEW, false) == true) getString(R.string.movie_editor_new_title) else getString(R.string.movie_editor_edit_title)
+        new = intent?.extras?.getBoolean(NEW, false) == true
+        supportActionBar?.title = if(new) getString(R.string.movie_editor_new_title) else getString(R.string.movie_editor_edit_title)
         val years = ArrayList<String>()
         val thisYear: Int = Calendar.getInstance().get(Calendar.YEAR)
         for (i in Movie.MIN_YEAR..thisYear) {
@@ -169,9 +177,7 @@ class MovieEditor : AppCompatActivity() {
         val actorsAdapter = ActorListAdapter(this, actorViewModel, this, false,
             onDelete = { deletedActor->
                 movieActorViewModel.delete(MovieActor(currentMovie.id, deletedActor.id))
-                if (currentMovie.id !in DatabaseFetcher.Companion.Updates.movies){
-                    DatabaseFetcher.Companion.Updates.movies.add(currentMovie.id)
-                }
+                DatabaseFetcher.updated.movies.add(currentMovie)
             }
         )
         movieViewModel.getActors(currentMovie.id).observe(this){ actorsInMovie ->
@@ -200,9 +206,7 @@ class MovieEditor : AppCompatActivity() {
         val genresAdapter = GenreListAdapter(this, genreViewModel, this, false,
             onDelete = { deletedGenre->
                 movieGenreViewModel.delete(MovieGenre(currentMovie.id, deletedGenre.id))
-                if (currentMovie.id !in DatabaseFetcher.Companion.Updates.movies){
-                    DatabaseFetcher.Companion.Updates.movies.add(currentMovie.id)
-                }
+                DatabaseFetcher.updated.movies.add(currentMovie)
             }
         )
         movieViewModel.getGenres(currentMovie.id).observe(this){ genresInMovie ->

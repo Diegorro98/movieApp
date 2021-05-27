@@ -30,7 +30,6 @@ class ActorGenreEditor : AppCompatActivity() {
     private var new = false
     private var saved = false
     private lateinit var save: () -> Unit
-    private lateinit var delete: () -> Unit
     private lateinit var favorite: () -> Boolean
     private var originalMovies: List<Long>? = null
     private var moviesInList: List<Long> = emptyList()
@@ -79,8 +78,15 @@ class ActorGenreEditor : AppCompatActivity() {
                 save = {
                     currentActor.name = binding.etAGName.text.toString().trim()
                     actorViewModel.update(currentActor)
+                    when(new){
+                        true -> DatabaseFetcher.added.actors.add(currentActor)
+                        false -> {
+                            if(!DatabaseFetcher.added.actors.contains(currentActor)) {
+                                DatabaseFetcher.updated.actors.add(currentActor)
+                            }
+                        }
+                    }
                 }
-                delete = {actorViewModel.delete(currentActor)}
                 favorite = {
                     currentActor.favorite = !currentActor.favorite
                     currentActor.favorite
@@ -89,9 +95,7 @@ class ActorGenreEditor : AppCompatActivity() {
                 val adapter = MovieListAdapter(this, movieViewModel, false,
                     onDelete = { deletedMovie ->
                         movieActorViewModel.delete(MovieActor(deletedMovie.id, currentActor.id))
-                        if (deletedMovie.id !in DatabaseFetcher.Companion.Updates.movies){
-                            DatabaseFetcher.Companion.Updates.movies.add(deletedMovie.id)
-                        }
+                        DatabaseFetcher.updated.movies.add(deletedMovie)
                     }
                 )
                 actorViewModel.getMovies(currentActor.id).observe(this) { moviesActors ->
@@ -120,16 +124,21 @@ class ActorGenreEditor : AppCompatActivity() {
 
             GENRE -> {
                 val genreViewModel: GenreViewModel by viewModels { GenreViewModelFactory((application as DatabaseApp).repository) }
-                supportActionBar?.title = if (intent?.extras?.getBoolean(NEW, false) == true) getString(R.string.actor_editor_new_title) else getString(R.string.genre_editor_edit_title)
+                supportActionBar?.title = if (new) getString(R.string.genre_editor_new_title) else getString(R.string.genre_editor_edit_title)
                 currentGenre = intent?.extras?.getSerializable(OBJECT) as Genre
                 currentGenre.favorite = intent?.extras?.getBoolean(FAVORITE) == true
                 invalidateOptionsMenu()
                 save =  {
                     currentGenre.name = binding.etAGName.text.toString().trim()
                     genreViewModel.update(currentGenre)
-                }
-                delete = {
-                    genreViewModel.delete(currentGenre)
+                    when(new){
+                        true -> DatabaseFetcher.added.genres.add(currentGenre)
+                        false -> {
+                            if(!DatabaseFetcher.added.genres.contains(currentGenre)) {
+                                DatabaseFetcher.updated.genres.add(currentGenre)
+                            }
+                        }
+                    }
                 }
                 favorite = {
                     currentGenre.favorite = !currentGenre.favorite
@@ -139,9 +148,7 @@ class ActorGenreEditor : AppCompatActivity() {
                 val adapter = MovieListAdapter(this, movieViewModel, false,
                     onDelete = { currentMovie ->
                         movieGenreViewModel.delete(MovieGenre(currentMovie.id, currentGenre.id))
-                        if (currentMovie.id !in DatabaseFetcher.Companion.Updates.movies){
-                            DatabaseFetcher.Companion.Updates.movies.add(currentMovie.id)
-                        }
+                        DatabaseFetcher.updated.movies.add(currentMovie)
                     }
                 )
                 genreViewModel.getMovies(currentGenre.id).observe(this) { moviesGenres ->

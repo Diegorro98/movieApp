@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
-import es.usj.drodriguez.movieapp.database.DatabaseFetcher
 import es.usj.drodriguez.movieapp.database.adapters.ActorListAdapter
 import es.usj.drodriguez.movieapp.database.adapters.GenreListAdapter
 import es.usj.drodriguez.movieapp.database.adapters.MovieListAdapter
@@ -49,17 +48,6 @@ class Lists : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (activity!= null) {
-            binding.listRefresh.setOnRefreshListener {
-                this.context?.let {
-                    activity?.application?.let { application ->
-                        DatabaseFetcher.fetch(it, application = application,
-                            onFinish = {
-                                binding.listRefresh.isRefreshing = false
-                            }
-                        )
-                    }
-                }
-            }
             when (type) {
                 MOVIES -> {
                     val adapter = MovieListAdapter(requireActivity(),movieViewModel,

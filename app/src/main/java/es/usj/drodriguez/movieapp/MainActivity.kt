@@ -14,6 +14,7 @@ import androidx.lifecycle.*
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayoutMediator
+import es.usj.drodriguez.movieapp.database.DatabaseFetcher
 import es.usj.drodriguez.movieapp.databinding.ActivityMainBinding
 import es.usj.drodriguez.movieapp.editors.*
 import es.usj.drodriguez.movieapp.utils.DatabaseApp
@@ -96,7 +97,13 @@ class MainActivity : AppCompatActivity() {
         })
         setSupportActionBar(binding.toolbarMovieList)
         binding.toolbarMovieList.showOverflowMenu()
-
+        binding.listRefresh.setOnRefreshListener {
+            DatabaseFetcher.fetch(this, application = application,
+                onFinish = {
+                    binding.listRefresh.isRefreshing = false
+                }
+            )
+        }
         binding.btnAddMovie.shrink()
         binding.btnAddMovie.setOnClickListener {
             CoroutineScope(IO).launch{

@@ -17,6 +17,7 @@ class DatabaseRepository(
     val allMoviesActors: Flow<List<MovieActor>> = movieActorDao.getAll()
     val allMoviesGenres: Flow<List<MovieGenre>> = movieGenreDao.getAll()
 
+    suspend fun getAllMovies() = movieDao.getAllNoFlow()
     suspend fun getNewMovie() = movieDao.getNew()
     suspend fun insertMovie(movie: Movie) = movieDao.insert(movie)
     suspend fun insertMovies(movies: List<Movie>) = movieDao.insertMultiple(movies)
@@ -29,6 +30,7 @@ class DatabaseRepository(
     fun getMovieByID(IDs: List<Long>) = movieDao.getByID(IDs)
     fun getMovieByID(id: Long) = movieDao.getByID(id)
 
+    suspend fun getAllGenres() = genreDao.getAllNoFlow()
     suspend fun getNewGenre() = genreDao.getNew()
     suspend fun insertGenre(genre: Genre) = genreDao.insert(genre)
     suspend fun insertGenres(genres: List<Genre>) = genreDao.insertMultiple(genres)
@@ -41,6 +43,7 @@ class DatabaseRepository(
     fun getGenreByID(id: Long) = genreDao.getByID(id)
     suspend fun getGenreByNameNoFlow(name: String) = genreDao.getByNameNoFlow(name)
 
+    suspend fun getAllActors() = actorDao.getAllNoFlow()
     suspend fun getNewActor()=actorDao.getNew()
     suspend fun insertActor(actor: Actor) = actorDao.insert(actor)
     suspend fun insertActors(actors: List<Actor>) = actorDao.insertMultiple(actors)
@@ -53,13 +56,25 @@ class DatabaseRepository(
     fun getActorByID(id: Long) = actorDao.getByID(id)
     suspend fun getActorByNameNoFlow(name: String) = actorDao.getByNameNoFlow(name)
 
+    suspend fun getAllMoviesActors() = movieActorDao.getAllNoFlow()
     suspend fun insertMovieActor(movieActor: MovieActor) = movieActorDao.insert(movieActor)
     suspend fun deleteMovieActor(movieActor: MovieActor) = movieActorDao.delete(movieActor)
     fun getActorMovies(actorID: Long) = movieActorDao.getMovies(actorID)
     fun getMovieActors(movieID: Long) = movieActorDao.getActors(movieID)
+    suspend fun getMovieActorsNoFlow(movieID: Long) = movieActorDao.getActorsNoFlow(movieID)
 
+    suspend fun getAllMoviesGenres() = movieGenreDao.getAllNoFlow()
     suspend fun insertMovieGenre(movieGenre: MovieGenre) = movieGenreDao.insert(movieGenre)
     suspend fun deleteMovieGenre(movieGenre: MovieGenre) = movieGenreDao.delete(movieGenre)
     fun getGenreMovies(genreID: Long) = movieGenreDao.getMovies(genreID)
     fun getMovieGenres(movieID: Long) = movieGenreDao.getGenres(movieID)
+    suspend fun getMovieGenresNoFlow(movieID: Long) = movieGenreDao.getGenresNoFlow(movieID)
+
+    suspend fun nuke(){
+        movieDao.nukeTable()
+        genreDao.nukeTable()
+        actorDao.nukeTable()
+        movieActorDao.nukeTable()
+        movieGenreDao.nukeTable()
+    }
 }

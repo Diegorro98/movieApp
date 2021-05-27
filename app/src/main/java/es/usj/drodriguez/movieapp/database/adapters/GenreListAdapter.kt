@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import es.usj.drodriguez.movieapp.MainActivity
 import es.usj.drodriguez.movieapp.R
+import es.usj.drodriguez.movieapp.database.DatabaseFetcher
 import es.usj.drodriguez.movieapp.database.classes.Genre
 import es.usj.drodriguez.movieapp.database.viewmodels.GenreViewModel
 import es.usj.drodriguez.movieapp.editors.ActorGenreEditor
@@ -36,7 +37,6 @@ class GenreListAdapter(
     var showOnlyFavorites = false
     var textFiler: String = ""
     private var originalList = emptyList<Genre>()
-
     @NonNull
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActorGenreHolder {
         context = parent.context
@@ -124,6 +124,14 @@ class GenreListAdapter(
                             }
                             R.id.btn_tb_contextual_delete -> {
                                 onDelete?.invoke(currentGenre)
+                                if(DatabaseFetcher.added.genres.contains(currentGenre)){
+                                    DatabaseFetcher.added.genres.remove(currentGenre)
+                                }else{
+                                    if (DatabaseFetcher.updated.genres.contains(currentGenre)){
+                                        DatabaseFetcher.updated.genres.remove(currentGenre)
+                                    }
+                                    DatabaseFetcher.deleted.genres.add(currentGenre)
+                                }
                                 true
                             }
                             else -> false

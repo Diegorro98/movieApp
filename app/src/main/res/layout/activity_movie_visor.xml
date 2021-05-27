@@ -22,15 +22,14 @@
         android:id="@+id/tb_movie_visor"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@android:color/transparent"
-        android:minHeight="?attr/actionBarSize"
+        android:background="@color/colorPrimarySemiOpaque"
         android:theme="@style/ToolbarIcons"
         app:title="@string/movie_title"
         app:layout_constraintBottom_toBottomOf="@+id/im_toolbar_poster"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/ic_baseline_close_24"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"
         app:menu="@menu/toolbar_main_contextual" />
 
     <ImageView

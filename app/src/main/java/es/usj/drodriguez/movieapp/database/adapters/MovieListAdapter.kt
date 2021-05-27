@@ -23,6 +23,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import es.usj.drodriguez.movieapp.MainActivity
 import es.usj.drodriguez.movieapp.R
+import es.usj.drodriguez.movieapp.database.DatabaseFetcher
 import es.usj.drodriguez.movieapp.database.classes.Movie
 import es.usj.drodriguez.movieapp.database.viewmodels.MovieViewModel
 import es.usj.drodriguez.movieapp.editors.MovieEditor
@@ -170,6 +171,14 @@ class MovieListAdapter(
                                 }
                                 R.id.btn_tb_contextual_delete -> {
                                     onDelete?.invoke(currentMovie)
+                                    if(DatabaseFetcher.added.movies.contains(currentMovie)){
+                                        DatabaseFetcher.added.movies.remove(currentMovie)
+                                    }else{
+                                        if (DatabaseFetcher.updated.movies.contains(currentMovie)){
+                                            DatabaseFetcher.updated.movies.remove(currentMovie)
+                                        }
+                                        DatabaseFetcher.deleted.movies.add(currentMovie)
+                                    }
                                     true
                                 }
                                 else -> false

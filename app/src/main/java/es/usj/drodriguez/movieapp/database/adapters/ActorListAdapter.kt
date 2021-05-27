@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import es.usj.drodriguez.movieapp.MainActivity
 import es.usj.drodriguez.movieapp.R
+import es.usj.drodriguez.movieapp.database.DatabaseFetcher
 import es.usj.drodriguez.movieapp.database.classes.Actor
 import es.usj.drodriguez.movieapp.database.viewmodels.ActorViewModel
 import es.usj.drodriguez.movieapp.editors.ActorGenreEditor
@@ -124,6 +125,14 @@ class ActorListAdapter(
                             }
                             R.id.btn_tb_contextual_delete -> {
                                 onDelete?.invoke(currentActor)
+                                if(DatabaseFetcher.added.actors.contains(currentActor)){
+                                    DatabaseFetcher.added.actors.remove(currentActor)
+                                }else{
+                                    if (DatabaseFetcher.updated.actors.contains(currentActor)){
+                                        DatabaseFetcher.updated.actors.remove(currentActor)
+                                    }
+                                    DatabaseFetcher.deleted.actors.add(currentActor)
+                                }
                                 true
                             }
                             else -> false

@@ -82,7 +82,7 @@ class MovieFetcher(
     @SerializedName(Movie.GENRES) var genres: List<Long>,
     @SerializedName(Movie.ACTORS)  var actors: List<Long>,
 ){
-    constructor(normalMovie: Movie, genresOfMovie: List<MovieGenre>, actorsOfMovie: List<MovieActor>) : this(
+    constructor(normalMovie: Movie, genresOfMovie: List<Long>, actorsOfMovie: List<Long>) : this(
         normalMovie.id,
         normalMovie.title,
         normalMovie.description,
@@ -92,12 +92,8 @@ class MovieFetcher(
         normalMovie.rating,
         normalMovie.votes,
         normalMovie.revenue,
-        List(genresOfMovie.size) {
-            genresOfMovie[it].genreID
-        },
-        List(actorsOfMovie.size) {
-            actorsOfMovie[it].actorID
-        }
+        genresOfMovie,
+        actorsOfMovie
     )
     fun asNormalMovie(movieToUpdate : Movie? =  null) = Movie(
         id,
@@ -112,11 +108,11 @@ class MovieFetcher(
         movieToUpdate?.posterURL,
         movieToUpdate?.favorite ?: false
     )
-    fun asMovieGenres() = List(genres.size) {
+    fun asMovieGenres() = if(genres != null )List(genres.size) {
         MovieGenre(id, genres[it])
-    }
-    fun asMovieActors() = List(genres.size) {
+    } else emptyList()
+    fun asMovieActors() = if(actors != null) List(actors.size) {
         MovieActor(id, actors[it])
-    }
+    } else emptyList()
 
 }

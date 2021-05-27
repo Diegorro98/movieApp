@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.usj.drodriguez.movieapp.R
+import es.usj.drodriguez.movieapp.database.DatabaseFetcher
 import es.usj.drodriguez.movieapp.database.adapters.MovieListAdapter
 import es.usj.drodriguez.movieapp.database.classes.Actor
 import es.usj.drodriguez.movieapp.database.classes.Genre
@@ -105,6 +106,14 @@ class ActorGenreVisor : AppCompatActivity() {
                 }
                 delete = {
                     actorViewModel.delete(currentActor)
+                    if(DatabaseFetcher.added.actors.contains(currentActor)){
+                        DatabaseFetcher.added.actors.remove(currentActor)
+                    }else{
+                        if (DatabaseFetcher.updated.actors.contains(currentActor)){
+                            DatabaseFetcher.updated.actors.remove(currentActor)
+                        }
+                        DatabaseFetcher.deleted.actors.add(currentActor)
+                    }
                 }
             }
             GENRE -> {
@@ -140,6 +149,14 @@ class ActorGenreVisor : AppCompatActivity() {
                 }
                 delete = {
                     genreViewModel.delete(currentGenre)
+                    if(DatabaseFetcher.added.genres.contains(currentGenre)){
+                        DatabaseFetcher.added.genres.remove(currentGenre)
+                    }else{
+                        if (DatabaseFetcher.updated.genres.contains(currentGenre)){
+                            DatabaseFetcher.updated.genres.remove(currentGenre)
+                        }
+                        DatabaseFetcher.deleted.genres.add(currentGenre)
+                    }
                 }
             }
         }

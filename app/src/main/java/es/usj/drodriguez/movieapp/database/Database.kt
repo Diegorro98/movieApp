@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package es.usj.drodriguez.movieapp.database
 
 import android.content.Context

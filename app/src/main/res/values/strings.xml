@@ -1,8 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">movieApp</string>
     <string name="developer" translatable="false">J. Diego Rodríguez</string>
-    <string name="user" translatable="false">admin</string>
-    <string name="password" translatable="false">admin</string>
     <string name="add_a_movie">Add a movie</string>
     <string name="phone" translatable="false">+34625454546</string>
     <string name="mail" translatable="false">alu.103413@usj.es</string>
@@ -31,7 +29,6 @@
     <string name="tv_splashscreen_info_connecting">Establishing connection</string>
     <string name="tv_splashscreen_info_fetching">Downloading last updated data</string>
     <string name="tv_splashscreen_info_first_fetch">Downloading the database</string>
-    <string name="toast_host_dialog">Press back again to continue offline</string>
     <string name="tv_splashscreen_info_update_complete">Update complete</string>
     <string name="tv_splashscreen_info_offline_mode">offline mode</string>
     <string name="tv_movie_item_runtime">%d minutes</string>
@@ -40,12 +37,11 @@
     <string name="actor_editor_edit_title">Edit the actor</string>
     <string name="actor_editor_new_title">Add an actor</string>
     <string name="genre_editor_edit_title">Edit the genre</string>
-    <string name="genre_editor_new_title">Add an genre</string>
+    <string name="genre_editor_new_title">Add a genre</string>
     <string name="title_contextual_delete">Delete</string>
     <string name="title_contextual_add_fav">Add to favorites</string>
     <string name="title_contextual_rmv_fav">Remove from favorites</string>
     <string name="title_contextual_edit">Edit</string>
-    <string name="tv_editor_empty_name">The name can\'t not be empty</string>
     <string name="movie_poster">Poster</string>
     <string name="movie_title">Title</string>
     <string name="movie_year">Year</string>

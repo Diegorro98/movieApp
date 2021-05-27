@@ -23,6 +23,8 @@ interface MovieDao {
 
     @Delete
     suspend fun delete(movie: Movie)
+    @Query("DELETE FROM ${Movie.TABLE_NAME}")
+    suspend fun nukeTable()
 
     @Query("UPDATE ${Movie.TABLE_NAME} SET ${Movie.FAVORITE} = :favorite WHERE ${Movie.ID} = :id")
     suspend fun setFavorite(id: Long, favorite: Boolean)
@@ -31,6 +33,8 @@ interface MovieDao {
 
     @Query ("SELECT * FROM ${Movie.TABLE_NAME} ORDER BY ${Movie.TITLE} ASC")
     fun getAll(): Flow<List<Movie>>
+    @Query ("SELECT * FROM ${Movie.TABLE_NAME} ORDER BY ${Movie.TITLE} ASC")
+    suspend fun getAllNoFlow(): List<Movie>
     @Query ("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.FAVORITE} = 1 ORDER BY ${Movie.TITLE} ASC")
     fun getFavorites(): Flow<List<Movie>>
     @Query("SELECT * FROM ${Movie.TABLE_NAME} WHERE ${Movie.ID} = :ID")
